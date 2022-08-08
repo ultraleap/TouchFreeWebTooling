@@ -1,5 +1,5 @@
 import TouchFree from '../TouchFree';
-import { TrackingServiceState } from '../TouchFreeToolingTypes';
+import { TrackingServiceState, DelegatedEventTarget } from '../TouchFreeToolingTypes';
 import { MessageReceiver } from './MessageReceiver';
 import { ServiceConnection } from './ServiceConnection';
 import { HandPresenceState, InteractionZoneState, ServiceStatus } from './TouchFreeServiceTypes';
@@ -16,7 +16,7 @@ interface InitParams {
 // Class: ConnectionManager
 // This Class manages the connection to the Service. It provides static variables
 // for ease of use and is a Singleton to allow for easy referencing.
-export class ConnectionManager extends EventTarget {
+export class ConnectionManager extends DelegatedEventTarget {
     // Group: Events
 
     // Event: OnConnected
