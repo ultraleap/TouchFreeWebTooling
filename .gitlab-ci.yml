@@ -1,26 +1,13 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  TF_SETTINGS_PROJECT_PATH: $CI_PROJECT_DIR/TF_Settings_Unity
-  TF_PROJECT_PATH: $CI_PROJECT_DIR/TF_Application
-  UNITY_HUB: "C:/Program Files/Unity Hub/Unity Hub.exe"
-
-  TF_TFW_PATH: $CI_PROJECT_DIR/TF_Tooling_Web
-  TF_SETTINGS_PATH: $CI_PROJECT_DIR/TF_Settings_Unity/Assets
-
-  BS_EXTENSION_NAME: ultouchfree
 
   TF_TFW_VERSION: '1.4.0'
-  TOUCHFREE_VERSION: '2.6.0'
-
   TF_TOOLING_API_VERSION: '1.4.0'
-
-  TARGET_TRACKING_JOBID_WIN: 859924
 
 stages:
   - build
   - test
   - package
-  - installer
   - deploy
   
 .Always_Build:
@@ -40,11 +27,11 @@ TF_Tooling::Web::build:
     - win10
   script:
     # Update Version.txt with latest information before packaging
-    - python ./Scripts/UpdateVersionFile.py --path ${env:TF_TFW_PATH}/Version.txt --swVer ${env:TF_TFW_VERSION} --apiVer ${env:TF_TOOLING_API_VERSION} --ref ${env:CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
-    - Get-Content ${env:TF_TFW_PATH}/Version.txt
+    - python ./Scripts/UpdateVersionFile.py --path ${env:CI_PROJECT_DIR}/Version.txt --swVer ${env:TF_TFW_VERSION} --apiVer ${env:TF_TOOLING_API_VERSION} --ref ${env:CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
+    - Get-Content ${env:CI_PROJECT_DIR}/Version.txt
 
     # Build Tooling
-    - cd ${env:TF_TFW_PATH}
+    - cd ${env:CI_PROJECT_DIR}
     - npm i
     - npm run build
     # Clean last build
@@ -55,10 +42,10 @@ TF_Tooling::Web::build:
       }
     # Package Tooling
     - mkdir ./Tooling_Release
-    - cp ${env:TF_TFW_PATH}/Version.txt ./Tooling_Release
-    - cp -R ${env:TF_TFW_PATH}/dist ./Tooling_Release
-    - cp -R ${env:TF_TFW_PATH}/Plugins ./Tooling_Release
-    - cp -R ${env:TF_TFW_PATH}/quick-start ./Tooling_Release
+    - cp ${env:CI_PROJECT_DIR}/Version.txt ./Tooling_Release
+    - cp -R ${env:CI_PROJECT_DIR}/dist ./Tooling_Release
+    - cp -R ${env:CI_PROJECT_DIR}/Plugins ./Tooling_Release
+    - cp -R ${env:CI_PROJECT_DIR}/quick-start ./Tooling_Release
   artifacts:
     name: "Tooling_for_Web_Build_${env:CI_COMMIT_SHORT_SHA}"
     paths:
@@ -72,144 +59,13 @@ TF_Tooling::Docs::build:
     - docker
   image: registry.ultrahaptics.com/apps/infrastructure/docker-naturaldocs:main
   script:
-    - mono "/opt/Natural Docs/NaturalDocs.exe" $TF_TFW_PATH/NaturalDocs_Config
+    - mono "/opt/Natural Docs/NaturalDocs.exe" $CI_PROJECT_DIR/NaturalDocs_Config
   artifacts:
     name: "TouchFree_Tooling_Documentation"
     paths:
     - ./Documentation/*
     expire_in: 2 weeks
     when: always
-
-TF_Service::Wrapper::build:
-  extends: .Always_Build
-  tags:
-    - docker-windows
-  image: registry.ultrahaptics.com/ooh/infrastructure/windows-dotnet-toolchain:latest
-  script:
-    - if ($CI_COMMIT_REF_NAME -Match 'release/.*') {
-        $TOUCHFREE_SUFFIX = ''
-      } else {
-        $TOUCHFREE_SUFFIX = 'dev+' + ${env:CI_COMMIT_SHORT_SHA}
-      }
-
-    - dotnet publish -p:VersionPrefix=$TOUCHFREE_VERSION -p:VersionSuffix=$TOUCHFREE_SUFFIX -c Release -r win-x64 "$CI_PROJECT_DIR/TF_Service_Utilities/ServiceWrapper/ServiceWrapper/ServiceWrapper.csproj"
-    # Move the built wrapper to the root directory
-    - mkdir ./Service_Wrapper_Build
-    - cp -R $CI_PROJECT_DIR/TF_Service_Utilities/ServiceWrapper/ServiceWrapper/bin/Release/net6.0/win-x64/publish/* ./Service_Wrapper_Build
-
-    # Sign the executable with the UltraLeap certificate
-    - azuresigntool sign -du "https://www.ultraleap.com" -kvu "https://$env:SIGN_VAULT_ID.vault.azure.net/"  -kvi "$env:SIGN_VAULT_APPLICATION_ID" -kvs "$env:SIGN_VAULT_APPLICATION_CLIENT_CODE" -kvc "ultraleap-ltd" -kvt "$env:SIGN_VAULT_TENANT_ID" -tr http://timestamp.digicert.com -v "$CI_PROJECT_DIR/Service_Wrapper_Build/ServiceWrapper.exe"
-  artifacts:
-    name: "TouchFree_Service_Wrapper"
-    paths:
-    - ./Service_Wrapper_Build/**
-    expire_in: 2 weeks
-    when: always
-
-.Base_TF_Service_dotNet:
-  extends: .Always_Build
-  variables:
-      DEFAULT_RELEASE_SUFFIX: ""
-      BRIGHTSIGN: ""
-      ARTIFACT_NAME: ""
-      SIGN_BINARY: ""
-      RUNTIME: ""
-      INCLUDE_SERVICE_LICENSES: ""
-  tags:
-    - docker-windows
-  image: registry.ultrahaptics.com/ooh/infrastructure/windows-dotnet-toolchain:latest
-  script:
-    - if ($CI_COMMIT_REF_NAME -Match 'release/.*') {
-        $TOUCHFREE_SUFFIX = $DEFAULT_RELEASE_SUFFIX
-      } else {
-        $TOUCHFREE_SUFFIX = 'dev+' + ${env:CI_COMMIT_SHORT_SHA}
-      }
-
-    - dotnet publish -p:BRIGHTSIGN=$BRIGHTSIGN -p:VersionPrefix=$TOUCHFREE_VERSION -p:VersionSuffix=$TOUCHFREE_SUFFIX -c Release -r $RUNTIME "$CI_PROJECT_DIR/TF_Service_dotNet/TouchFree/TouchFreeLib.csproj"
-    - dotnet publish -p:BRIGHTSIGN=$BRIGHTSIGN -p:VersionPrefix=$TOUCHFREE_VERSION -p:VersionSuffix=$TOUCHFREE_SUFFIX -c Release -r $RUNTIME "$CI_PROJECT_DIR/TF_Service_dotNet/TouchFree_Service/TouchFree_Service.csproj"
-
-    # Move the built executable to the root directory
-    - mkdir ./Service_dotNet_Build
-    - cp -R "$CI_PROJECT_DIR/TF_Service_dotNet/TouchFree_Service/bin/Release/net6.0/${RUNTIME}/publish/*" ./Service_dotNet_Build
-    - rm ./Service_dotNet_Build/interaction-tuning.json
-
-    - if ($INCLUDE_SERVICE_LICENSES -Match 'true') {
-        mkdir ./Service_dotNet_Build/ThirdParty;
-        cp "$CI_PROJECT_DIR/Third_Party_Licenses/Service/*" ./Service_dotNet_Build/ThirdParty;
-      }
-
-    # Sign the executable with the UltraLeap certificate
-    - if ($SIGN_BINARY -Match 'true') {
-        azuresigntool sign -du "https://www.ultraleap.com" -kvu "https://$env:SIGN_VAULT_ID.vault.azure.net/"  -kvi "$env:SIGN_VAULT_APPLICATION_ID" -kvs "$env:SIGN_VAULT_APPLICATION_CLIENT_CODE" -kvc "ultraleap-ltd" -kvt "$env:SIGN_VAULT_TENANT_ID" -tr http://timestamp.digicert.com -v "$CI_PROJECT_DIR/Service_dotNet_Build/TouchFree_Service.exe"
-      }
-  artifacts:
-    name: $ARTIFACT_NAME
-    paths:
-    - ./Service_dotNet_Build/**
-    expire_in: 2 weeks
-    when: always
-
-TF_Service::dotNet::Windows::build:
-  extends: .Base_TF_Service_dotNet
-  variables:
-      ARTIFACT_NAME: "TouchFree_Service_dotNet"
-      SIGN_BINARY: "true"
-      RUNTIME: "win-x64"
-
-TF_Service::dotNet::ARMLinux::build:
-  extends: .Base_TF_Service_dotNet
-  variables:
-      DEFAULT_RELEASE_SUFFIX: "beta"
-      BRIGHTSIGN: "true"
-      ARTIFACT_NAME: "TouchFree_Service_dotNet_ARMLinux"
-      RUNTIME: "linux-arm64"
-      INCLUDE_SERVICE_LICENSES: "true"
-
-TF_Service::dotNet::x64Linux::build:
-  extends: .Base_TF_Service_dotNet
-  variables:
-      DEFAULT_RELEASE_SUFFIX: "beta"
-      BRIGHTSIGN: "true"
-      ARTIFACT_NAME: "TouchFree_Service_dotNet_x64Linux"
-      RUNTIME: "linux-x64"
-      INCLUDE_SERVICE_LICENSES: "true"
-
-Tracking::ARMLinux::download_package:
-  extends: .Always_Build
-  tags:
-    - unity
-    - win10
-  script:
-    - cd ./Scripts/BrightSign_Scripts
-    - python ./Download_Tracking.py -t ${env:GITLAB_TOKEN}
-  after_script:
-    - if (Test-Path "C:/build_machine_info.txt") { Get-Content "C:/build_machine_info.txt" }
-  artifacts:
-    paths:
-    - ./Scripts/BrightSign_Scripts/Build_ARM64_Linux_release/*.tar.gz
-    expire_in: 1 hour
-
-TF_Service::dotNet::test:
-  extends: .Always_Test
-  tags:
-    - docker-windows
-  image: registry.ultrahaptics.com/ooh/infrastructure/windows-dotnet-toolchain:latest
-  script:
-    # Run unit tests
-    - dotnet test "$CI_PROJECT_DIR/TF_Service_dotNet/TouchFreeTests/TouchFreeTests.csproj" --results-directory $CI_PROJECT_DIR/TestResults --collect:"XPlat Code Coverage;Format=Cobertura" --logger:"junit;LogFilePath=$CI_PROJECT_DIR/TestResults/Test_Results.xml;MethodFormat=Class;FailureBodyFormat=Verbose"
-    - reportgenerator "-reports:$CI_PROJECT_DIR/TestResults/*/coverage.cobertura.xml" "-targetdir:TestReports"
-  artifacts:
-    when: always
-    name: "TestResults"
-    paths:
-    - $CI_PROJECT_DIR/TestResults/Test_Results.xml
-    - $CI_PROJECT_DIR/TestResults/*/coverage.cobertura.xml
-    - $CI_PROJECT_DIR/TestReports/
-    reports:
-      junit: $CI_PROJECT_DIR/TestResults/Test_Results.xml
-      coverage_report:
-        coverage_format: cobertura
-        path: $CI_PROJECT_DIR/TestResults/*/coverage.cobertura.xml
 
 TF_Tooling::Web::test:
   extends: .Always_Test
@@ -220,7 +76,7 @@ TF_Tooling::Web::test:
   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
   script:
     # Run unit tests
-    - cd ${env:TF_TFW_PATH}
+    - cd ${env:CI_PROJECT_DIR}
     - npm i
     - npm run test
     - npm run test:coverage
@@ -228,13 +84,13 @@ TF_Tooling::Web::test:
     when: always
     name: "TestResults"
     paths:
-    - ${env:TF_TFW_PATH}/junit.xml
-    - ${env:TF_TFW_PATH}/coverage/
+    - ${env:CI_PROJECT_DIR}/junit.xml
+    - ${env:CI_PROJECT_DIR}/coverage/
     reports:
-      junit: ${env:TF_TFW_PATH}/junit.xml
+      junit: ${env:CI_PROJECT_DIR}/junit.xml
       coverage_report:
         coverage_format: cobertura
-        path: ${env:TF_TFW_PATH}/coverage/cobertura-coverage.xml
+        path: ${env:CI_PROJECT_DIR}/coverage/cobertura-coverage.xml
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
 pages:
@@ -243,195 +99,13 @@ pages:
     - TF_Tooling::Web::test
   script:
     - mkdir .public
-    - cp ${env:TF_TFW_PATH}/coverage/* .public
+    - cp ${env:CI_PROJECT_DIR}/coverage/* .public
     - mv .public public
   artifacts:
     paths:
       - public
   only:
     - develop
-
-TF_Service::Tray::build:
-  extends: .Always_Build
-  tags:
-    - unity
-    - win10
-  script:
-    - MSBuild.exe $CI_PROJECT_DIR/TF_Service_Utilities/ServiceUITray/ServiceUITray.sln /p:Configuration=Release /p:Platform=x64
-    # Move the built tray app to the root directory
-    - mkdir ./Service_Tray_Build
-    - cp -R $CI_PROJECT_DIR/TF_Service_Utilities/ServiceUITray/ServiceUITray/bin/x64/Release/* ./Service_Tray_Build
-
-    # Sign the executable with the UltraLeap certificate
-    - $cert=Get-ChildItem -Path Cert:\LocalMachine\My -CodeSigningCert
-    - Set-AuthenticodeSignature -FilePath $CI_PROJECT_DIR/Service_Tray_Build/ServiceUITray.exe -TimestampServer 'http://timestamp.comodoca.com/authenticode' -Certificate $cert
-  artifacts:
-    name: "TouchFree_Service_Tray"
-    paths:
-    - ./Service_Tray_Build/**
-    expire_in: 2 weeks
-    when: always
-
-TF_Settings::Windows::build:
-  extends: .Always_Build
-  tags:
-    - unity
-    - win10
-  script:
-    # Get Unity version and changeset from the project.
-    - $line = Get-Content  $TF_SETTINGS_PROJECT_PATH/ProjectSettings/ProjectVersion.txt | Select -Index 1
-    - $UNITY_VERSION = $line -Split " " | Select -Index 1
-    - $UNITY_CHANGESET = $line -Match '\((.+)\)' | ForEach-Object { $Matches[1] }
-    # Check whether the required Unity version is installed. If not, install it.
-    - Start-Process -Wait -RedirectStandardOutput "tmp.txt" -FilePath "$UNITY_HUB" -ArgumentList "-- --headless editors --installed"
-    - Get-Content "tmp.txt"
-    - Start-Process -Wait -RedirectStandardOutput "tmp.txt" -FilePath "$UNITY_HUB" -ArgumentList "-- --headless install-path --set C:/Unity"
-    - Get-Content "tmp.txt"
-    - if (-not (Test-Path "C:/Unity/$UNITY_VERSION")) { Start-Process -Wait -RedirectStandardOutput "tmp.txt" -FilePath "$UNITY_HUB" -ArgumentList "-- --headless install --version $UNITY_VERSION --changeset $UNITY_CHANGESET" }
-    - Get-Content "tmp.txt"
-
-    - $UNITY_EXE = "C:/Unity/$UNITY_VERSION/Editor/Unity.exe"
-    - echo "$UNITY_EXE"
-
-    # Update Version.txt with latest information before packaging
-    - python ./Scripts/UpdateVersionFile.py --path ${env:TF_SETTINGS_PATH}/Version.txt --swVer ${env:TOUCHFREE_VERSION} --apiVer ${env:TF_TOOLING_API_VERSION} --ref ${env:CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
-    - Get-Content ${env:TF_SETTINGS_PATH}/Version.txt
-
-    - mkdir $CI_PROJECT_DIR/UIBuild
-    - cp ${env:TF_SETTINGS_PATH}/Version.txt $CI_PROJECT_DIR/UIBuild
-
-    # Update ProjectSettings file with correct version & build settings
-    - cd ./Scripts
-    - python ./UpdateUnityProjVer.py --path ../TF_Settings_Unity/ProjectSettings/ProjectSettings.asset --ver ${env:TOUCHFREE_VERSION}
-    - "& ./build_settingsUI.bat $UNITY_EXE"
-
-    # Sign the executable with the UltraLeap certificate
-    - $cert=Get-ChildItem -Path Cert:\LocalMachine\My -CodeSigningCert
-    - Set-AuthenticodeSignature -FilePath $CI_PROJECT_DIR/UIBuild/TouchFreeSettingsUI.exe -TimestampServer 'http://timestamp.comodoca.com/authenticode' -Certificate $cert
-  artifacts:
-    name: "TouchFree_Settings_${env:TOUCHFREE_VERSION}_${env:CI_COMMIT_SHORT_SHA}"
-    paths:
-    - UIBuild/**
-    - ./SettingsUI_build.log
-    expire_in: 2 weeks
-    when: always
-
-TF_Settings::Web::build:
-  extends: .Always_Build
-  tags:
-    - docker-windows
-  image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
-  script:
-    - npm -v
-    - npm install -w TF_Settings_Web
-    - npm ls
-    - cd ./TF_Settings_Web
-    - npm run tauri build
-    # npm workspaces cause the Web Settings node modules to be installed in the root folder so need to copy the Web Settings' package.json up a level
-    # so it's at the same level as the node modules
-    - cp ./package.json ../
-    - cd ../
-    # We don't want the touchfree module to appear in the licensing file
-    - Remove-Item -Force -Recurse .\node_modules\touchfree\
-    - npx generate-license-file@2.0.0 --input ./package.json --output ./TF_Settings_Web/dist/ThirdPartyLicenses.txt --eol lf --ci
-    - if ((cat ./TF_Settings_Web/dist/ThirdPartyLicenses.txt | Select-String "react").Count -eq 0) {
-        exit 1
-      }
-    - azuresigntool sign -du "https://www.ultraleap.com" -kvu "https://$env:SIGN_VAULT_ID.vault.azure.net/"  -kvi "$env:SIGN_VAULT_APPLICATION_ID" -kvs "$env:SIGN_VAULT_APPLICATION_CLIENT_CODE" -kvc "ultraleap-ltd" -kvt "$env:SIGN_VAULT_TENANT_ID" -tr http://timestamp.digicert.com -v "$CI_PROJECT_DIR/TF_Settings_Web/src-tauri/target/release/touchfree-settings-web.exe"
-    - mv $CI_PROJECT_DIR/TF_Settings_Web/src-tauri/target/release/*.exe $CI_PROJECT_DIR/TF_Settings_Web/
-  artifacts:
-    name: "TouchFree_Settings_Web_${env:TOUCHFREE_VERSION}_${env:CI_COMMIT_SHORT_SHA}"
-    paths:
-    - ./TF_Settings_Web/dist/*
-    - ./TF_Settings_Web/*.exe
-    expire_in: 2 weeks
-    when: always
-
-TouchFree::build:
-  extends: .Always_Build
-  tags:
-    - unity
-    - win10
-  script:
-    # Get Unity version and changeset from the project.
-    - $line = Get-Content  $TF_PROJECT_PATH/ProjectSettings/ProjectVersion.txt | Select -Index 1
-    - $UNITY_VERSION = $line -Split " " | Select -Index 1
-    - $UNITY_CHANGESET = $line -Match '\((.+)\)' | ForEach-Object { $Matches[1] }
-
-    # Check whether the required Unity version is installed. If not, install it.
-    - Start-Process -Wait -RedirectStandardOutput "tmp.txt" -FilePath "$UNITY_HUB" -ArgumentList "-- --headless editors --installed"
-    - Get-Content "tmp.txt"
-    - Start-Process -Wait -RedirectStandardOutput "tmp.txt" -FilePath "$UNITY_HUB" -ArgumentList "-- --headless install-path --set C:/Unity"
-    - Get-Content "tmp.txt"
-    - if (-not (Test-Path "C:/Unity/$UNITY_VERSION")) { Start-Process -Wait -RedirectStandardOutput "tmp.txt" -FilePath "$UNITY_HUB" -ArgumentList "-- --headless install --version $UNITY_VERSION --changeset $UNITY_CHANGESET" }
-    - Get-Content "tmp.txt"
-
-    - $UNITY_EXE = "C:/Unity/$UNITY_VERSION/Editor/Unity.exe"
-    - echo "$UNITY_EXE"
-
-    # Update Version.txt with latest information before packaging
-    - python ./Scripts/UpdateVersionFile.py --path ${env:TF_PROJECT_PATH}/Assets/Version.txt --apiVer ${env:TF_TOOLING_API_VERSION} --swVer ${env:TOUCHFREE_VERSION} --ref ${env:CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
-    - Get-Content "${env:TF_PROJECT_PATH}/Assets/Version.txt"
-
-    # Copy Version.txt to build folder
-    - if (Test-Path -Path "./TouchFree_Build") {
-        Remove-Item -LiteralPath ./TouchFree_Build -Force -Recurse
-        Remove-Item -LiteralPath ./TouchFree_Build -Force -Recurse
-      }
-    - mkdir ./TouchFree_Build
-    - cp ${env:TF_PROJECT_PATH}/Assets/Version.txt ./TouchFree_Build
-
-    # Build TouchFree
-    - cd ./Scripts
-    - python ./UpdateUnityProjVer.py --path ../TF_Application/ProjectSettings/ProjectSettings.asset --ver ${env:TOUCHFREE_VERSION}
-    - "& ./build_touchfree.bat $UNITY_EXE"
-
-    # Sign the executable with the UltraLeap certificate
-    - $cert=Get-ChildItem -Path Cert:\LocalMachine\My -CodeSigningCert
-    - Set-AuthenticodeSignature -FilePath $CI_PROJECT_DIR/TouchFree_Build/TouchFree.exe -TimestampServer 'http://timestamp.comodoca.com/authenticode' -Certificate $cert
-  artifacts:
-    name: "TouchFree_Build_${env:CI_COMMIT_SHORT_SHA}"
-    paths:
-      - ./TouchFree_Build/*
-      - ./TouchFree_build.log
-    expire_in: 2 weeks
-    when: always
-
-Tracking::download:
-  extends: .Always_Build
-  tags:
-    - unity
-  script:
-    - cd ./Scripts/
-    - python ./Download_Tracking.py -t ${env:GITLAB_TOKEN} -j ${TARGET_TRACKING_JOBID_WIN}
-    - mv ./Tracking_Build/Ultraleap_Tracking_Installer*win64.exe ./Tracking_Build/Tracking_for_TouchFree_${TOUCHFREE_VERSION}.exe
-  after_script:
-    - if (Test-Path "C:/build_machine_info.txt") { Get-Content "C:/build_machine_info.txt" }
-  artifacts:
-    paths:
-    - ./Scripts/Tracking_Build/Tracking_for_TouchFree_*.exe
-    expire_in: 1 hour
-
-TF_Service::Integration::test:
-  extends: .Always_Test
-  dependencies:
-    - TF_Service::dotNet::Windows::build
-  needs: ["TF_Service::dotNet::Windows::build"]
-  tags:
-    - docker-windows
-  image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
-  script:
-    - cd ./Testing/ServiceSocketTests/
-    - npm install
-    - ./node_modules/.bin/gulp build_machine_run
-  artifacts:
-    name: test_results
-    paths:
-      - ./Testing/ServiceSocketTests/results/**
-      - ./Testing/ServiceSocketTests/PUT_TEST_BUILD_IN_HERE/**
-    reports:
-      junit: ./Testing/ServiceSocketTests/results/test_results.xml
-    when: always
 
 TF_Tooling::Web::package:
   stage: package
@@ -455,214 +129,3 @@ TF_Tooling::Web::package:
     when: always
   tags:
     - docker
-
-TF_Service::Windows::package:
-  stage: package
-  dependencies:
-    - TF_Settings::Windows::build
-    - TF_Settings::Web::build
-    - TF_Service::dotNet::Windows::build
-    - TF_Service::Wrapper::build
-    - TF_Service::Tray::build
-  needs: [
-    "TF_Service::dotNet::Windows::build",
-    "TF_Settings::Web::build",
-    "TF_Settings::Windows::build",
-    "TF_Service::Wrapper::build",
-    "TF_Service::Tray::build"
-  ]
-  script:
-    # Package Service up neatly
-    - mkdir ./Service_Package/
-    - mkdir ./Service_Package/Service/
-    - mkdir ./Service_Package/SettingsUI/
-    - mkdir ./Service_Package/Wrapper/
-    - mkdir ./Service_Package/Wrapper/wwwroot/
-    - mkdir ./Service_Package/Tray/
-    - mkdir ./Service_Package/Licenses/
-
-    # Update Version.txt with latest information before packaging
-    - cp $CI_PROJECT_DIR/TF_Service_dotNet/Version.txt ./Service_dotNet_Build
-    - python ./Scripts/UpdateVersionFile.py --path ${env:CI_PROJECT_DIR}/Service_dotNet_Build/Version.txt --apiVer ${env:TF_TOOLING_API_VERSION} --swVer ${env:TOUCHFREE_VERSION} --ref ${env:CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
-    - Get-Content "${env:CI_PROJECT_DIR}/Service_dotNet_Build/Version.txt"
-
-    - cp -R ./Service_dotNet_Build/* ./Service_Package/Service/
-    - cp -R ./UIBuild/* ./Service_Package/SettingsUI/
-    - cp -R ./Service_Wrapper_Build/* ./Service_Package/Wrapper/
-    - cp -R ./TF_Settings_Web/dist/* ./Service_Package/Wrapper/wwwroot
-    - cp -R ./Service_Tray_Build/* ./Service_Package/Tray/
-    - cp -R ./Third_Party_Licenses/* ./Service_Package/Licenses/
-
-
-  artifacts:
-    name: "TouchFree_Service_Package_${CI_COMMIT_SHORT_SHA}"
-    paths:
-      - ./Service_Package
-    expire_in: 2 weeks
-    when: always
-  tags:
-    - unity
-    - win10
-
-TF_Service::dotNet::Brightsign::example:
-  stage: package
-  dependencies:
-    - TF_Tooling::Web::package
-  needs: [
-    "TF_Tooling::Web::package"
-  ]
-  script:
-    # Run innosetup
-    - mkdir ./BS_Example_Package
-    - cp ./Scripts/BrightSign_Scripts/QuickStart-autorun.brs ./BS_Example_package
-    - mv ./BS_Example_package/QuickStart-autorun.brs ./BS_Example_package/autorun.brs
-    - cp -R ./Tooling_Package* ./BS_Example_package
-
-  artifacts:
-    name: "BrightSign_Example_Package_${CI_COMMIT_SHORT_SHA}"
-    paths:
-    - ./BS_Example_Package
-    expire_in: 2 weeks
-    when: always
-  tags:
-    - win10
-
-Linux_Image::ARMLinux::package:
-  stage: package
-  image: ubuntu:20.04
-  dependencies:
-    - Tracking::ARMLinux::download_package
-    - TF_Settings::Web::build
-    - TF_Service::dotNet::ARMLinux::build
-  needs: [
-    "Tracking::ARMLinux::download_package",
-    "TF_Settings::Web::build",
-    "TF_Service::dotNet::ARMLinux::build"
-  ]
-  script:
-    - apt-get update
-    - apt-get --assume-yes install squashfs-tools
-    - mkdir licenses
-
-    # Uncompress & chmod TouchFree Service
-    - ln ./Service_dotNet_Build/libatomic.so.1.2.0 ./Service_dotNet_Build/libatomic.so.1
-    - ln ./Service_dotNet_Build/libLeapC.so.5 ./Service_dotNet_Build/libLeapC.so
-    - ln ./Service_dotNet_Build/libstdc++.so.6.0.28 ./Service_dotNet_Build/libstdc++.so.6
-    - chmod +x ./Service_dotNet_Build/TouchFree_Service
-    - cp ./Service_dotNet_Build/ThirdParty/* ./licenses
-
-    # Uncompress & chmod tracking service
-    - tar -xzf $CI_PROJECT_DIR/Scripts/BrightSign_Scripts/Build_ARM64_Linux_release/Ultraleap_Tracking_Installer_*.tar.gz
-    - chmod +x ./TrackingService/bin/libtrack_server
-
-    # Combine services into one directory
-    - mkdir ./TouchFree_Extension
-    - mkdir ./TouchFree_Extension/TouchFree
-    - mkdir ./TouchFree_Extension/wwwroot
-    - mkdir ./TouchFree_Extension/Tracking
-    - mkdir ./TouchFree_Extension/Tracking/bin
-    - cp -R ./TrackingService/bin/* ./TouchFree_Extension/Tracking/bin
-    - cp ./LeapSDK/ThirdPartyNotices.md ./TouchFree_Extension/Tracking
-    - cp -R $CI_PROJECT_DIR/Service_dotNet_Build/* ./TouchFree_Extension/TouchFree
-    - cp -R $CI_PROJECT_DIR/TF_Settings_Web/dist/* ./TouchFree_Extension/wwwroot
-    - cp $CI_PROJECT_DIR/Scripts/BrightSign_Scripts/Version.txt ./TouchFree_Extension
-
-    - mkdir ./temp
-    - cp -rf ./TouchFree_Extension/* ./temp
-    - mksquashfs ./temp ext_ultouchfree.squashfs
-
-    - cp ./LeapSDK/ThirdPartyNotices.md ./licenses
-
-    - tar zcf linux_image.tar.gz ext_ultouchfree.squashfs licenses
-  artifacts:
-    name: "TouchFree_Linux_Image_${CI_COMMIT_SHORT_SHA}"
-    paths:
-      - ./linux_image.tar.gz
-    expire_in: 2 weeks
-    when: always
-  tags:
-    - docker
-
-TF_Service::ARMLinux::package:
-  stage: package
-  image: ubuntu:20.04
-  dependencies:
-    - Tracking::ARMLinux::download_package
-    - TF_Settings::Web::build
-    - TF_Service::dotNet::ARMLinux::build
-  needs: [
-    "Tracking::ARMLinux::download_package",
-    "TF_Settings::Web::build",
-    "TF_Service::dotNet::ARMLinux::build"
-  ]
-  script:
-    - apt-get update
-    - apt-get --assume-yes install squashfs-tools
-
-    # Uncompress & chmod TouchFree Service
-    - ln ./Service_dotNet_Build/libatomic.so.1.2.0 ./Service_dotNet_Build/libatomic.so.1
-    - ln ./Service_dotNet_Build/libLeapC.so.5 ./Service_dotNet_Build/libLeapC.so
-    - ln ./Service_dotNet_Build/libstdc++.so.6.0.28 ./Service_dotNet_Build/libstdc++.so.6
-    - chmod +x ./Service_dotNet_Build/TouchFree_Service
-
-    # Uncompress & chmod tracking service
-    - cd $CI_PROJECT_DIR/Scripts/BrightSign_Scripts/
-    - tar -xzf ./Build_ARM64_Linux_release/Ultraleap_Tracking_Installer_*.tar.gz
-    - chmod +x ./TrackingService/bin/libtrack_server
-
-    # Combine services into one directory
-    - mkdir ./TouchFree_Extension
-    - mkdir ./TouchFree_Extension/TouchFree
-    - mkdir ./TouchFree_Extension/wwwroot
-    - mkdir ./TouchFree_Extension/Tracking
-    - mkdir ./TouchFree_Extension/Tracking/bin
-    - cp -R ./TrackingService/bin/* ./TouchFree_Extension/Tracking/bin
-    - cp ./LeapSDK/ThirdPartyNotices.md ./TouchFree_Extension/Tracking
-    - cp -R $CI_PROJECT_DIR/Service_dotNet_Build/* ./TouchFree_Extension/TouchFree
-    - cp -R $CI_PROJECT_DIR/TF_Settings_Web/dist/* ./TouchFree_Extension/wwwroot
-
-    - cp $CI_PROJECT_DIR/Scripts/BrightSign_Scripts/Version.txt ./TouchFree_Extension
-
-    - cd "$CI_PROJECT_DIR/Scripts/BrightSign_Scripts/"
-    - chmod +x ./make-extension-ubi
-    - ./make-extension-ubi ./TouchFree_Extension/ $BS_EXTENSION_NAME
-
-    - mkdir $CI_PROJECT_DIR/TF_Service_BS/
-    - cp ./build-$BS_EXTENSION_NAME/*.tar.gz $CI_PROJECT_DIR/TF_Service_BS/
-  artifacts:
-    name: "TouchFree_BrightSign_${TOUCHFREE_VERSION}_${CI_COMMIT_SHORT_SHA}"
-    paths:
-      - "$CI_PROJECT_DIR/TF_Service_BS/*"
-    expire_in: 2 weeks
-    when: always
-  tags:
-    - docker
-
-TouchFree::installer:
-  stage: installer
-  dependencies:
-    - TF_Service::Windows::package
-    - Tracking::download
-    - TouchFree::build
-  needs: [
-    "TF_Service::Windows::package",
-    "Tracking::download",
-    "TouchFree::build"
-  ]
-  script:
-    # Run innosetup
-    - cd ./Scripts/
-    - "& ./compile_installer.bat ${env:TOUCHFREE_VERSION} $CI_PROJECT_DIR/TF_Service_Utilities/Installer/TouchFree_Installer.iss"
-
-    # Sign the installer with the UltraLeap certificate
-    - $cert=Get-ChildItem -Path Cert:\LocalMachine\My -CodeSigningCert
-    - Set-AuthenticodeSignature -FilePath "$CI_PROJECT_DIR/Installer_Build/TouchFree_${TOUCHFREE_VERSION}_Installer.exe" -TimestampServer 'http://timestamp.comodoca.com/authenticode' -Certificate $cert
-  artifacts:
-    name: "TouchFree_Installer_${TOUCHFREE_VERSION}_${CI_COMMIT_SHORT_SHA}"
-    paths:
-      - ./Installer_Build/*.exe
-    expire_in: 2 weeks
-    when: always
-  tags:
-    - unity
-    - win10
