@@ -58,7 +58,6 @@ export class InputActionManager extends EventTarget {
             }
         }
 
-        
         // Wrapping the function in a timeout of 0 seconds allows the dispatch to be asynchronous
         setTimeout(() => {
             TouchFree.DispatchEvent('TransmitInputAction', action);
