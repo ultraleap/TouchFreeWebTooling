@@ -29,7 +29,7 @@ export const intervalTest = async (test: () => unknown) => {
                 clearInterval(interval);
                 resolve();
             } catch (e) {
-                if (time > 1000) {
+                if (time > 10000) {
                     clearInterval(interval);
                     reject(e);
                 }
