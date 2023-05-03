@@ -38,3 +38,5 @@ export const intervalTest = async (test: () => unknown) => {
         }, 20);
     });
 };
+
+export const sleep = async (timeoutMS: number) => await new Promise(resolve => setTimeout(resolve, timeoutMS));

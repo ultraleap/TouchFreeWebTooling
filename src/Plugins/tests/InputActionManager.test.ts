@@ -1,6 +1,6 @@
 import TouchFree from '../../TouchFree';
 import { HandChirality, HandType, InputType, InteractionType, TouchFreeInputAction } from '../../TouchFreeToolingTypes';
-import { createInputAction, mockTfPluginInputAction } from '../../tests/testUtils';
+import { createInputAction, mockTfPluginInputAction, sleep } from '../../tests/testUtils';
 import { InputActionManager } from '../InputActionManager';
 import { InputActionPlugin } from '../InputActionPlugin';
 
@@ -77,30 +77,26 @@ describe('InputActionManager', () => {
         expect(pluginCallCount).toBe(4);
     });
 
-    test('Check plugin can return null', () => {
+    test('Check plugin can return null',async () => {
         let pluginCallCount = 0;
 
         class MockNullPlugin  extends InputActionPlugin {
-            RunPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+            RunPlugin(): TouchFreeInputAction | null {
                 pluginCallCount++;
-                // return inputAction;
                 return null;
             }
         }
 
         InputActionManager.SetPlugins([new MockNullPlugin()]);
         
-        const handler = TouchFree.RegisterEventCallback('TransmitInputAction', () => fail() )
+        let failed = false;
+        TouchFree.RegisterEventCallback('TransmitInputAction', () =>  {failed = true})
 
         expect(pluginCallCount).toBe(0);
         mockTfPluginInputAction();
         expect(pluginCallCount).toBe(1);
-        
-        // TouchFree.DispatchEvent('TransmitInputAction', action);
 
-        setTimeout(() => {
-            handler.UnregisterEventCallback();
-        }, 2000);
-
+        await sleep(1000);
+        expect(failed).toBeFalsy();
     })
 });
