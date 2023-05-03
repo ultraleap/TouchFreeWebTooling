@@ -52,11 +52,14 @@ export class InputActionManager extends EventTarget {
                 if (modifiedAction !== null) {
                     action = modifiedAction;
                 } else {
+                    console.log("NULL")
                     // The plugin has cancelled the InputAction entirely
                     return;
                 }
             }
         }
+
+        console.log("test")
 
         // Wrapping the function in a timeout of 0 seconds allows the dispatch to be asynchronous
         setTimeout(() => {

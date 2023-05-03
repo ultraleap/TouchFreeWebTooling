@@ -1,3 +1,4 @@
+import TouchFree from '../../TouchFree';
 import { HandChirality, HandType, InputType, InteractionType, TouchFreeInputAction } from '../../TouchFreeToolingTypes';
 import { createInputAction, mockTfPluginInputAction } from '../../tests/testUtils';
 import { InputActionManager } from '../InputActionManager';
@@ -75,4 +76,31 @@ describe('InputActionManager', () => {
         mockTfPluginInputAction();
         expect(pluginCallCount).toBe(4);
     });
+
+    test('Check plugin can return null', () => {
+        let pluginCallCount = 0;
+
+        class MockNullPlugin  extends InputActionPlugin {
+            RunPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+                pluginCallCount++;
+                // return inputAction;
+                return null;
+            }
+        }
+
+        InputActionManager.SetPlugins([new MockNullPlugin()]);
+        
+        const handler = TouchFree.RegisterEventCallback('TransmitInputAction', () => fail() )
+
+        expect(pluginCallCount).toBe(0);
+        mockTfPluginInputAction();
+        expect(pluginCallCount).toBe(1);
+        
+        // TouchFree.DispatchEvent('TransmitInputAction', action);
+
+        setTimeout(() => {
+            handler.UnregisterEventCallback();
+        }, 2000);
+
+    })
 });
