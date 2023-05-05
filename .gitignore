@@ -44,12 +44,12 @@ Thumbs.db
 ./test/*.js
 ./test/**/*.js
 dist
+bundle
+etc
 
 ./Plugins/**/Snapping_Plugin.js
 
-# ============ #
-# Test Outputs #
-# ============ #
+tsconfig.tsbuildinfo
 
 *.xml
 coverage/

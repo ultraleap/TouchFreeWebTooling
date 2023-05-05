@@ -1,38 +1,43 @@
 import TouchFree from '../TouchFree';
 import { TouchFreeInputAction } from '../TouchFreeToolingTypes';
 
-// Class: TouchlessCursor
-// This class is a base class for creating custom Touchless cursors for use with TouchFree Tooling.
-//
-// Override <HandleInputAction> to react to <TouchFreeInputActions> as they are recieved.
-//
-// For an example of a reactive cursor, see <DotCursor>.
+/**
+ * Base class for creating touchless cursors.
+ *
+ * @remarks
+ * Override {@link HandleInputAction} to react to {@link TouchFreeInputAction}s
+ * @public
+ */
 export abstract class TouchlessCursor {
-    // Group: Variables
-
-    // Variable: cursor
-    // The HTMLElement that represents this cursor
+    /**
+     * The {@link HTMLElement} or {@link SVGElement} that represents this cursor
+     */
     cursor: HTMLElement | SVGElement | undefined;
 
-    // Variable: enabled
-    // Whether the cursor should hide and show depending on hand presence
+    /**
+     * Whether the cursor should hide and show depending on hand presence
+     */
     enabled: boolean;
 
-    // Variable: cursor
-    // Whether the cursor should be visible or not after being enabled
+    /**
+     * Whether the cursor should be visible or not after being enabled
+     */
     shouldShow: boolean;
 
-    // Variable: opacityOnHandsLost
-    // The opacity of the cursor when hands are lost
+    /**
+     * The opacity of the cursor when hands are lost
+     */
     protected opacityOnHandsLost = 1;
 
-    // Group: Functions
-
-    // Function: constructor
-    // Registers the Cursor for updates from the <InputActionManager>
-    //
-    // If you intend to make use of the <WebInputController>, make sure that _cursor has the
-    // "touchfree-cursor" class. This prevents it blocking other elements from recieving events.
+    /**
+     * Registers the Cursor for updates via the `'TransmitInputAction'` TouchFree event
+     *
+     * @remarks
+     * If you intend to make use of `WebInputController`, make sure both {@link _cursor} has
+     * the `touchfree-cursor` class. This prevents them from blocking other elements from
+     * receiving events.
+     * @param _cursor - Cursor element
+     */
     constructor(_cursor: HTMLElement | SVGElement | undefined) {
         TouchFree.RegisterEventCallback('TransmitInputAction', this.HandleInputAction.bind(this));
 
@@ -41,8 +46,10 @@ export abstract class TouchlessCursor {
         this.shouldShow = true;
     }
 
-    // Function: UpdateCursor
-    // Sets the position of the cursor, should be run after <HandleInputAction>.
+    /**
+     * Sets the position of the cursor, should be run after {@link HandleInputAction}.
+     * @param _inputAction - Input action to use when updating cursor
+     */
     protected UpdateCursor(_inputAction: TouchFreeInputAction): void {
         if (this.cursor) {
             let width = this.cursor.clientWidth;
@@ -66,18 +73,18 @@ export abstract class TouchlessCursor {
         return [newCursor.width, newCursor.height];
     }
 
-    // Function: HandleInputAction
-    // The core of the logic for Cursors, this is invoked with each <TouchFreeInputAction> as
-    // they are received. Override this function to implement cursor behaviour in response.
-    //
-    // Parameters:
-    //    _inputAction - The latest input action received from TouchFree Service.
+    /**
+     * Invoked when new {@link TouchFreeInputAction}s are received.
+     * Override to implement cursor behaviour.
+     * @param _inputAction - The latest input action received from TouchFree Service.
+     */
     protected HandleInputAction(_inputAction: TouchFreeInputAction): void {
         this.UpdateCursor(_inputAction);
     }
 
-    // Function: ShowCursor
-    // Used to make the cursor visible
+    /**
+     * Make the cursor visible. Fades over time.
+     */
     ShowCursor(): void {
         this.shouldShow = true;
         if (this.enabled) {
@@ -85,8 +92,9 @@ export abstract class TouchlessCursor {
         }
     }
 
-    // Function: HideCursor
-    // Used to make the cursor invisible
+    /**
+     * Make the cursor invisible. Fades over time.
+     */
     HideCursor(): void {
         if (this.shouldShow) {
             // If opacity is NaN or 0 then set it to be 1
@@ -96,8 +104,9 @@ export abstract class TouchlessCursor {
         this.SetCursorOpacity(0);
     }
 
-    // Function: EnableCursor
-    // Used to enable the cursor so that it will show if hands are present
+    /**
+     * Used to enable the cursor so that it will show if hands are present
+     */
     EnableCursor(): void {
         this.enabled = true;
         if (this.shouldShow) {
@@ -106,8 +115,9 @@ export abstract class TouchlessCursor {
         }
     }
 
-    // Function: DisableCursor
-    // Used to disable the cursor so that it will never show
+    /**
+     * Used to disable the cursor so that it will never show
+     */
     DisableCursor(): void {
         this.enabled = false;
         const shouldShowOnEnable = this.shouldShow;
@@ -117,8 +127,9 @@ export abstract class TouchlessCursor {
         this.shouldShow = shouldShowOnEnable;
     }
 
-    // Function: SetCursorOpacity
-    // Used to set the opacity of the cursor
+    /**
+     * Used to set the opacity of the cursor
+     */
     SetCursorOpacity(opacity: number): void {
         if (this.cursor) {
             this.cursor.style.opacity = opacity.toString();
