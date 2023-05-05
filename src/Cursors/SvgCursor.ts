@@ -9,6 +9,10 @@ export const enum CursorPart {
     CENTER_BORDER,
 }
 
+/**
+ * {@link TouchlessCursor} created with SVG elements.
+ * @public
+ */
 export class SVGCursor extends TouchlessCursor {
     private xPositionAttribute = 'cx';
     private yPositionAttribute = 'cy';
@@ -24,13 +28,11 @@ export class SVGCursor extends TouchlessCursor {
     private baseRingThickness = 5;
     private baseRingSizeMultiplier: number;
 
-    // Group: Functions
-
-    // Function: constructor
-    // Constructs a new cursor consisting of a central cursor and a ring.
-    // Optionally provide a ringSizeMultiplier to change the size that the <cursorRing> is relative to the _cursor.
-    // Optionally provide a darkCursor to change the cursor to be dark to provide better contrast on light colored
-    // UIs.
+    /**
+     * Constructs a new cursor consisting of a central cursor and a ring.
+     * @param ringSizeMultiplier - Optional multiplier to change the size of the cursor ring.
+     * @param darkCursor - Optionally darken the cursor to provide better contrast on light colored UIs.
+     */
     constructor(ringSizeMultiplier = 2, darkCursor = false) {
         super(undefined);
         this.isDarkCursor = darkCursor;
@@ -98,10 +100,12 @@ export class SVGCursor extends TouchlessCursor {
         TouchFree.RegisterEventCallback('HandExited', this.HideCursor.bind(this));
     }
 
-    // Function: UpdateCursor
-    // Used to update the cursor when receiving a "MOVE" <ClientInputAction>. Updates the
-    // cursor's position, as well as the size of the ring based on the current ProgressToClick.
-    protected UpdateCursor(inputAction: TouchFreeInputAction) {
+    /**
+     * Update the cursor position as well as the size of the ring based on {@link TouchFreeInputAction.ProgressToClick}.
+     * @param inputAction - Input action to use when updating cursor
+     * @internal
+     */
+    protected override UpdateCursor(inputAction: TouchFreeInputAction) {
         if (!this.shouldShow) {
             this.HideCursor();
             return;
@@ -131,15 +135,20 @@ export class SVGCursor extends TouchlessCursor {
         }
     }
 
-    // Function: HandleInputAction
-    // This override replaces the basic functionality of the <TouchlessCursor>, making the
-    // cursor's ring scale dynamically with the current ProgressToClick and creating a
-    // "shrink" animation when a "DOWN" event is received, and a "grow" animation when an "UP"
-    // is received.
-    //
-    // When a "CANCEL" event is received, the cursor is hidden as it suggests the hand has been lost.
-    // When any other event is received and the cursor is hidden, the cursor is shown again.
-    protected HandleInputAction(inputData: TouchFreeInputAction) {
+    /**
+     * Replaces the basic functionality of {@link TouchlessCursor}
+     *
+     * @remarks
+     * Makes the cursor ring scale dynamically with {@link TouchFreeInputAction.ProgressToClick};
+     * creates a 'shrink' animation when a {@link InputType.DOWN} event is received;
+     * creates a 'grow' animation when a {@link InputType.UP} event is received.
+     *
+     * When a {@link InputType.CANCEL} event is received the cursor is hidden as it suggests the hand
+     * has been lost. When hidden and any other event is received, the cursor is shown again.
+     * @param inputData - Input action to handle this update
+     * @internal
+     */
+    protected override HandleInputAction(inputData: TouchFreeInputAction) {
         if (this.cursor) {
             switch (inputData.InputType) {
                 case InputType.MOVE:
@@ -178,9 +187,10 @@ export class SVGCursor extends TouchlessCursor {
         this.cursorRing.setAttribute('stroke-width', Math.round(this.baseRingThickness * scale).toString());
     }
 
-    // Function: ShowCursor
-    // Used to make the cursor visible, fades over time
-    ShowCursor() {
+    /**
+     * Make the cursor visible. Fades over time.
+     */
+    override ShowCursor() {
         this.shouldShow = true;
         if (this.enabled && !this.cursorShowing) {
             this.cursorShowing = true;
@@ -188,9 +198,10 @@ export class SVGCursor extends TouchlessCursor {
         }
     }
 
-    // Function: HideCursor
-    // Used to make the cursor invisible, fades over time
-    HideCursor() {
+    /**
+     * Make the cursor invisible. Fades over time.
+     */
+    override HideCursor() {
         if (this.shouldShow) {
             // If opacity is NaN or 0 then set it to be 1
             this.opacityOnHandsLost = Number(this.cursorCanvas.style.opacity) || 1;
@@ -203,9 +214,10 @@ export class SVGCursor extends TouchlessCursor {
         }
     }
 
-    // Function: SetCursorOpacity
-    // Used to set the opacity of the cursor
-    SetCursorOpacity(opacity: number): void {
+    /**
+     * Used to set the opacity of the cursor
+     */
+    override SetCursorOpacity(opacity: number): void {
         this.cursorCanvas.style.opacity = opacity.toString();
     }
 
@@ -229,8 +241,9 @@ export class SVGCursor extends TouchlessCursor {
         return !width ? 0 : parseFloat(width);
     }
 
-    // Function: SetDefaultColors
-    // Used to reset the SVGCursor to it's default styling
+    /**
+     * Used to reset the SVGCursor to it's default styling
+     */
     ResetToDefaultColors() {
         this.cursor?.setAttribute('fill', this.isDarkCursor ? 'black' : 'white');
         this.cursor?.removeAttribute('stroke');
@@ -247,9 +260,11 @@ export class SVGCursor extends TouchlessCursor {
         this.cursorRing.setAttribute('stroke-width', this.baseRingThickness.toString());
     }
 
-    // Function: SetColor
-    // Used to set a part of the SVGCursor to a specific color
-    // Takes a CursorPart enum to select which part of the cursor to color and a color represented by a string
+    /**
+     * Used to set a part of the SVGCursor to a specific color
+     * @param cursorPart - enum to select which part of the cursor to color
+     * @param color - color represented by a string
+     */
     SetColor(cursorPart: CursorPart, color: string) {
         switch (cursorPart) {
             case CursorPart.CENTER_FILL:

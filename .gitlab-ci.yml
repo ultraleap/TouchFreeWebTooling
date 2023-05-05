@@ -34,7 +34,7 @@ TF_Tooling::Web::build:
     # Build Tooling
     - cd ${CI_PROJECT_DIR}
     - npm i
-    - npm run build
+    - npm run build:bundle
     # Clean last build
     - cd ${CI_PROJECT_DIR}
     - if (Test-Path -Path "./Tooling_Release") {
@@ -51,20 +51,6 @@ TF_Tooling::Web::build:
     name: "Tooling_for_Web_Build_${CI_COMMIT_SHORT_SHA}"
     paths:
       - ./Tooling_Release/*
-    expire_in: 2 weeks
-    when: always
-
-TF_Tooling::Docs::build:
-  extends: .Always_Build
-  tags:
-    - docker
-  image: registry.ultrahaptics.com/apps/infrastructure/docker-naturaldocs:main
-  script:
-    - mono "/opt/Natural Docs/NaturalDocs.exe" $CI_PROJECT_DIR/NaturalDocs_Config
-  artifacts:
-    name: "TouchFree_Tooling_Documentation"
-    paths:
-    - ./Documentation/*
     expire_in: 2 weeks
     when: always
 

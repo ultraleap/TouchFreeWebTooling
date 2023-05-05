@@ -1,7 +1,2 @@
-import { BaseInputController } from './BaseInputController';
-import { WebInputController } from './WebInputController';
-
-module.exports = {
-    BaseInputController: BaseInputController,
-    WebInputController: WebInputController,
-};
+export { BaseInputController } from './BaseInputController';
+export { WebInputController } from './WebInputController';
