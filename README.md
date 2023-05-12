@@ -1,49 +1,52 @@
-# TouchFree
-TouchFree includes an Application, a Windows Service and a series of Tooling packages in order to
-convert Ultraleap tracking data into a data structure suitable for input systems for touchscreen
-user interfaces.
+<!--links-->
+[discord]: https://discord.com/invite/3VCndThqxS "Discord Server"
+[touchfree]: https://developer.leapmotion.com/touchfree "TouchFree Download"
+[web]: https://developer.leapmotion.com/touchfree-tooling-for-web "TouchFree Web Tooling"
+[unity]: https://developer.leapmotion.com/touchfree-tooling-unity "TouchFree Unity Tooling"
 
-## WARNINGS
-- This repository has been made available for you to work with, edit and make your own versions.
-This repository and any derivatives of it is presented on an ‘as-is’ basis in line with the Apache
-license. Unless it is an officially released application available from our website or an explicitly
-agreed license, it is not supported by Ultraleap and we are not responsible for anything that you
-create.
+[download]: https://developer.leapmotion.com/touchfree-tooling-for-web "Ultraleap TouchFree Web Tooling Bundle Download"
+[documentation]: https://docs.ultraleap.com/touchfree-user-manual/tooling-for-web.html "Ultraleap TouchFree Web Tooling Documentation"
+[setup]: https://docs.ultraleap.com/touchfree-user-manual/tooling-for-web.html#setup "Ultraleap TouchFree Web Tooling Setup Documentation"
+[examples]: https://github.com/ultraleap/TouchFree-Tooling-Examples/tree/develop/Examples-Web "Ultraleap TouchFree Tooling Web Examples"
 
-If you require assistance whilst working with these repositories we recommend utilising our [Help Center](https://forums.leapmotion.com/), [Developer Forums](https://support.leapmotion.com/hc/en-us) or our [Documentation Site](https://docs.ultraleap.com/) to help you find the answers or get support from the wider developer community.
+<!--content-->
+# Ultraleap TouchFree Web Tooling
 
-## Contents:
+[![touchfree](https://img.shields.io/badge/TouchFree-00cf75)][touchfree]
+[![webtooling](https://img.shields.io/badge/Web%20Tooling-00cf75)][web]
+[![unitytooling](https://img.shields.io/badge/Unity%20Tooling-00cf75)][unity]
+![GitHub](https://img.shields.io/github/license/ultraleap/TouchFreeWebTooling)
 
-### TouchFree Overlay
+[![documentation](https://img.shields.io/badge/Documentation-docs.ultraleap.com-e47400)][documentation]
+[![mail](https://img.shields.io/badge/Email%20Support%20-%20support%40ultraleap.com-7535de)](mailto:support@ultraleap.com)
+[![discord](https://img.shields.io/badge/Ultraleap%20Developer%20Discord-7535de)][discord]
 
-The TouchFree Overlay application allows for a retrofit solution. This application provides
-a transparent overlay that enables you to use TouchFree interactions with any existing touch-supported application.
+TouchFree Web Tooling empowers developers to build touchless Web applications using Ultraleap's hand tracking technology.
 
-TouchFree Overlay requires the TouchFree Service to run properly.
+## Getting Started
 
-As TouchFree Overlay depends on TouchFree Tooling, if you intend to work on TouchFree Overlay as a
-devloper, you will need to run the `setup_repository.bat` script in the `Scripts` directory. Ensure
-that if you have previously worked on the Overlay, that you delete the `TF_Application/Assets/TouchFree`
-folder before running this script.
+Download the [TouchFree Web Tooling Bundle][download] and follow the [setup steps here][setup] to include TouchFree Web Tooling in your project.
 
-### TouchFree Service:
+## Examples
 
-The TouchFree Service must be running in order to make use of the TouchFree Application or any Client built with the TouchFree Tooling.
-The TouchFree Service is built from within the Unity project found at `./TF_Service_and_Tooling_Unity`.
+The tooling bundle includes a quick start example: `quick-start/Quick-Start_Example.html`.
 
-### TouchFree Tooling
+More examples can be found in [TouchFree Tooling Web Examples][examples].
 
-The TouchFree Tooling provides a Client connection to the TouchFree Service where it receives positional and interaction data relevant to touchless interaction.
-Additionally, TouchFree Tooling provides extendable Cursors and Input Systems to allow the TouchFree Service's data to be used in different environments. It requires
-both the Ultraleap Tracking service installed to provide data from a camera, and the TouchFree Service
-(as above).
+## Developer Guide
 
-The TouchFree Tooling is available for two integration environments at the moment:
+### Setup
 
-* Unity
-  * The Unity version of TouchFree Tooling can be found in the project found at
-  `./TF_Service_and_Tooling_Unity`. Builds can be found on the releases page linked above.
+In order to work on TouchFree Tooling for web, you will need to do the following:
 
-* Web (JavaScript)
-  * The JavaScript version of TouchFree Tooling can be found at
-  `./TF_Tooling_Web`. Built in TypeScript, it available in JavaScript form
+- Install the LTS of [Node.js](https://nodejs.org/en/download/)
+- Open this directory in a terminal and run `npm i` to install dependencies
+  - _Note: An IDE with an integrated terminal such as Visual Studio Code is recommended._
+- To build TouchFree and the Snapping Plugin for Web, run `npm run build` in this directory once the dependencies are installed as above
+- To run the unit tests, run `npm test` in this directory
+
+# Support
+
+User Support Email: support@ultraleap.com
+
+[Ultraleap Developer Discord][discord]

@@ -1,16 +1,8 @@
-# =============== #
-# Unity generated #
-# =============== #
-Temp/
-Obj/
-UnityGenerated/
-Library/
-Logs/
-
 # ======= #
 # Node.js #
 # ======= #
 
+/node_modules/*
 **/node_modules/*
 **/node_modules/**
 
@@ -31,13 +23,6 @@ ExportedObj/
 .vscode/
 **/.vsconfig
 
-# ================#
-# JetBrains Rider #
-# ================#
-.idea/
-*JetBrains.meta
-JetBrains/
-
 # ============ #
 # OS generated #
 # ============ #
@@ -50,52 +35,21 @@ Icon\?
 ehthumbs.db
 Thumbs.db
 
-# ====================== #
-#  Ultraleap generated   #
-# ====================== #
-Builds/
-Build/
-AssetDirStat.asset
-**/bin
-Service_Package/
-Installer_Build/
-TouchFree_Build/
+# ================ #
+# Transpiled files #
+# ================ #
 
-# =============== #
-#  Documentation  #
-# =============== #
-Documentation/Tooling for Web/**
-Documentation/Tooling for Unity/**
-!Documentation/Info.md
-!Documentation/Tooling for Web/Info.md
-!Documentation/Tooling for Unity/Info.md
-*/NaturalDocs_Config/Working Data/**
+./src/*.js
+./src/**.js
+./test/*.js
+./test/**/*.js
+dist
 
-# ========= #
-#  Testing  #
-# ========= #
+./Plugins/**/Snapping_Plugin.js
 
-**/package-lock.json
-**/packages-lock.json
-**/usage.txt
-Testing/ServiceSocketTests/results/*
-Testing/ServiceSocketTests/results/**
-!Testing/ServiceSocketTests/results/results.md
-**/PUT_TEST_BUILD_IN_HERE/*
-!**/PUT_TEST_BUILD_IN_HERE/info.md
+# ============ #
+# Test Outputs #
+# ============ #
 
-# =================== #
-#  Service Utilities  #
-# =================== #
-
-!/TF_Service_Utilities/**/*.csproj
-!/TF_Service_Utilities/**/*.sln
-
-# =================== #
-#    Service dotNet   #
-# =================== #
-
-!/TF_Service_dotNet/**/*.csproj
-!/TF_Service_dotNet/**/*.sln
-!/TF_Service_dotNet/**/launchSettings.json
-/TF_Application/Assets/TouchFree/Tooling
+*.xml
+coverage/
