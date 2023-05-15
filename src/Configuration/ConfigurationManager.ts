@@ -74,6 +74,10 @@ export class ConfigurationManager {
         );
     }
 
+    public static ResetInteractionConfigToDefault(_callback: (newState: ConfigState) => void): void {
+        ConnectionManager.serviceConnection()?.ResetInteractionConfig(_callback);
+    }
+
     private static BaseConfigChangeRequest(
         _interaction: Partial<InteractionConfig> | null,
         _physical: Partial<PhysicalConfig> | null,
