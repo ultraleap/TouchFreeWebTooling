@@ -409,4 +409,3 @@ export class TrackingStateCallback {
         this.callback = _callback;
     }
 }
-

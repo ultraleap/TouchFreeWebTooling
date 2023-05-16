@@ -13,55 +13,22 @@ stages:
 .Always_Build:
   stage: build
   when: always
-  script:
-    # Get Unity version and changeset from the project.
-    - $line = Get-Content  $TF_SETTINGS_PROJECT_PATH/ProjectSettings/ProjectVersion.txt | Select -Index 1
-    - $UNITY_VERSION = $line -Split " " | Select -Index 1
-    - $UNITY_CHANGESET = $line -Match '\((.+)\)' | ForEach-Object { $Matches[1] }
-    # Check whether the required Unity version is installed. If not, install it.
-    - Start-Process -Wait -RedirectStandardOutput "tmp.txt" -FilePath "$UNITY_HUB" -ArgumentList "-- --headless editors --installed"
-    - Get-Content "tmp.txt"
-    - Start-Process -Wait -RedirectStandardOutput "tmp.txt" -FilePath "$UNITY_HUB" -ArgumentList "-- --headless install-path --set C:/Unity"
-    - Get-Content "tmp.txt"
-    - if (-not (Test-Path "C:/Unity/$UNITY_VERSION")) { Start-Process -Wait -RedirectStandardOutput "tmp.txt" -FilePath "$UNITY_HUB" -ArgumentList "-- --headless install --version $UNITY_VERSION --changeset $UNITY_CHANGESET" }
-    - Get-Content "tmp.txt"
+  timeout: 10m
+  
+.Always_Test:
+  stage: test
+  when: always
+  timeout: 10m
 
-    - $UNITY_EXE = "C:/Unity/$UNITY_VERSION/Editor/Unity.exe"
-    - echo "$UNITY_EXE"
-
-    # Update Version.txt with latest information before packaging
-    - python ./Scripts/UpdateVersionFile.py --path ${env:TF_TFU_PATH}/Version.txt --swVer ${env:TF_TFU_VERSION} --apiVer ${env:TF_TOOLING_API_VERSION} --ref ${env:CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_BRANCH"
-    - Get-Content ${env:TF_PROJECT_PATH}/Assets/TouchFree_Application/Version.txt
-
-    # Copy Version.txt to Tooling_Release folder
-    - if (Test-Path -Path "./Tooling_Release") {
-        Remove-Item -LiteralPath ./Tooling_Release -Force -Recurse
-        Remove-Item -LiteralPath ./Tooling_Release -Force -Recurse
-      }
-    - mkdir ./Tooling_Release
-    - cp ${env:CI_PROJECT_DIR}/TF_Settings_and_Tooling_Unity/Assets/TouchFree/Tooling/Version.txt ./Tooling_Release
-
-    # Package Tooling
-    - cd ./Scripts
-    - "& ./package_unity_Tooling.bat $UNITY_EXE"
-  artifacts:
-    name: "Tooling_for_Unity_Build_${env:CI_COMMIT_SHORT_SHA}"
-    paths:
-      - ./Tooling_Release/*
-      - ./Tooling_for_Unity_package.log
-    expire_in: 2 weeks
-    when: always
+TF_Tooling::Web::build:
+  extends: .Always_Build
   tags:
     - unity
     - win10
-
-TF_Tooling::Web::build:
-  stage: build
-  when: always
   script:
     # Update Version.txt with latest information before packaging
-    - python ./Scripts/UpdateVersionFile.py --path ${env:TF_TFW_PATH}/Version.txt --swVer ${env:TF_TFW_VERSION} --apiVer ${env:TF_TOOLING_API_VERSION} --ref ${env:CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_BRANCH"
-    - Get-Content ${env:TF_PROJECT_PATH}/Assets/TouchFree_Application/Version.txt
+    - python ./Scripts/UpdateVersionFile.py --path ${env:CI_PROJECT_DIR}/Version.txt --swVer ${env:TF_TFW_VERSION} --apiVer ${env:TF_TOOLING_API_VERSION} --ref ${env:CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
+    - Get-Content ${env:CI_PROJECT_DIR}/Version.txt
 
 TF_Tooling::Web::build:
   extends: .Always_Build

@@ -74,4 +74,3 @@ export class InputActionManager extends EventTarget {
         }, 0);
     }
 }
-

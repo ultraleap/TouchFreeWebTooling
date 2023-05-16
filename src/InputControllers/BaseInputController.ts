@@ -70,4 +70,3 @@ export abstract class BaseInputController {
         BaseInputController.Instantiated = false;
     }
 }
-

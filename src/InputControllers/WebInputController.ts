@@ -571,4 +571,3 @@ enum ScrollDirection {
     Left = 2,
     Right = 3,
 }
-
