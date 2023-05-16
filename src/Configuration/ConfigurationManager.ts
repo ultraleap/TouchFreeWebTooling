@@ -75,7 +75,7 @@ export class ConfigurationManager {
     }
 
     public static ResetInteractionConfigToDefault(_callback: (newState: ConfigState) => void): void {
-        ConnectionManager.serviceConnection()?.ResetInteractionConfig(_callback);
+        ConnectionManager.serviceConnection()?.ResetInteractionConfigFile(_callback);
     }
 
     private static BaseConfigChangeRequest(
