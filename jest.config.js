@@ -4,5 +4,6 @@ module.exports = {
     testEnvironment: 'jsdom',
     collectCoverageFrom: ['./src/**/*.ts'],
     setupFilesAfterEnv: ['jest-extended-snapshot'],
-    coverageReporters: ['cobertura', 'text', 'text-summary', 'html']
+    coverageReporters: ['cobertura', 'text', 'text-summary', 'html'],
+    coveragePathIgnorePatterns: ['node_modules']
 };
