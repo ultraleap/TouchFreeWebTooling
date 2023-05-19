@@ -174,7 +174,7 @@ export class ServiceConnection {
 
             case ActionCode.CONFIGURATION_RESPONSE:
             case ActionCode.SERVICE_STATUS_RESPONSE:
-            case ActionCode.CONFIGURATION_FILE_RESPONSE:
+            case ActionCode.CONFIGURATION_FILE_CHANGE_RESPONSE:
             case ActionCode.QUICK_SETUP_RESPONSE: {
                 const response = looseData.content as WebSocketResponse;
                 ConnectionManager.messageReceiver.responseQueue.push(response);
