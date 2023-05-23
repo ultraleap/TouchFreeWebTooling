@@ -47,7 +47,7 @@ export enum ActionCode {
     REQUEST_CONFIGURATION_FILE = 'REQUEST_CONFIGURATION_FILE',
     CONFIGURATION_FILE_STATE = 'CONFIGURATION_FILE_STATE',
     SET_CONFIGURATION_FILE = 'SET_CONFIGURATION_FILE',
-    CONFIGURATION_FILE_RESPONSE = 'CONFIGURATION_FILE_RESPONSE',
+    CONFIGURATION_FILE_CHANGE_RESPONSE = 'CONFIGURATION_FILE_CHANGE_RESPONSE',
 
     QUICK_SETUP = 'QUICK_SETUP',
     QUICK_SETUP_CONFIG = 'QUICK_SETUP_CONFIG',
@@ -61,6 +61,8 @@ export enum ActionCode {
     SET_HAND_DATA_STREAM_STATE = 'SET_HAND_DATA_STREAM_STATE',
 
     INTERACTION_ZONE_EVENT = 'INTERACTION_ZONE_EVENT',
+
+    RESET_INTERACTION_CONFIG_FILE = 'RESET_INTERACTION_CONFIG_FILE',
 }
 
 export type EventStatus = 'PROCESSED' | 'UNPROCESSED';
@@ -189,6 +191,20 @@ export class ConfigState extends TouchFreeRequest {
 // use of the data received.
 export class ConfigChangeRequest extends TouchFreeRequest {}
 
+// Class: ConfigStateCallback
+// Used by <MessageReceiver> to wait for a <ConfigState> from the Service. Owns a callback
+// with a <ConfigState> as a parameter to allow users to make use of the new
+// <ConfigStateResponse>. Stores a timestamp of its creation so the response has the ability to
+// timeout if not seen within a reasonable timeframe.
+export class ConfigStateCallback extends TouchFreeRequestCallback<ConfigState> {}
+
+
+// class: ResetInteractionConfigFile
+// Used internally to request that the Service resets the Interaction Config File to
+// its default state. Provides the Default <InteractionConfigFull> returned by the Service
+// once the reset is complete.
+export class ResetInteractionConfigFileRequest extends TouchFreeRequest {}
+
 // class: HandRenderDataStateRequest
 // Used to set the state of the Hand Render Data stream.
 export class HandRenderDataStateRequest extends TouchFreeRequest {
@@ -203,13 +219,6 @@ export class HandRenderDataStateRequest extends TouchFreeRequest {
         this.lens = lens;
     }
 }
-
-// Class: ConfigStateCallback
-// Used by <MessageReceiver> to wait for a <ConfigState> from the Service. Owns a callback
-// with a <ConfigState> as a parameter to allow users to make use of the new
-// <ConfigStateResponse>. Stores a timestamp of its creation so the response has the ability to
-// timeout if not seen within a reasonable timeframe.
-export class ConfigStateCallback extends TouchFreeRequestCallback<ConfigState> {}
 
 // Class: ServiceStatus
 // This data structure is used to receive service status.

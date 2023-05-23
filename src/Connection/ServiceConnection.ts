@@ -10,6 +10,7 @@ import {
     ConfigStateCallback,
     HandPresenceEvent,
     InteractionZoneEvent,
+    ResetInteractionConfigFileRequest,
     ResponseCallback,
     ServiceStatus,
     ServiceStatusCallback,
@@ -173,7 +174,7 @@ export class ServiceConnection {
 
             case ActionCode.CONFIGURATION_RESPONSE:
             case ActionCode.SERVICE_STATUS_RESPONSE:
-            case ActionCode.CONFIGURATION_FILE_RESPONSE:
+            case ActionCode.CONFIGURATION_FILE_CHANGE_RESPONSE:
             case ActionCode.QUICK_SETUP_RESPONSE: {
                 const response = looseData.content as WebSocketResponse;
                 ConnectionManager.messageReceiver.responseQueue.push(response);
@@ -260,6 +261,29 @@ export class ServiceConnection {
 
         this.webSocket.send(message);
     };
+
+    // Function: ResetInteractionConfigFile
+    // Used internally to request that the Service resets the Interaction Config File to
+    // its default state. Provides the Default <InteractionConfigFull> returned by the Service
+    // once the reset is complete.
+    //
+    // If your _callback requires context it should be bound to that context via .bind()
+    ResetInteractionConfigFile = (_callback: (defaultConfig: ConfigState) => void): void => {
+        if (_callback === null) {
+            console.error('Request for config state failed. This is due to a missing callback');
+            return;
+        }
+
+        const guid: string = uuidgen();
+        const request: ResetInteractionConfigFileRequest = new ResetInteractionConfigFileRequest(guid);
+        const wrapper = new CommunicationWrapper<ResetInteractionConfigFileRequest>
+            (ActionCode.RESET_INTERACTION_CONFIG_FILE, request);
+        const message: string = JSON.stringify(wrapper);
+
+        ConnectionManager.messageReceiver.configStateCallbacks[guid] = new ConfigStateCallback(Date.now(), _callback);
+
+        this.webSocket.send(message);
+    }
 
     // Function: RequestServiceStatus
     // Used internally to request information from the Service via the <webSocket>.
