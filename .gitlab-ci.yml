@@ -2,19 +2,19 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
   TF_TFW_VERSION: '1.4.0'
-  TF_TOOLING_API_VERSION: '1.4.0'
+  TF_TOOLING_API_VERSION: '1.5.0'
 
 stages:
   - build
   - test
   - package
   - deploy
-  
+
 .Always_Build:
   stage: build
   when: always
   timeout: 10m
-  
+
 .Always_Test:
   stage: test
   when: always
