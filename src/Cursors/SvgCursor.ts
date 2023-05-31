@@ -69,6 +69,7 @@ export class SVGCursor extends TouchlessCursor {
         svgDotElement.setAttribute(this.xPositionAttribute, '100');
         svgDotElement.setAttribute(this.yPositionAttribute, '100');
         svgDotElement.setAttribute('opacity', '1');
+        svgDotElement.setAttribute('stroke-width', this.baseDotBorderThickness.toString());
         svgDotElement.style.transformBox = 'fill-box';
         svgDotElement.style.transformOrigin = 'center';
         svgDotElement.style.transform = 'scale(1)';
@@ -239,7 +240,6 @@ export class SVGCursor extends TouchlessCursor {
     // Used to reset the SVGCursor to it's default styling
     ResetToDefaultColors() {
         this.cursor?.setAttribute('fill', this.isDarkCursor ? 'black' : 'white');
-        this.cursor?.removeAttribute('stroke-width');
         this.cursor?.removeAttribute('stroke');
         this.cursorRing.setAttribute('stroke', this.isDarkCursor ? 'black' : 'white');
     }
@@ -267,7 +267,6 @@ export class SVGCursor extends TouchlessCursor {
                 return;
             case CursorPart.CENTER_BORDER:
                 this.cursor?.setAttribute('stroke', color);
-                this.cursor?.setAttribute('stroke-width', this.baseDotBorderThickness.toString());
                 return;
         }
     }

@@ -13,7 +13,6 @@ const checkDefaultCursorColors = (isDarkCursor = false) => {
     const baseColor = isDarkCursor ? 'black' : 'white';
     expect(cursorDot?.getAttribute('fill')).toBe(baseColor);
     expect(cursorDot?.getAttribute('stroke')).toBe(null);
-    expect(cursorDot?.getAttribute('stroke-width')).toBe(null);
     expect(cursorRing?.getAttribute('stroke')).toBe(baseColor);
 };
 
@@ -23,7 +22,6 @@ const setNonDefaultCursorColors = () => {
     svgCursor.SetColor(CursorPart.CENTER_BORDER, 'green');
     expect(cursorDot?.getAttribute('fill')).toBe('red');
     expect(cursorDot?.getAttribute('stroke')).toBe('green');
-    expect(cursorDot?.getAttribute('stroke-width')).toBe('2');
     expect(cursorRing?.getAttribute('stroke')).toBe('blue');
 };
 
@@ -50,11 +48,11 @@ describe('SVG Cursor', () => {
     });
 
     test('Cursor ring should shrink with ProgressToClick', () => {
-        expect(cursorRing?.getAttribute('r')).toBe('30');
+        expect(cursorRing?.getAttribute('r')).toBe('33');
 
         mockTfInputAction({ InputType: InputType.MOVE, ProgressToClick: 0.5 });
 
-        expect(cursorRing?.getAttribute('r')).toBe('23');
+        expect(cursorRing?.getAttribute('r')).toBe('25');
     });
 
     test('Cursor ring should fade in with ProgressToClick', () => {
@@ -139,25 +137,69 @@ describe('SVG Cursor', () => {
         expect(cursor?.style.opacity).toBe('0.4');
     });
 
+    test('SetRingThicknessScale should set the correct ring thickness scale', () => {
+        const thickness = Number(cursorRing?.getAttribute('stroke-width'));
+        svgCursor.SetRingThicknessScale(2);
+        expect(cursorRing?.getAttribute('stroke-width')).toBe((thickness * 2).toString());
+
+        svgCursor.SetRingThicknessScale(10);
+        expect(cursorRing?.getAttribute('stroke-width')).toBe((thickness * 10).toString());
+
+        svgCursor.SetRingThicknessScale(1);
+        expect(cursorRing?.getAttribute('stroke-width')).toBe(thickness.toString());
+    });
+
+    test('SetCursorScale should set the correct cursor scale', () => {
+        const cursorSize = Number(cursorDot?.getAttribute('r'));
+        const borderSize = Number(cursorDot?.getAttribute('stroke-width'));
+
+        svgCursor.SetCursorScale(2);
+        expect(cursorDot?.getAttribute('r')).toBe((cursorSize * 2).toString());
+        expect(cursorDot?.getAttribute('stroke-width')).toBe((borderSize * 2).toString());
+
+        svgCursor.SetCursorScale(7);
+        expect(cursorDot?.getAttribute('r')).toBe((cursorSize * 7).toString());
+        expect(cursorDot?.getAttribute('stroke-width')).toBe((borderSize * 7).toString());
+
+        svgCursor.SetCursorScale(1);
+        expect(cursorDot?.getAttribute('r')).toBe(cursorSize.toString());
+        expect(cursorDot?.getAttribute('stroke-width')).toBe(borderSize.toString());
+    });
+
+    test('ResetToDefaultScale should reset the cursor scale', () => {
+        const cursorSize = cursorDot?.getAttribute('r');
+        const borderSize = cursorDot?.getAttribute('stroke-width');
+        const thickness = cursorRing?.getAttribute('stroke-width');
+
+        svgCursor.SetCursorScale(2);
+        svgCursor.SetRingThicknessScale(2);
+        expect(cursorDot?.getAttribute('r')).not.toBe(cursorSize);
+        expect(cursorDot?.getAttribute('stroke-width')).not.toBe(borderSize);
+        expect(cursorRing?.getAttribute('stroke-width')).not.toBe(thickness);
+
+        svgCursor.ResetToDefaultScale();
+        expect(cursorDot?.getAttribute('r')).toBe(cursorSize);
+        expect(cursorDot?.getAttribute('stroke-width')).toBe(borderSize);
+        expect(cursorRing?.getAttribute('stroke-width')).toBe(thickness);
+    });
+
     test('SetColor should set the color of the correct cursor part', () => {
         checkDefaultCursorColors();
+        expect(cursorDot?.getAttribute('stroke-width')).toBe('2');
 
         svgCursor.SetColor(CursorPart.CENTER_FILL, 'red');
         expect(cursorDot?.getAttribute('fill')).toBe('red');
         expect(cursorDot?.getAttribute('stroke')).toBe(null);
-        expect(cursorDot?.getAttribute('stroke-width')).toBe(null);
         expect(cursorRing?.getAttribute('stroke')).toBe('white');
 
         svgCursor.SetColor(CursorPart.RING_FILL, 'blue');
         expect(cursorDot?.getAttribute('fill')).toBe('red');
         expect(cursorDot?.getAttribute('stroke')).toBe(null);
-        expect(cursorDot?.getAttribute('stroke-width')).toBe(null);
         expect(cursorRing?.getAttribute('stroke')).toBe('blue');
 
         svgCursor.SetColor(CursorPart.CENTER_BORDER, 'green');
         expect(cursorDot?.getAttribute('fill')).toBe('red');
         expect(cursorDot?.getAttribute('stroke')).toBe('green');
-        expect(cursorDot?.getAttribute('stroke-width')).toBe('2');
         expect(cursorRing?.getAttribute('stroke')).toBe('blue');
     });
 
