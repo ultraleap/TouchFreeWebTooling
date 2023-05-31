@@ -214,26 +214,14 @@ export class SVGCursor extends TouchlessCursor {
     // Used to set the radius of the cursor
     private GetCurrentCursorRadius(): number {
         const radius = this.cursor?.getAttribute('r');
-        if (!radius) {
-            return 0;
-        }
-
-        const radiusAsNumber = parseFloat(radius);
-
-        return radiusAsNumber;
+        return !radius ? 0 : parseFloat(radius);
     }
 
     // Function: GetCurrentCursorRingWidth
     // Used to set the width of the cursor ring
     private GetCurrentCursorRingWidth(): number {
-        const radius = this.cursorRing.getAttribute('stroke-width');
-        if (!radius) {
-            return 0;
-        }
-
-        const radiusAsNumber = parseFloat(radius);
-
-        return radiusAsNumber;
+        const width = this.cursorRing.getAttribute('stroke-width');
+        return !width ? 0 : parseFloat(width);
     }
 
     // Function: SetDefaultColors
