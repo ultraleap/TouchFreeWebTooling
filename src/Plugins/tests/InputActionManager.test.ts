@@ -77,20 +77,26 @@ describe('InputActionManager', () => {
         expect(pluginCallCount).toBe(4);
     });
 
-    test('Check plugin can return null',async () => {
+    test('Check plugin can return null', async () => {
         let pluginCallCount = 0;
+        let nulledInputAction: TouchFreeInputAction;
 
-        class MockNullPlugin  extends InputActionPlugin {
-            RunPlugin(): TouchFreeInputAction | null {
+        class MockNullPlugin extends InputActionPlugin {
+            RunPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+                // Store the nulled input action to check against later
+                nulledInputAction = inputAction;
                 pluginCallCount++;
                 return null;
             }
         }
 
         InputActionManager.SetPlugins([new MockNullPlugin()]);
-        
+
         let failed = false;
-        TouchFree.RegisterEventCallback('TransmitInputAction', () =>  {failed = true})
+        TouchFree.RegisterEventCallback('TransmitInputAction', (inputAction) => {
+            // Fail if we receive the nulled input action
+            failed = inputAction === nulledInputAction;
+        });
 
         expect(pluginCallCount).toBe(0);
         mockTfPluginInputAction();
@@ -98,5 +104,5 @@ describe('InputActionManager', () => {
 
         await sleep(1000);
         expect(failed).toBeFalsy();
-    })
+    });
 });
