@@ -1,6 +1,6 @@
 import TouchFree from '../../TouchFree';
 import { HandChirality, HandType, InputType, InteractionType, TouchFreeInputAction } from '../../TouchFreeToolingTypes';
-import { createInputAction, mockTfPluginInputAction, sleep } from '../../tests/testUtils';
+import { createInputAction, mockTfPluginPartialInputAction,mockTfPluginInputAction, sleep, checkTwoInputActionsAreSame } from '../../tests/testUtils';
 import { InputActionManager } from '../InputActionManager';
 import { InputActionPlugin } from '../InputActionPlugin';
 
@@ -73,9 +73,58 @@ describe('InputActionManager', () => {
             new MockOrderPlugin(3),
         ]);
         expect(pluginCallCount).toBe(0);
-        mockTfPluginInputAction();
+        mockTfPluginPartialInputAction();
         expect(pluginCallCount).toBe(4);
     });
+
+    test('Check InputActionPlugin methods', async () => {
+        let callCount = 0;
+        let passed = false;
+        let currentInputAction: TouchFreeInputAction;
+        
+
+        class MockCallSuperPlugin extends InputActionPlugin {
+            RunPlugin(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+                callCount++;
+                const returnedInputAction = super.RunPlugin(_inputAction);
+                checkTwoInputActionsAreSame(_inputAction, returnedInputAction);
+
+                return returnedInputAction;
+            }
+        
+            ModifyInputAction(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+                callCount++;
+                const returnInputAction = super.ModifyInputAction(_inputAction);
+
+                checkTwoInputActionsAreSame(_inputAction, returnInputAction);
+
+                return _inputAction;
+            }
+        
+            TransmitInputAction(_inputAction: TouchFreeInputAction): void {
+                callCount++;
+                this.addEventListener("InputActionOutput", (event) => {
+                    const actionEvent = event as CustomEvent<TouchFreeInputAction>;
+                    const action = actionEvent.detail;
+
+                    if(action === currentInputAction){
+                        passed = true;
+                    }
+                });
+
+                super.TransmitInputAction(_inputAction);
+            }
+        }
+
+        InputActionManager.SetPlugins([new MockCallSuperPlugin()]);
+        expect(callCount).toBe(0);
+        currentInputAction = createInputAction();
+        mockTfPluginInputAction(currentInputAction);
+        expect(callCount).toBe(3);
+
+        await sleep(1000);
+        expect(passed).toBeTruthy();
+    })
 
     test('Check plugin can return null', async () => {
         let pluginCallCount = 0;
@@ -99,7 +148,7 @@ describe('InputActionManager', () => {
         });
 
         expect(pluginCallCount).toBe(0);
-        mockTfPluginInputAction();
+        mockTfPluginPartialInputAction();
         expect(pluginCallCount).toBe(1);
 
         await sleep(1000);
