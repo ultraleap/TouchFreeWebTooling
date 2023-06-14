@@ -1,3 +1,4 @@
+import { LicenseState } from 'Licensing/Licensing';
 import { InteractionConfigFull, InteractionConfig, PhysicalConfig } from '../Configuration/ConfigurationTypes';
 import { ConfigurationState, TrackingServiceState } from '../TouchFreeToolingTypes';
 import { Mask } from '../Tracking/TrackingTypes';
@@ -63,6 +64,14 @@ export enum ActionCode {
     INTERACTION_ZONE_EVENT = 'INTERACTION_ZONE_EVENT',
 
     RESET_INTERACTION_CONFIG_FILE = 'RESET_INTERACTION_CONFIG_FILE',
+
+    GET_LICENSE_STATE = 'GET_LICENSE_STATE',
+    LICENSE_STATE_RESPONSE = 'LICENSE_STATE_RESPONSE',
+    ADD_LICENSE_KEY = 'ADD_LICENSE_KEY',
+    ADD_LICENSE_RESPONSE = 'ADD_LICENSE_RESPONSE',
+    REMOVE_LICENSE_KEY = 'REMOVE_LICENSE_KEY',
+    REMOVE_LICENSE_RESPONSE = 'REMOVE_LICENSE_RESPONSE',
+    LICENSE_STATE = 'LICENSE_STATE',
 }
 
 export type EventStatus = 'PROCESSED' | 'UNPROCESSED';
@@ -198,6 +207,9 @@ export class ConfigChangeRequest extends TouchFreeRequest {}
 // timeout if not seen within a reasonable timeframe.
 export class ConfigStateCallback extends TouchFreeRequestCallback<ConfigState> {}
 
+export class LicenseStateCallback extends TouchFreeRequestCallback<LicenseStateResponse> {}
+
+export class LicenseChangeCallback extends TouchFreeRequestCallback<LicenseChangeResponse> {}
 
 // class: ResetInteractionConfigFile
 // Used internally to request that the Service resets the Interaction Config File to
@@ -269,6 +281,35 @@ export class ServiceStatusRequest extends TouchFreeRequest {}
 // <ServiceStatusResponse>. Stores a timestamp of its creation so the response has the ability to
 // timeout if not seen within a reasonable timeframe.
 export class ServiceStatusCallback extends TouchFreeRequestCallback<ServiceStatus> {}
+
+export class LicenseStatusRequest extends TouchFreeRequest {}
+
+export class LicenseStateResponse extends TouchFreeRequest {
+    public licenseState: LicenseState;
+
+    constructor(_requestID: string, _state: LicenseState) {
+        super(_requestID);
+        this.licenseState = _state;
+    }
+}
+
+export class LicenseKeyRequest extends TouchFreeRequest {
+    public licenseKey: string;
+
+    constructor(_requestID: string, _licenseKey: string) {
+        super(_requestID);
+        this.licenseKey = _licenseKey;
+    }
+}
+
+export class LicenseChangeResponse extends TouchFreeRequest {
+    public changeDetails: string;
+
+    constructor(_requestID: string, _changeDetails: string) {
+        super(_requestID);
+        this.changeDetails = _changeDetails;
+    }
+}
 
 // Class: WebSocketResponse
 // The structure seen when the Service responds to a request. This is to verify whether it was
@@ -398,14 +439,4 @@ export class SimpleRequest {
 // Used by <MessageReceiver> to wait for a <TrackingStateResponse> from the Service. Owns a callback with a
 // <TrackingStateResponse> as a parameter. Stores a timestamp of its creation so the response has the ability to
 // timeout if not seen within a reasonable timeframe.
-export class TrackingStateCallback {
-    // Variable: timestamp
-    timestamp: number;
-    // Variable: callback
-    callback: (detail: TrackingStateResponse) => void;
-
-    constructor(_timestamp: number, _callback: (detail: TrackingStateResponse) => void) {
-        this.timestamp = _timestamp;
-        this.callback = _callback;
-    }
-}
+export class TrackingStateCallback extends TouchFreeRequestCallback<TrackingStateResponse> {}

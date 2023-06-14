@@ -23,6 +23,10 @@ import {
     WebSocketResponse,
     InteractionZoneState,
     EventUpdate,
+    LicenseStateCallback,
+    LicenseChangeCallback,
+    LicenseStateResponse,
+    LicenseChangeResponse,
 } from './TouchFreeServiceTypes';
 
 // Class: MessageReceiver
@@ -92,6 +96,12 @@ export class MessageReceiver {
     // A dictionary of unique request IDs and <ServiceStatusCallback> that represent requests
     // that are awaiting response from the Service.
     serviceStatusCallbacks: { [id: string]: ServiceStatusCallback } = {};
+
+    licenseStateCallbacks: { [id: string]: LicenseStateCallback } = {};
+    licenseStateQueue: Array<LicenseStateResponse> = [];
+
+    licenseChangeCallbacks: { [id: string]: LicenseChangeCallback } = {};
+    licenseChangeResponseQueue: Array<LicenseChangeResponse> = [];
 
     // Variable: lastStateUpdate
     // The last hand presence state update received from the Service.
@@ -364,6 +374,33 @@ export class MessageReceiver {
         if (this.lastInteractionZoneUpdate.status === 'UNPROCESSED') {
             ConnectionManager.HandleInteractionZoneEvent(this.lastInteractionZoneUpdate.state);
             this.lastInteractionZoneUpdate.status = 'PROCESSED';
+        }
+    }
+
+    CheckForLicenseData(): void {
+        const licenseStateResponse: LicenseStateResponse | undefined = this.licenseStateQueue.shift();
+
+        if (licenseStateResponse) {
+            this.HandleResponseInQueue(licenseStateResponse, this.licenseStateCallbacks);
+        }
+
+        const licenseChangeResponse: LicenseChangeResponse | undefined = this.licenseChangeResponseQueue.shift();
+
+        if (licenseChangeResponse) {
+            this.HandleResponseInQueue(licenseChangeResponse, this.licenseChangeCallbacks);
+        }
+    }
+
+    private HandleResponseInQueue<
+        ResponseType extends TouchFreeRequest,
+        CallbackType extends TouchFreeRequestCallback<ResponseType>>
+        (response: ResponseType, callbackList: { [id: string]: CallbackType }) {
+        if (callbackList !== undefined) {
+            for (const key in callbackList) {
+                if (key === response.requestID) {
+                    callbackList[key].callback(response);
+                }
+            }
         }
     }
 

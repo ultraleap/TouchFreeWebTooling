@@ -10,6 +10,12 @@ import {
     ConfigStateCallback,
     HandPresenceEvent,
     InteractionZoneEvent,
+    LicenseChangeCallback,
+    LicenseChangeResponse,
+    LicenseKeyRequest,
+    LicenseStateCallback,
+    LicenseStateResponse,
+    LicenseStatusRequest,
     ResetInteractionConfigFileRequest,
     ResponseCallback,
     ServiceStatus,
@@ -23,6 +29,7 @@ import {
     WebSocketResponse,
 } from './TouchFreeServiceTypes';
 import { v4 as uuidgen } from 'uuid';
+import { LicenseManager, LicenseState } from 'Licensing/Licensing';
 
 // Class: ServiceConnection
 // This represents a connection to a TouchFree Service. It should be created by a
@@ -191,6 +198,25 @@ export class ServiceConnection {
                 ConnectionManager.messageReceiver.lastInteractionZoneUpdate = { status: 'UNPROCESSED', state: state };
                 break;
             }
+
+            case ActionCode.LICENSE_STATE: {
+                const response = looseData.content as LicenseStateResponse;
+                TouchFree.DispatchEvent('OnLicenseStateChange', response.licenseState);
+                break;
+            }
+
+            case ActionCode.LICENSE_STATE_RESPONSE: {
+                const response = looseData.content as LicenseStateResponse;
+                ConnectionManager.messageReceiver.licenseStateQueue.push(response);
+                break;
+            }
+
+            case ActionCode.ADD_LICENSE_RESPONSE:
+            case ActionCode.REMOVE_LICENSE_RESPONSE: {
+                const response = looseData.content as LicenseChangeResponse;
+                ConnectionManager.messageReceiver.licenseChangeResponseQueue.push(response);
+                break;
+            }
         }
     };
 
@@ -329,6 +355,41 @@ export class ServiceConnection {
 
         this.webSocket.send(message);
     };
+
+    RequestLicenseState = (_callback: (detail: LicenseStateResponse) => void): void => {
+        const guid: string = uuidgen();
+        const request: LicenseStatusRequest = new LicenseStatusRequest(guid);
+        const wrapper = new CommunicationWrapper<LicenseStatusRequest>(ActionCode.GET_LICENSE_STATE, request);
+        const message: string = JSON.stringify(wrapper);
+
+        ConnectionManager.messageReceiver.licenseStateCallbacks[guid] = new LicenseStateCallback(Date.now(), _callback);
+
+        this.webSocket.send(message);
+    }
+
+    AddLicenseRequest = (licenseKey: string, _callback: (detail: LicenseChangeResponse) => void): void => {
+        const guid: string = uuidgen();
+        const request: LicenseKeyRequest = new LicenseKeyRequest(guid, licenseKey);
+        const wrapper = new CommunicationWrapper<LicenseKeyRequest>(ActionCode.ADD_LICENSE_KEY, request);
+        const message: string = JSON.stringify(wrapper);
+
+        ConnectionManager.messageReceiver.licenseChangeCallbacks[guid]
+            = new LicenseChangeCallback(Date.now(), _callback);
+
+        this.webSocket.send(message);
+    }
+
+    RemoveLicenseRequest = (licenseKey: string, _callback: (detail: LicenseChangeResponse) => void): void => {
+        const guid: string = uuidgen();
+        const request: LicenseKeyRequest = new LicenseKeyRequest(guid, licenseKey);
+        const wrapper = new CommunicationWrapper<LicenseKeyRequest>(ActionCode.REMOVE_LICENSE_KEY, request);
+        const message: string = JSON.stringify(wrapper);
+
+        ConnectionManager.messageReceiver.licenseChangeCallbacks[guid]
+            = new LicenseChangeCallback(Date.now(), _callback);
+
+        this.webSocket.send(message);
+    }
 
     // Function: QuickSetupRequest
     // Used internally to pass information to the Service about performing a QuickSetup

@@ -17,6 +17,7 @@ const events: TouchFreeEventSignatures = {
     TransmitInputActionRaw: jest.fn(),
     HandEntered: jest.fn(),
     HandExited: jest.fn(),
+    OnLicenseStateChange: jest.fn(),
 };
 
 describe('TouchFree', () => {

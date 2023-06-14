@@ -177,6 +177,13 @@ const EventImplementations: () => EventImpls = () =>
                 RegisterEventFunc: DefaultRegisterEventFunc,
             }),
         },
+        OnLicenseStateChange: {
+            Target: ConnectionManager.instance,
+            WithCallback: (callback) => ({
+                Listener: MakeCustomEventWrapper(callback),
+                RegisterEventFunc: DefaultRegisterEventFunc,
+            }),
+        }
     });
 
 // Function: RegisterEventCallback
@@ -221,6 +228,9 @@ const EventImplementations: () => EventImpls = () =>
 //
 // HandExited: () => void;
 // Event dispatched when the the active hand exits the interaction zone
+//
+// OnLicenseStateChange: (licenseState: LicenseState) => void;
+// TODO
 const RegisterEventCallback = <TEvent extends TouchFreeEvent>(
     event: TEvent,
     callback: TouchFreeEventSignatures[TEvent]

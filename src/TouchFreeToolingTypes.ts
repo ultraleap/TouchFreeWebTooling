@@ -1,3 +1,4 @@
+import { LicenseState } from 'Licensing/Licensing';
 import { Vector, Vector2 } from './Configuration/ConfigurationTypes';
 import { ServiceStatus } from './Connection/TouchFreeServiceTypes';
 
@@ -186,6 +187,7 @@ export interface TouchFreeEventSignatures {
     TransmitInputAction: (inputAction: TouchFreeInputAction) => void;
     HandEntered: () => void;
     HandExited: () => void;
+    OnLicenseStateChange: (state: LicenseState) => void;
 }
 
 export type TouchFreeEvent = Extract<keyof TouchFreeEventSignatures, string>;
