@@ -27,6 +27,4 @@ export enum LicenseState
     UNLICENSED,
     LICENSED,
     CAMERA_UNLICENSED,
-    ACTIVE,
-    INACTIVE
 }
