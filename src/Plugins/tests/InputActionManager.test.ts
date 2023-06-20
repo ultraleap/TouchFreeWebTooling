@@ -1,6 +1,6 @@
 import TouchFree from '../../TouchFree';
 import { HandChirality, HandType, InputType, InteractionType, TouchFreeInputAction } from '../../TouchFreeToolingTypes';
-import { createInputAction, mockTfPluginPartialInputAction,mockTfPluginInputAction, sleep, checkTwoInputActionsAreSame } from '../../tests/testUtils';
+import { createInputAction, mockTfPluginPartialInputAction,mockTfPluginInputAction, sleep, checkTwoInputActionsAreSame, copyInputAction } from '../../tests/testUtils';
 import { InputActionManager } from '../InputActionManager';
 import { InputActionPlugin } from '../InputActionPlugin';
 
@@ -86,7 +86,8 @@ describe('InputActionManager', () => {
         class MockCallSuperPlugin extends InputActionPlugin {
             RunPlugin(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 callCount++;
-                const returnedInputAction = super.RunPlugin(_inputAction);
+                const copy = copyInputAction(_inputAction);
+                const returnedInputAction = super.RunPlugin(copy);
                 checkTwoInputActionsAreSame(_inputAction, returnedInputAction);
 
                 return returnedInputAction;
@@ -94,7 +95,8 @@ describe('InputActionManager', () => {
         
             ModifyInputAction(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 callCount++;
-                const returnInputAction = super.ModifyInputAction(_inputAction);
+                const copy = copyInputAction(_inputAction);
+                const returnInputAction = super.ModifyInputAction(copy);
 
                 checkTwoInputActionsAreSame(_inputAction, returnInputAction);
 
@@ -107,12 +109,13 @@ describe('InputActionManager', () => {
                     const actionEvent = event as CustomEvent<TouchFreeInputAction>;
                     const action = actionEvent.detail;
 
-                    if(action === currentInputAction){
+                    if(checkTwoInputActionsAreSame(action,currentInputAction)){
                         passed = true;
                     }
                 });
 
-                super.TransmitInputAction(_inputAction);
+                const copy = copyInputAction(_inputAction);
+                super.TransmitInputAction(copy);
             }
         }
 

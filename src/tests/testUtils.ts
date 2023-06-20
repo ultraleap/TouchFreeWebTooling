@@ -23,20 +23,27 @@ export const mockTfPluginPartialInputAction = (input?: Partial<TouchFreeInputAct
 export const mockTfPluginInputAction = (input: TouchFreeInputAction) =>
     InputActionManager.HandleInputAction(input);
 
-export const checkTwoInputActionsAreSame = (a: TouchFreeInputAction | null, b: TouchFreeInputAction | null) => {
+export const checkTwoInputActionsAreSame = (a: TouchFreeInputAction | null, b: TouchFreeInputAction | null): boolean => {
     if(!a && !b){
-        return;
+        return true;
     } else if (!a || !b){
-        fail("Only one input action was null");
+        throw new Error("Only one input action was null");
     }
+
+    let passed = true;
 
     Object.keys(a).forEach((key => {
         const castedKey = key as keyof TouchFreeInputAction;
         const valueA = a[castedKey];
         const valueB = b[castedKey];
+        if(valueA !== valueB) passed = false;
         expect(valueA).toBe(valueB);
     }))
+
+    return passed;
 }
+
+export const copyInputAction=(input: TouchFreeInputAction): TouchFreeInputAction => Object.assign({}, input);
 
 export const intervalTest = async (test: () => unknown) => {
     await new Promise<void>((resolve, reject) => {
