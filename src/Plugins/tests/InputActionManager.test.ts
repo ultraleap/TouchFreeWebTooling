@@ -1,6 +1,13 @@
 import TouchFree from '../../TouchFree';
 import { HandChirality, HandType, InputType, InteractionType, TouchFreeInputAction } from '../../TouchFreeToolingTypes';
-import { createInputAction, mockTfPluginPartialInputAction,mockTfPluginInputAction, sleep, checkTwoInputActionsAreSame, copyInputAction } from '../../tests/testUtils';
+import {
+    createInputAction,
+    mockTfPluginPartialInputAction,
+    mockTfPluginInputAction,
+    sleep,
+    checkTwoInputActionsAreSame,
+    copyInputAction,
+} from '../../tests/testUtils';
 import { InputActionManager } from '../InputActionManager';
 import { InputActionPlugin } from '../InputActionPlugin';
 
@@ -80,8 +87,6 @@ describe('InputActionManager', () => {
     test('Check InputActionPlugin methods', async () => {
         let callCount = 0;
         let passed = false;
-        let currentInputAction: TouchFreeInputAction;
-        
 
         class MockCallSuperPlugin extends InputActionPlugin {
             RunPlugin(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
@@ -92,7 +97,7 @@ describe('InputActionManager', () => {
 
                 return returnedInputAction;
             }
-        
+
             ModifyInputAction(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 callCount++;
                 const copy = copyInputAction(_inputAction);
@@ -102,14 +107,14 @@ describe('InputActionManager', () => {
 
                 return _inputAction;
             }
-        
+
             TransmitInputAction(_inputAction: TouchFreeInputAction): void {
                 callCount++;
-                this.addEventListener("InputActionOutput", (event) => {
+                this.addEventListener('InputActionOutput', (event) => {
                     const actionEvent = event as CustomEvent<TouchFreeInputAction>;
                     const action = actionEvent.detail;
 
-                    if(checkTwoInputActionsAreSame(action,currentInputAction)){
+                    if (checkTwoInputActionsAreSame(action, currentInputAction)) {
                         passed = true;
                     }
                 });
@@ -121,13 +126,13 @@ describe('InputActionManager', () => {
 
         InputActionManager.SetPlugins([new MockCallSuperPlugin()]);
         expect(callCount).toBe(0);
-        currentInputAction = createInputAction();
+        const currentInputAction = createInputAction();
         mockTfPluginInputAction(currentInputAction);
         expect(callCount).toBe(3);
 
         await sleep(1000);
         expect(passed).toBeTruthy();
-    })
+    });
 
     test('Check plugin can return null', async () => {
         let pluginCallCount = 0;
