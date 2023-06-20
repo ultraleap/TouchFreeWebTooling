@@ -29,7 +29,7 @@ import {
     WebSocketResponse,
 } from './TouchFreeServiceTypes';
 import { v4 as uuidgen } from 'uuid';
-import { LicenseManager, LicenseState } from 'Licensing/Licensing';
+import { LicenseManager } from '../Licensing/Licensing';
 
 // Class: ServiceConnection
 // This represents a connection to a TouchFree Service. It should be created by a
@@ -201,6 +201,7 @@ export class ServiceConnection {
 
             case ActionCode.LICENSE_STATE: {
                 const response = looseData.content as LicenseStateResponse;
+                LicenseManager.currentState = response.licenseState;
                 TouchFree.DispatchEvent('OnLicenseStateChange', response.licenseState);
                 break;
             }

@@ -304,10 +304,12 @@ export class LicenseKeyRequest extends TouchFreeRequest {
 
 export class LicenseChangeResponse extends TouchFreeRequest {
     public changeDetails: string;
+    public succeeded: boolean;
 
-    constructor(_requestID: string, _changeDetails: string) {
+    constructor(_requestID: string, _changeDetails: string, _succeeded: boolean) {
         super(_requestID);
         this.changeDetails = _changeDetails;
+        this.succeeded = _succeeded;
     }
 }
 

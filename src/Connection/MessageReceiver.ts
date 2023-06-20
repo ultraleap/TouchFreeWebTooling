@@ -164,6 +164,7 @@ export class MessageReceiver {
         this.CheckForTrackingStateResponse();
         this.CheckForAction();
         this.CheckForHandData();
+        this.CheckForLicenseData();
     }
 
     // Function: CheckForHandshakeResponse

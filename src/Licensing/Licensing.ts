@@ -11,12 +11,7 @@ export class LicenseManager {
     public static currentState: LicenseState = LicenseState.UNLICENSED;
 
     public static GetLicenseState(_callback: (detail: LicenseStateResponse) => void): void {
-        const callbackWrapper = (detail: LicenseStateResponse) => {
-            LicenseManager.currentState = detail.licenseState;
-            _callback(detail);
-        };
-
-        ConnectionManager.serviceConnection()?.RequestLicenseState(callbackWrapper);
+        ConnectionManager.serviceConnection()?.RequestLicenseState(_callback);
     }
 
     public static AddLicenseKey(licenseKey: string, callback: (detail: LicenseChangeResponse) => void): void {
