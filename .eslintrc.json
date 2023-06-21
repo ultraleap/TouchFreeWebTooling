@@ -70,7 +70,9 @@
                     "color",
                     "colors",
                     "colored",
-                    "mmps"
+                    "mmps",
+                    "nulled",
+                    "castedKey"
                 ],
                 "skipWordIfMatch": ["^pointer.*$", "(\\S+(32|64)+)"],
                 "minLength": 3
