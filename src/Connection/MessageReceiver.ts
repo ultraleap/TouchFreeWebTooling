@@ -93,14 +93,26 @@ export class MessageReceiver {
     serviceStatusQueue: Array<ServiceStatus> = [];
 
     // Variable: serviceStatusCallbacks
-    // A dictionary of unique request IDs and <ServiceStatusCallback> that represent requests
-    // that are awaiting response from the Service.
+    // A dictionary of unique request IDs and <ServiceStatusCallback> that represent previous
+    // requests to get the current service status that are awaiting response from the Service.
     serviceStatusCallbacks: { [id: string]: ServiceStatusCallback } = {};
 
+    // Variable: licenseStateCallbacks
+    // A dictionary of unique request IDs and <LicenseStateCallback>s that represent previous
+    // requests to get the current license state.
     licenseStateCallbacks: { [id: string]: LicenseStateCallback } = {};
+
+    // Variable: licenseStateQueue
+    // A queue of <LicenseStateResponses> recieved from the Service that are not yet processed
     licenseStateQueue: Array<LicenseStateResponse> = [];
 
+    // Variable: licenseChangeCallbacks
+    // A dictionary of unique request IDs and <LicenseChangeCallback>s that represent previous
+    // requests to modify the current license state.
     licenseChangeCallbacks: { [id: string]: LicenseChangeCallback } = {};
+
+    // Variable: licenseChangeResponseQueue
+    // A queue of <LicenseChangeResponse> recieved from the Service that are not yet processed
     licenseChangeResponseQueue: Array<LicenseChangeResponse> = [];
 
     // Variable: lastStateUpdate
@@ -251,25 +263,6 @@ export class MessageReceiver {
         }
     }
 
-    // Function: HandleCallbackList
-    // Checks the dictionary of <callbacks> for a matching request ID. If there is a
-    // match, calls the callback action in the matching <TouchFreeRequestCallback>.
-    // Returns true if it was able to find a callback, returns false if not
-    private static HandleCallbackList<T extends TouchFreeRequest>(
-        callbackResult: T,
-        callbacks: { [id: string]: TouchFreeRequestCallback<T> }
-    ): 'Success' | 'NoCallbacksFound' {
-        for (const key in callbacks) {
-            if (key === callbackResult.requestID) {
-                callbacks[key].callback(callbackResult);
-                delete callbacks[key];
-                return 'Success';
-            }
-        }
-
-        return 'NoCallbacksFound';
-    }
-
     // Function: CheckForServiceStatus
     // Used to check the <serviceStatusQueue> for a <ServiceStatus>. Sends it to <HandleCallbackList> with
     // the <serviceStatusCallbacks> dictionary if there is one.
@@ -378,30 +371,21 @@ export class MessageReceiver {
         }
     }
 
+    // Function: CheckForLicenseData
+    // Checks <licenseStateQueue> and <licenseChangeResponseQueue> for responses from the service
+    // related to Licensing. For those which match a callback in the relevant queue, invokes those
+    // callbacks with the new data.
     CheckForLicenseData(): void {
         const licenseStateResponse: LicenseStateResponse | undefined = this.licenseStateQueue.shift();
 
         if (licenseStateResponse) {
-            this.HandleResponseInQueue(licenseStateResponse, this.licenseStateCallbacks);
+            MessageReceiver.HandleCallbackList(licenseStateResponse, this.licenseStateCallbacks);
         }
 
         const licenseChangeResponse: LicenseChangeResponse | undefined = this.licenseChangeResponseQueue.shift();
 
         if (licenseChangeResponse) {
-            this.HandleResponseInQueue(licenseChangeResponse, this.licenseChangeCallbacks);
-        }
-    }
-
-    private HandleResponseInQueue<
-        ResponseType extends TouchFreeRequest,
-        CallbackType extends TouchFreeRequestCallback<ResponseType>>
-        (response: ResponseType, callbackList: { [id: string]: CallbackType }) {
-        if (callbackList !== undefined) {
-            for (const key in callbackList) {
-                if (key === response.requestID) {
-                    callbackList[key].callback(response);
-                }
-            }
+            MessageReceiver.HandleCallbackList(licenseChangeResponse, this.licenseChangeCallbacks);
         }
     }
 
@@ -431,6 +415,25 @@ export class MessageReceiver {
         MessageReceiver.ClearUnresponsiveItems(lastClearTime, this.configStateCallbacks);
         MessageReceiver.ClearUnresponsiveItems(lastClearTime, this.serviceStatusCallbacks);
         MessageReceiver.ClearUnresponsiveItems(lastClearTime, this.trackingStateCallbacks);
+    }
+
+    // Function: HandleCallbackList
+    // Checks the dictionary of <callbacks> for a matching request ID. If there is a
+    // match, calls the callback action in the matching <TouchFreeRequestCallback>.
+    // Returns true if it was able to find a callback, returns false if not
+    private static HandleCallbackList<T extends TouchFreeRequest>(
+        callbackResult: T,
+        callbacks: { [id: string]: TouchFreeRequestCallback<T> }
+    ): 'Success' | 'NoCallbacksFound' {
+        for (const key in callbacks) {
+            if (key === callbackResult.requestID) {
+                callbacks[key].callback(callbackResult);
+                delete callbacks[key];
+                return 'Success';
+            }
+        }
+
+        return 'NoCallbacksFound';
     }
 
     private static ClearUnresponsiveItems<T>(

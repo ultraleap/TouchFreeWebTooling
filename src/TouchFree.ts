@@ -227,10 +227,10 @@ const EventImplementations: () => EventImpls = () =>
 // Event dispatched when the active hand enters the interaction zone
 //
 // HandExited: () => void;
-// Event dispatched when the the active hand exits the interaction zone
+// Event dispatched when the active hand exits the interaction zone
 //
 // OnLicenseStateChange: (licenseState: LicenseState) => void;
-// TODO
+// Event dispatched when the Licensing state of TouchFree Service changes
 const RegisterEventCallback = <TEvent extends TouchFreeEvent>(
     event: TEvent,
     callback: TouchFreeEventSignatures[TEvent]

@@ -357,6 +357,11 @@ export class ServiceConnection {
         this.webSocket.send(message);
     };
 
+    // Function: RequestLicenseState
+    // Use internally to request the current state of Licensing within the Service via the
+    // <webSocket>. Provides a <LicenseState> through the _callback parameter.
+    //
+    // If your _callback requires context it should be bound to that context via .bind()
     RequestLicenseState = (_callback: (detail: LicenseStateResponse) => void): void => {
         const guid: string = uuidgen();
         const request: LicenseStatusRequest = new LicenseStatusRequest(guid);
@@ -368,6 +373,12 @@ export class ServiceConnection {
         this.webSocket.send(message);
     }
 
+    // Function: AddLicenseRequest
+    // Use internally to attempt to add a License Key to TouchFree, via the <webSocket>.
+    // Provides a <LicenseChangeResponse> through the _callback parameter, which includes a boolean
+    // success/fail state and string content.
+    //
+    // If your _callback requires context it should be bound to that context via .bind()
     AddLicenseRequest = (licenseKey: string, _callback: (detail: LicenseChangeResponse) => void): void => {
         const guid: string = uuidgen();
         const request: LicenseKeyRequest = new LicenseKeyRequest(guid, licenseKey);
@@ -380,6 +391,12 @@ export class ServiceConnection {
         this.webSocket.send(message);
     }
 
+    // Function: RemoveLicenseRequest
+    // Use internally to attempt to remove a License Key from TouchFree, via the <webSocket>.
+    // Provides a <LicenseChangeResponse> through the _callback parameter, which includes a boolean
+    // success/fail state and string content.
+    //
+    // If your _callback requires context it should be bound to that context via .bind()
     RemoveLicenseRequest = (licenseKey: string, _callback: (detail: LicenseChangeResponse) => void): void => {
         const guid: string = uuidgen();
         const request: LicenseKeyRequest = new LicenseKeyRequest(guid, licenseKey);
