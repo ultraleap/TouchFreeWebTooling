@@ -373,8 +373,8 @@ export class MessageReceiver {
 
     // Function: CheckForLicenseData
     // Checks <licenseStateQueue> and <licenseChangeResponseQueue> for responses from the service
-    // related to Licensing. For those which match a callback in the relevant queue, invokes those
-    // callbacks with the new data.
+    // related to Licensing. Invokes any matching callbacks from the relevant callback list with
+    // the data in the queue.
     CheckForLicenseData(): void {
         const licenseStateResponse: LicenseStateResponse | undefined = this.licenseStateQueue.shift();
 
