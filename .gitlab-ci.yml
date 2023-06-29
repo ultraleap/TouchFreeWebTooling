@@ -27,27 +27,27 @@ TF_Tooling::Web::build:
     - win10
   script:
     # Update Version.txt with latest information before packaging
-    - python ./Scripts/UpdateVersionFile.py --path ${env:CI_PROJECT_DIR}/Version.txt --swVer ${env:TF_TFW_VERSION} --apiVer ${env:TF_TOOLING_API_VERSION} --ref ${env:CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
-    - Get-Content ${env:CI_PROJECT_DIR}/Version.txt
+    - python ./Scripts/UpdateVersionFile.py --path ${CI_PROJECT_DIR}/Version.txt --swVer ${env:TF_TFW_VERSION} --apiVer ${env:TF_TOOLING_API_VERSION} --ref ${CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
+    - Get-Content ${CI_PROJECT_DIR}/Version.txt
 
     # Build Tooling
-    - cd ${env:CI_PROJECT_DIR}
+    - cd ${CI_PROJECT_DIR}
     - npm i
     - npm run build
     # Clean last build
-    - cd ${env:CI_PROJECT_DIR}
+    - cd ${CI_PROJECT_DIR}
     - if (Test-Path -Path "./Tooling_Release") {
         Remove-Item -LiteralPath ./Tooling_Release -Force -Recurse
         Remove-Item -LiteralPath ./Tooling_Release -Force -Recurse
       }
     # Package Tooling
     - mkdir ./Tooling_Release
-    - cp ${env:CI_PROJECT_DIR}/Version.txt ./Tooling_Release
-    - cp -R ${env:CI_PROJECT_DIR}/dist ./Tooling_Release
-    - cp -R ${env:CI_PROJECT_DIR}/Plugins ./Tooling_Release
-    - cp -R ${env:CI_PROJECT_DIR}/quick-start ./Tooling_Release
+    - cp ${CI_PROJECT_DIR}/Version.txt ./Tooling_Release
+    - cp -R ${CI_PROJECT_DIR}/dist ./Tooling_Release
+    - cp -R ${CI_PROJECT_DIR}/Plugins ./Tooling_Release
+    - cp -R ${CI_PROJECT_DIR}/quick-start ./Tooling_Release
   artifacts:
-    name: "Tooling_for_Web_Build_${env:CI_COMMIT_SHORT_SHA}"
+    name: "Tooling_for_Web_Build_${CI_COMMIT_SHORT_SHA}"
     paths:
       - ./Tooling_Release/*
     expire_in: 2 weeks
@@ -76,7 +76,7 @@ TF_Tooling::Web::test:
   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
   script:
     # Run unit tests
-    - cd ${env:CI_PROJECT_DIR}
+    - cd ${CI_PROJECT_DIR}
     - npm i
     - npm run test
     - npm run test:coverage
@@ -84,13 +84,13 @@ TF_Tooling::Web::test:
     when: always
     name: "TestResults"
     paths:
-    - ${env:CI_PROJECT_DIR}/junit.xml
-    - ${env:CI_PROJECT_DIR}/coverage/
+    - ${CI_PROJECT_DIR}/junit.xml
+    - ${CI_PROJECT_DIR}/coverage/
     reports:
-      junit: ${env:CI_PROJECT_DIR}/junit.xml
+      junit: ${CI_PROJECT_DIR}/junit.xml
       coverage_report:
         coverage_format: cobertura
-        path: ${env:CI_PROJECT_DIR}/coverage/cobertura-coverage.xml
+        path: ${CI_PROJECT_DIR}/coverage/cobertura-coverage.xml
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
 pages:
@@ -99,7 +99,7 @@ pages:
     - TF_Tooling::Web::test
   script:
     - mkdir .public
-    - cp ${env:CI_PROJECT_DIR}/coverage/* .public
+    - cp ${CI_PROJECT_DIR}/coverage/* .public
     - mv .public public
   artifacts:
     paths:
