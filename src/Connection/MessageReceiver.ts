@@ -23,6 +23,10 @@ import {
     WebSocketResponse,
     InteractionZoneState,
     EventUpdate,
+    LicenseStateCallback,
+    LicenseChangeCallback,
+    LicenseStateResponse,
+    LicenseChangeResponse,
 } from './TouchFreeServiceTypes';
 
 // Class: MessageReceiver
@@ -89,9 +93,27 @@ export class MessageReceiver {
     serviceStatusQueue: Array<ServiceStatus> = [];
 
     // Variable: serviceStatusCallbacks
-    // A dictionary of unique request IDs and <ServiceStatusCallback> that represent requests
-    // that are awaiting response from the Service.
+    // A dictionary of unique request IDs and <ServiceStatusCallback> that represent previous
+    // requests to get the current service status that are awaiting response from the Service.
     serviceStatusCallbacks: { [id: string]: ServiceStatusCallback } = {};
+
+    // Variable: licenseStateCallbacks
+    // A dictionary of unique request IDs and <LicenseStateCallback>s that represent previous
+    // requests to get the current license state.
+    licenseStateCallbacks: { [id: string]: LicenseStateCallback } = {};
+
+    // Variable: licenseStateQueue
+    // A queue of <LicenseStateResponses> recieved from the Service that are not yet processed
+    licenseStateQueue: Array<LicenseStateResponse> = [];
+
+    // Variable: licenseChangeCallbacks
+    // A dictionary of unique request IDs and <LicenseChangeCallback>s that represent previous
+    // requests to modify the current license state.
+    licenseChangeCallbacks: { [id: string]: LicenseChangeCallback } = {};
+
+    // Variable: licenseChangeResponseQueue
+    // A queue of <LicenseChangeResponse> recieved from the Service that are not yet processed
+    licenseChangeResponseQueue: Array<LicenseChangeResponse> = [];
 
     // Variable: lastStateUpdate
     // The last hand presence state update received from the Service.
@@ -154,6 +176,7 @@ export class MessageReceiver {
         this.CheckForTrackingStateResponse();
         this.CheckForAction();
         this.CheckForHandData();
+        this.CheckForLicenseData();
     }
 
     // Function: CheckForHandshakeResponse
@@ -238,25 +261,6 @@ export class MessageReceiver {
                     break;
             }
         }
-    }
-
-    // Function: HandleCallbackList
-    // Checks the dictionary of <callbacks> for a matching request ID. If there is a
-    // match, calls the callback action in the matching <TouchFreeRequestCallback>.
-    // Returns true if it was able to find a callback, returns false if not
-    private static HandleCallbackList<T extends TouchFreeRequest>(
-        callbackResult: T,
-        callbacks: { [id: string]: TouchFreeRequestCallback<T> }
-    ): 'Success' | 'NoCallbacksFound' {
-        for (const key in callbacks) {
-            if (key === callbackResult.requestID) {
-                callbacks[key].callback(callbackResult);
-                delete callbacks[key];
-                return 'Success';
-            }
-        }
-
-        return 'NoCallbacksFound';
     }
 
     // Function: CheckForServiceStatus
@@ -367,6 +371,24 @@ export class MessageReceiver {
         }
     }
 
+    // Function: CheckForLicenseData
+    // Checks <licenseStateQueue> and <licenseChangeResponseQueue> for responses from the service
+    // related to Licensing. Invokes any matching callbacks from the relevant callback list with
+    // the data in the queue.
+    CheckForLicenseData(): void {
+        const licenseStateResponse: LicenseStateResponse | undefined = this.licenseStateQueue.shift();
+
+        if (licenseStateResponse) {
+            MessageReceiver.HandleCallbackList(licenseStateResponse, this.licenseStateCallbacks);
+        }
+
+        const licenseChangeResponse: LicenseChangeResponse | undefined = this.licenseChangeResponseQueue.shift();
+
+        if (licenseChangeResponse) {
+            MessageReceiver.HandleCallbackList(licenseChangeResponse, this.licenseChangeCallbacks);
+        }
+    }
+
     // Function: CheckForHandData
     // Checks <latestHandDataItem> and if the <HandFrame> is not undefined sends it to
     // <HandDataManager> to handle the frame.
@@ -393,6 +415,25 @@ export class MessageReceiver {
         MessageReceiver.ClearUnresponsiveItems(lastClearTime, this.configStateCallbacks);
         MessageReceiver.ClearUnresponsiveItems(lastClearTime, this.serviceStatusCallbacks);
         MessageReceiver.ClearUnresponsiveItems(lastClearTime, this.trackingStateCallbacks);
+    }
+
+    // Function: HandleCallbackList
+    // Checks the dictionary of <callbacks> for a matching request ID. If there is a
+    // match, calls the callback action in the matching <TouchFreeRequestCallback>.
+    // Returns true if it was able to find a callback, returns false if not
+    private static HandleCallbackList<T extends TouchFreeRequest>(
+        callbackResult: T,
+        callbacks: { [id: string]: TouchFreeRequestCallback<T> }
+    ): 'Success' | 'NoCallbacksFound' {
+        for (const key in callbacks) {
+            if (key === callbackResult.requestID) {
+                callbacks[key].callback(callbackResult);
+                delete callbacks[key];
+                return 'Success';
+            }
+        }
+
+        return 'NoCallbacksFound';
     }
 
     private static ClearUnresponsiveItems<T>(

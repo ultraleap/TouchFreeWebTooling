@@ -1,3 +1,4 @@
+import { LicenseState } from 'Licensing/Licensing';
 import { Vector, Vector2 } from './Configuration/ConfigurationTypes';
 import { ServiceStatus } from './Connection/TouchFreeServiceTypes';
 
@@ -8,7 +9,7 @@ export class VersionInfo {
 
     // Variable: ApiVersion
     // The current API version of the Tooling.
-    public static readonly ApiVersion: string = '1.5.0';
+    public static readonly ApiVersion: string = '1.6.0';
 
     // Variable: API_HEADER_NAME
     // The name of the header we wish the Service to compare our version with.
@@ -186,6 +187,7 @@ export interface TouchFreeEventSignatures {
     TransmitInputAction: (inputAction: TouchFreeInputAction) => void;
     HandEntered: () => void;
     HandExited: () => void;
+    OnLicenseStateChange: (state: LicenseState) => void;
 }
 
 export type TouchFreeEvent = Extract<keyof TouchFreeEventSignatures, string>;

@@ -2,7 +2,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
   TF_TFW_VERSION: '1.4.0'
-  TF_TOOLING_API_VERSION: '1.5.0'
+  TF_API_VERSION: '1.6.0'
 
 stages:
   - build
@@ -27,7 +27,7 @@ TF_Tooling::Web::build:
     - win10
   script:
     # Update Version.txt with latest information before packaging
-    - python ./Scripts/UpdateVersionFile.py --path ${env:CI_PROJECT_DIR}/Version.txt --swVer ${env:TF_TFW_VERSION} --apiVer ${env:TF_TOOLING_API_VERSION} --ref ${env:CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
+    - python ./Scripts/UpdateVersionFile.py --path ${env:CI_PROJECT_DIR}/Version.txt --swVer ${env:TF_TFW_VERSION} --apiVer ${env:TF_API_VERSION} --ref ${env:CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
     - Get-Content ${env:CI_PROJECT_DIR}/Version.txt
 
     # Build Tooling

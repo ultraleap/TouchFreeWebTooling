@@ -1,3 +1,4 @@
+import { LicenseState } from 'Licensing/Licensing';
 import { InteractionConfigFull, InteractionConfig, PhysicalConfig } from '../Configuration/ConfigurationTypes';
 import { ConfigurationState, TrackingServiceState } from '../TouchFreeToolingTypes';
 import { Mask } from '../Tracking/TrackingTypes';
@@ -27,6 +28,14 @@ import { Mask } from '../Tracking/TrackingTypes';
 // SET_HAND_DATA_STREAM_STATE - Represents a request to the Service to enable/disable
 //                              the HAND_DATA stream or change the lens to have the hand position relative to.
 // INTERACTION_ZONE_EVENT - Represents the interaction zone state received from the Service
+// GET_LICENSE_STATE - Represents a request to receive current Licensing state of TouchFree Service
+// LICENSE_STATE_RESPONSE - Represents a response to a request for the current Licensing state of
+//                          TouchFree Service
+// ADD_LICENSE_KEY - Represents a request to add a License Key to TouchFree Service
+// ADD_LICENSE_RESPONSE - Represents a response to an add License Key request
+// REMOVE_LICENSE_KEY - Represents a request to remove a License Key to TouchFree Service
+// REMOVE_LICENSE_RESPONSE - Represents a response to an remove License Key request
+// LICENSE_STATE - Represents an event emitted by the Service whenever TouchFree's Licensing Service changes
 export enum ActionCode {
     INPUT_ACTION = 'INPUT_ACTION',
 
@@ -63,6 +72,14 @@ export enum ActionCode {
     INTERACTION_ZONE_EVENT = 'INTERACTION_ZONE_EVENT',
 
     RESET_INTERACTION_CONFIG_FILE = 'RESET_INTERACTION_CONFIG_FILE',
+
+    GET_LICENSE_STATE = 'GET_LICENSE_STATE',
+    LICENSE_STATE_RESPONSE = 'LICENSE_STATE_RESPONSE',
+    ADD_LICENSE_KEY = 'ADD_LICENSE_KEY',
+    ADD_LICENSE_RESPONSE = 'ADD_LICENSE_RESPONSE',
+    REMOVE_LICENSE_KEY = 'REMOVE_LICENSE_KEY',
+    REMOVE_LICENSE_RESPONSE = 'REMOVE_LICENSE_RESPONSE',
+    LICENSE_STATE = 'LICENSE_STATE',
 }
 
 export type EventStatus = 'PROCESSED' | 'UNPROCESSED';
@@ -199,6 +216,7 @@ export class ConfigChangeRequest extends TouchFreeRequest {}
 export class ConfigStateCallback extends TouchFreeRequestCallback<ConfigState> {}
 
 
+
 // class: ResetInteractionConfigFile
 // Used internally to request that the Service resets the Interaction Config File to
 // its default state. Provides the Default <InteractionConfigFull> returned by the Service
@@ -269,6 +287,62 @@ export class ServiceStatusRequest extends TouchFreeRequest {}
 // <ServiceStatusResponse>. Stores a timestamp of its creation so the response has the ability to
 // timeout if not seen within a reasonable timeframe.
 export class ServiceStatusCallback extends TouchFreeRequestCallback<ServiceStatus> {}
+
+// class: LicenseStatusRequest
+// Used to request the current Licensing state of the Service. This is recieved as a <LicenseState>
+// which should be linked to a <LicenseStateCallback> via its requestID to to make use of the
+// response.
+export class LicenseStatusRequest extends TouchFreeRequest {}
+
+// Class: LicenseStateResponse
+// The structure seen when the Service responds to a <LicenseStatusRequest>. Contains a
+// <LicenseState> representing the current state of Service's Licenses.
+export class LicenseStateResponse extends TouchFreeRequest {
+    public licenseState: LicenseState;
+
+    constructor(_requestID: string, _state: LicenseState) {
+        super(_requestID);
+        this.licenseState = _state;
+    }
+}
+
+// Class: LicenseStateCallback
+// Used by <MessageReceiver> to wait for a <LicenseState> from the Service. Owns a callback with a
+// <LicenseState> as a parameter to allow users to make use of the <LicenseStateResponse>
+export class LicenseStateCallback extends TouchFreeRequestCallback<LicenseStateResponse> {}
+
+// Class: LicenseKeyRequest
+// Used to request the addition / removal of License Keys from TouchFree. A <LicenseChangeResponse>
+// should follow from the Service, which should be connected to this via request via its requestID.
+export class LicenseKeyRequest extends TouchFreeRequest {
+    public licenseKey: string;
+
+    constructor(_requestID: string, _licenseKey: string) {
+        super(_requestID);
+        this.licenseKey = _licenseKey;
+    }
+}
+
+// Class: LicenseChangeResponse
+// The response to a request to modify (add/remove) a License Key in TouchFree Service. Contains
+// a boolean representing whether the modification was successful, and a <changeDetails> string
+// containing a message detailing any relevant info, for displaying to users.
+export class LicenseChangeResponse extends TouchFreeRequest {
+    public changeDetails: string;
+    public succeeded: boolean;
+
+    constructor(_requestID: string, _changeDetails: string, _succeeded: boolean) {
+        super(_requestID);
+        this.changeDetails = _changeDetails;
+        this.succeeded = _succeeded;
+    }
+}
+
+// Class: LicenseChangeCallback
+// Used by <MessageReceiver> to wait for a <LicenseChangeResponse> from the Service. Owns a callback
+// function which takes a <LicenseChangeResponse> as a parameter to allow users to make use of the
+// details of the response.
+export class LicenseChangeCallback extends TouchFreeRequestCallback<LicenseChangeResponse> {}
 
 // Class: WebSocketResponse
 // The structure seen when the Service responds to a request. This is to verify whether it was
@@ -398,14 +472,4 @@ export class SimpleRequest {
 // Used by <MessageReceiver> to wait for a <TrackingStateResponse> from the Service. Owns a callback with a
 // <TrackingStateResponse> as a parameter. Stores a timestamp of its creation so the response has the ability to
 // timeout if not seen within a reasonable timeframe.
-export class TrackingStateCallback {
-    // Variable: timestamp
-    timestamp: number;
-    // Variable: callback
-    callback: (detail: TrackingStateResponse) => void;
-
-    constructor(_timestamp: number, _callback: (detail: TrackingStateResponse) => void) {
-        this.timestamp = _timestamp;
-        this.callback = _callback;
-    }
-}
+export class TrackingStateCallback extends TouchFreeRequestCallback<TrackingStateResponse> {}

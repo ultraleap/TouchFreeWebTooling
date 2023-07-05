@@ -2,10 +2,11 @@ import * as Configuration from './Configuration';
 import * as Connection from './Connection';
 import * as Cursors from './Cursors';
 import * as InputControllers from './InputControllers';
+import * as Licensing from './Licensing';
 import * as Plugins from './Plugins';
-import TouchFree from './TouchFree';
 import * as TouchFreeToolingTypes from './TouchFreeToolingTypes';
 import * as Tracking from './Tracking';
+import TouchFree from './TouchFree';
 
 module.exports = {
     ...TouchFree, // Export all props of the TouchFree object
@@ -13,6 +14,7 @@ module.exports = {
     Connection: Connection,
     Cursors: Cursors,
     InputControllers: InputControllers,
+    Licensing: Licensing,
     Plugins: Plugins,
     TouchFreeToolingTypes: TouchFreeToolingTypes,
     Tracking: Tracking,
