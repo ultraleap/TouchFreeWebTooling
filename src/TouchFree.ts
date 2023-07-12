@@ -17,7 +17,7 @@ export interface TfInitParams {
 }
 
 const GetCurrentCursor = () => CurrentCursor;
-const SetCurrentCursor = (cursor: TouchlessCursor) => (CurrentCursor = cursor);
+const SetCurrentCursor = (cursor: TouchlessCursor | undefined) => (CurrentCursor = cursor);
 const GetInputController = () => InputController;
 
 // Function: Init
@@ -32,6 +32,7 @@ const Init = (tfInitParams?: TfInitParams): void => {
             CurrentCursor = new SVGCursor();
         } else {
             if (tfInitParams.initialiseCursor === undefined || tfInitParams.initialiseCursor === true) {
+                console.log("TEST12")
                 CurrentCursor = new SVGCursor();
             }
         }

@@ -3,6 +3,7 @@ import { DotCursor } from '../Cursors/DotCursor';
 import { SVGCursor } from '../Cursors/SvgCursor';
 import TouchFree from '../TouchFree';
 import { TouchFreeEventSignatures, TouchFreeEvent } from '../TouchFreeToolingTypes';
+import { sleep } from './testUtils';
 
 const events: TouchFreeEventSignatures = {
     OnConnected: jest.fn(),
@@ -38,6 +39,30 @@ describe('TouchFree', () => {
             });
         }
     }
+
+    const checkDefaultCursor = async (initialiseCursor: boolean | undefined) => {
+        let connected = false;
+        TouchFree.SetCurrentCursor(undefined);
+        let cursor = TouchFree.GetCurrentCursor();
+        expect(cursor).toBe(undefined);
+        TouchFree.Init({ initialiseCursor: initialiseCursor });
+        ConnectionManager.AddConnectionListener(() => {
+            connected = true;
+            cursor = TouchFree.GetCurrentCursor();
+            expect(cursor instanceof SVGCursor).toBe(true);
+        });
+        await sleep(1000);
+        expect(connected).toBe(true);
+    }
+
+    it('Should create an SVGCursor when initialiseCursor is undefined', async () => {
+        checkDefaultCursor(undefined);
+        console.log("UNDEF")
+    });
+
+    it('Should create an SVGCursor when initialiseCursor is true', async () => {
+        checkDefaultCursor(true);
+    });
 
     it('Should pass a given address to the ConnectionManager', () => {
         const newAddress = { ip: '192.168.0.1', port: '8080' };
