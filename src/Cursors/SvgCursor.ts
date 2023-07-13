@@ -12,7 +12,7 @@ export const enum CursorPart {
 export class SVGCursor extends TouchlessCursor {
     private xPositionAttribute = 'cx';
     private yPositionAttribute = 'cy';
-    private cursorCanvas: SVGSVGElement;
+    public cursorCanvas: SVGSVGElement;
     private cursorRing: SVGCircleElement;
     private ringSizeMultiplier: number;
 
@@ -47,7 +47,6 @@ export class SVGCursor extends TouchlessCursor {
         svgElement.style.transition = 'opacity 0.5s linear';
         svgElement.setAttribute('width', '100%');
         svgElement.setAttribute('height', '100%');
-        svgElement.setAttribute('shape-rendering', 'optimizeSpeed');
         svgElement.id = 'svg-cursor';
         documentBody?.appendChild(svgElement);
 
