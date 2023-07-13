@@ -12,7 +12,7 @@ export const enum CursorPart {
 export class SVGCursor extends TouchlessCursor {
     private xPositionAttribute = 'cx';
     private yPositionAttribute = 'cy';
-    public cursorCanvas: SVGSVGElement;
+    private cursorCanvas: SVGSVGElement;
     private cursorRing: SVGCircleElement;
     private ringSizeMultiplier: number;
 
@@ -207,6 +207,12 @@ export class SVGCursor extends TouchlessCursor {
     // Used to set the opacity of the cursor
     SetCursorOpacity(opacity: number): void {
         this.cursorCanvas.style.opacity = opacity.toString();
+    }
+
+    // Function: SetCursorOptimise
+    // Used to set the rendering mode of the SVGCursor to be optimised for speed or rendered in the default manner
+    SetCursorOptimise(optimise: boolean) {
+        this.cursorCanvas.setAttribute('shape-rendering', optimise ? 'optimizeSpeed' : 'auto');
     }
 
     // Function: GetCurrentCursorRadius
