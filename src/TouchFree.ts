@@ -5,6 +5,7 @@ import { WebInputController } from './InputControllers/WebInputController';
 import { HandDataManager } from './Plugins/HandDataManager';
 import { InputActionManager } from './Plugins/InputActionManager';
 import { TouchFreeEvent, TouchFreeEventSignatures } from './TouchFreeToolingTypes';
+import { SessionState, WebSocketResponse } from 'Connection/TouchFreeServiceTypes';
 
 let InputController: WebInputController | undefined;
 let CurrentCursor: TouchlessCursor | undefined;
@@ -39,6 +40,16 @@ const Init = (tfInitParams?: TfInitParams): void => {
 // Function: IsConnected
 // Are we connected to the TouchFree service?
 const IsConnected = (): boolean => ConnectionManager.IsConnected;
+
+// Function: ControlAnalyticsSession
+// Used to start or stop an analytics session.
+const ControlAnalyticsSession = (
+    state: SessionState,
+    application: string,
+    callback?: (detail: WebSocketResponse) => void
+) => {
+    ConnectionManager.serviceConnection()?.RequestSessionStateChange(state, application, callback);
+};
 
 // Class: EventHandle
 // Object that can unregister a callback from an event
@@ -260,4 +271,5 @@ export default {
     GetInputController,
     IsConnected,
     RegisterEventCallback,
+    ControlAnalytics: ControlAnalyticsSession,
 };

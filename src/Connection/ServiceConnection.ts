@@ -15,6 +15,8 @@ import {
     ServiceStatus,
     ServiceStatusCallback,
     ServiceStatusRequest,
+    SessionState,
+    SessionStateChangeRequest,
     SimpleRequest,
     TrackingStateCallback,
     TrackingStateRequest,
@@ -191,6 +193,11 @@ export class ServiceConnection {
                 ConnectionManager.messageReceiver.lastInteractionZoneUpdate = { status: 'UNPROCESSED', state: state };
                 break;
             }
+
+            case ActionCode.SESSION_STATE_CHANGE: {
+                ConnectionManager.messageReceiver.sessionStateQueue.push(looseData.content as WebSocketResponse);
+                break;
+            }
         }
     };
 
@@ -276,14 +283,16 @@ export class ServiceConnection {
 
         const guid: string = uuidgen();
         const request: ResetInteractionConfigFileRequest = new ResetInteractionConfigFileRequest(guid);
-        const wrapper = new CommunicationWrapper<ResetInteractionConfigFileRequest>
-            (ActionCode.RESET_INTERACTION_CONFIG_FILE, request);
+        const wrapper = new CommunicationWrapper<ResetInteractionConfigFileRequest>(
+            ActionCode.RESET_INTERACTION_CONFIG_FILE,
+            request
+        );
         const message: string = JSON.stringify(wrapper);
 
         ConnectionManager.messageReceiver.configStateCallbacks[guid] = new ConfigStateCallback(Date.now(), _callback);
 
         this.webSocket.send(message);
-    }
+    };
 
     // Function: RequestServiceStatus
     // Used internally to request information from the Service via the <webSocket>.
@@ -429,6 +438,32 @@ export class ServiceConnection {
             ConnectionManager.messageReceiver.trackingStateCallbacks[requestID] = new TrackingStateCallback(
                 Date.now(),
                 _callback
+            );
+        }
+
+        this.webSocket.send(message);
+    };
+
+    // Function: RequestSessionStateChange
+    // Used to either start a new analytics session, or stop the current session.
+    RequestSessionStateChange = (
+        state: SessionState,
+        application: string,
+        callback?: (detail: WebSocketResponse) => void
+    ) => {
+        const requestID = uuidgen();
+        const content: SessionStateChangeRequest = {
+            requestID: requestID,
+            state: state,
+            application: application,
+        };
+        const wrapper = new CommunicationWrapper<SessionStateChangeRequest>(ActionCode.SESSION_STATE_CHANGE, content);
+        const message = JSON.stringify(wrapper);
+
+        if (callback) {
+            ConnectionManager.messageReceiver.sessionStateCallbacks[requestID] = new ResponseCallback(
+                Date.now(),
+                callback
             );
         }
 

@@ -199,6 +199,16 @@ describe('MessageReceiver', () => {
         await intervalTest(() => expect(testFn).toBeCalledTimes(1));
     });
 
+    it('should correctly check for the session state change response', async () => {
+        const testFn = jest.fn();
+        mockOpen();
+        serviceConnection?.RequestSessionStateChange('START', 'test', testFn);
+
+        onMessage(ActionCode.SESSION_STATE_CHANGE, undefined, JSON.parse(message).guid);
+
+        await intervalTest(() => expect(testFn).toBeCalledTimes(1));
+    });
+
     it('should correctly check for a hand presence event', async () => {
         const testFn = jest.spyOn(ConnectionManager, 'HandleHandPresenceEvent');
         testFn.mockImplementation(() => {});

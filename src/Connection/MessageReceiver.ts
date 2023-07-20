@@ -23,6 +23,7 @@ import {
     WebSocketResponse,
     InteractionZoneState,
     EventUpdate,
+    CallbackList,
 } from './TouchFreeServiceTypes';
 
 // Class: MessageReceiver
@@ -113,6 +114,15 @@ export class MessageReceiver {
     // that are awaiting response from the Service.
     trackingStateCallbacks: { [id: string]: TrackingStateCallback } = {};
 
+    // Variable: sessionStateQueue
+    // A queue of responses from RequestSessionStateChange calls.
+    sessionStateQueue: WebSocketResponse[] = [];
+
+    // Variable: sessionStateCallbacks
+    // A dictionary of unique request IDs and <ResponseCallback> that represent requests
+    // that are awaiting response from the Service.
+    sessionStateCallbacks: CallbackList<WebSocketResponse> = {};
+
     // Variable: callbackClearInterval
     // Stores the reference number for the interval running <ClearUnresponsiveCallbacks>, allowing
     // it to be cleared.
@@ -151,9 +161,10 @@ export class MessageReceiver {
         this.CheckForResponse();
         this.CheckForConfigState();
         this.CheckForServiceStatus();
-        this.CheckForTrackingStateResponse();
+        this.CheckQueue(this.trackingStateQueue, this.trackingStateCallbacks);
         this.CheckForAction();
         this.CheckForHandData();
+        this.CheckQueue(this.sessionStateQueue, this.sessionStateCallbacks);
     }
 
     // Function: CheckForHandshakeResponse
@@ -244,10 +255,11 @@ export class MessageReceiver {
     // Checks the dictionary of <callbacks> for a matching request ID. If there is a
     // match, calls the callback action in the matching <TouchFreeRequestCallback>.
     // Returns true if it was able to find a callback, returns false if not
-    private static HandleCallbackList<T extends TouchFreeRequest>(
-        callbackResult: T,
-        callbacks: { [id: string]: TouchFreeRequestCallback<T> }
+    private static HandleCallbackList<T extends WebSocketResponse | TouchFreeRequest>(
+        callbackResult?: T,
+        callbacks?: CallbackList<T>
     ): 'Success' | 'NoCallbacksFound' {
+        if (!callbackResult || !callbacks) return 'NoCallbacksFound';
         for (const key in callbacks) {
             if (key === callbackResult.requestID) {
                 callbacks[key].callback(callbackResult);
@@ -257,6 +269,25 @@ export class MessageReceiver {
         }
 
         return 'NoCallbacksFound';
+    }
+
+    // Function: CheckQueue
+    // Gets the next response in a given queue and handles the callback if present.
+    private CheckQueue<T extends WebSocketResponse | TrackingStateResponse>(
+        queue: T[],
+        callbacks: CallbackList<T>
+    ): void {
+        const response = queue.shift();
+
+        if (!response || !callbacks) return;
+
+        for (const key in callbacks) {
+            if (key === response.requestID) {
+                callbacks[key].callback(response);
+                delete callbacks[key];
+                return;
+            }
+        }
     }
 
     // Function: CheckForServiceStatus
@@ -291,6 +322,9 @@ export class MessageReceiver {
     // Function: CheckForTrackingStateResponse
     // Used to check the <trackingStateQueue> for a <TrackingStateResponse>.
     // Sends it to <HandleTrackingStateResponse> if there is one.
+    //
+    // This method is no longer used within this class (replaced with a call to CheckQueue).
+    // It has been left in to not break the API, but should be considered deprecated.
     CheckForTrackingStateResponse(): void {
         const trackingStateResponse: TrackingStateResponse | undefined = this.trackingStateQueue.shift();
 
@@ -302,6 +336,9 @@ export class MessageReceiver {
     // Function: HandleTrackingStateResponse
     // Checks the dictionary of <trackingStateCallbacks> for a matching request ID. If there is a
     // match, calls the callback action in the matching <TrackingStateCallback>.
+    //
+    // This method is no longer used within this class (replaced with a call to CheckQueue).
+    // It has been left in to not break the API, but should be considered deprecated.
     HandleTrackingStateResponse(trackingStateResponse: TrackingStateResponse): void {
         if (this.trackingStateCallbacks !== undefined) {
             for (const key in this.trackingStateCallbacks) {

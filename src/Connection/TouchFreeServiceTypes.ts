@@ -27,6 +27,8 @@ import { Mask } from '../Tracking/TrackingTypes';
 // SET_HAND_DATA_STREAM_STATE - Represents a request to the Service to enable/disable
 //                              the HAND_DATA stream or change the lens to have the hand position relative to.
 // INTERACTION_ZONE_EVENT - Represents the interaction zone state received from the Service
+//
+// SESSION_STATE - Represents a request to start or stop an analytics session
 export enum ActionCode {
     INPUT_ACTION = 'INPUT_ACTION',
 
@@ -63,8 +65,17 @@ export enum ActionCode {
     INTERACTION_ZONE_EVENT = 'INTERACTION_ZONE_EVENT',
 
     RESET_INTERACTION_CONFIG_FILE = 'RESET_INTERACTION_CONFIG_FILE',
+
+    SESSION_STATE_CHANGE = 'SESSION_STATE_CHANGE',
 }
 
+// Type: SessionState
+// START - Sent to the service to start an analytics session
+// STOP - Sent to the service to stop an analytics session
+export type SessionState = 'START' | 'STOP';
+
+// Type: EventStatus
+// Represents whether the event has been processed by the service
 export type EventStatus = 'PROCESSED' | 'UNPROCESSED';
 
 // Enum: HandPresenceState
@@ -197,7 +208,6 @@ export class ConfigChangeRequest extends TouchFreeRequest {}
 // <ConfigStateResponse>. Stores a timestamp of its creation so the response has the ability to
 // timeout if not seen within a reasonable timeframe.
 export class ConfigStateCallback extends TouchFreeRequestCallback<ConfigState> {}
-
 
 // class: ResetInteractionConfigFile
 // Used internally to request that the Service resets the Interaction Config File to
@@ -394,6 +404,17 @@ export class SimpleRequest {
     }
 }
 
+// Interface: SessionStateChangeRequest
+// Represents a request to the service to change the state of an analytics session.
+export interface SessionStateChangeRequest {
+    // Variable: requestID
+    requestID: string;
+    // Variable: state
+    state: SessionState;
+    // Variable: application
+    application: string;
+}
+
 // Class: TrackingStateCallback
 // Used by <MessageReceiver> to wait for a <TrackingStateResponse> from the Service. Owns a callback with a
 // <TrackingStateResponse> as a parameter. Stores a timestamp of its creation so the response has the ability to
@@ -409,3 +430,7 @@ export class TrackingStateCallback {
         this.callback = _callback;
     }
 }
+
+// Type: CallbackList
+// Represents a list of callbacks keyed against id strings.
+export type CallbackList<T> = { [id: string]: TouchFreeRequestCallback<T> };
