@@ -235,4 +235,14 @@ describe('SVG Cursor', () => {
             checkDefaultCursorColors(true);
         });
     });
+
+    test('SetCursorOptimise correctly sets the attribute correctly', () => {
+        expect(cursor?.getAttribute('shape-rendering')).toBe(null);
+
+        svgCursor.SetCursorOptimise(true);
+        expect(cursor?.getAttribute('shape-rendering')).toBe('optimizeSpeed');
+
+        svgCursor.SetCursorOptimise(false);
+        expect(cursor?.getAttribute('shape-rendering')).toBe('auto');
+    });
 });
