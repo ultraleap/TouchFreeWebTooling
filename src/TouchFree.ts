@@ -23,7 +23,7 @@ const GetInputController = () => InputController;
 // Function: Init
 // Initializes TouchFree - must be called before any functionality requiring a TouchFree service connection.
 const Init = (tfInitParams?: TfInitParams): void => {
-    ConnectionManager.init({ address: tfInitParams?.address } ?? undefined);
+    ConnectionManager.init({ address: tfInitParams?.address });
 
     InputController = new WebInputController();
 
