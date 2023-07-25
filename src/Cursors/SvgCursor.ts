@@ -47,7 +47,6 @@ export class SVGCursor extends TouchlessCursor {
         svgElement.style.transition = 'opacity 0.5s linear';
         svgElement.setAttribute('width', '100%');
         svgElement.setAttribute('height', '100%');
-        svgElement.setAttribute('shape-rendering', 'optimizeSpeed');
         svgElement.id = 'svg-cursor';
         documentBody?.appendChild(svgElement);
 
@@ -208,6 +207,12 @@ export class SVGCursor extends TouchlessCursor {
     // Used to set the opacity of the cursor
     SetCursorOpacity(opacity: number): void {
         this.cursorCanvas.style.opacity = opacity.toString();
+    }
+
+    // Function: SetCursorOptimise
+    // Used to set the rendering mode of the SVGCursor to be optimised for speed or rendered in the default manner
+    SetCursorOptimise(optimise: boolean) {
+        this.cursorCanvas.setAttribute('shape-rendering', optimise ? 'optimizeSpeed' : 'auto');
     }
 
     // Function: GetCurrentCursorRadius
