@@ -25,18 +25,15 @@ const GetInputController = () => InputController;
 const Init = (tfInitParams?: TfInitParams): void => {
     ConnectionManager.init({ address: tfInitParams?.address } ?? undefined);
 
-    ConnectionManager.AddConnectionListener(() => {
-        InputController = new WebInputController();
+    InputController = new WebInputController();
 
-        if (tfInitParams === undefined) {
+    if (tfInitParams === undefined) {
+        CurrentCursor = new SVGCursor();
+    } else {
+        if (tfInitParams.initialiseCursor === undefined || tfInitParams.initialiseCursor === true) {
             CurrentCursor = new SVGCursor();
-        } else {
-            if (tfInitParams.initialiseCursor === undefined || tfInitParams.initialiseCursor === true) {
-                console.log("TEST12")
-                CurrentCursor = new SVGCursor();
-            }
         }
-    });
+    }
 };
 
 // Function: IsConnected
