@@ -5,7 +5,7 @@ import { WebInputController } from './InputControllers/WebInputController';
 import { HandDataManager } from './Plugins/HandDataManager';
 import { InputActionManager } from './Plugins/InputActionManager';
 import { TouchFreeEvent, TouchFreeEventSignatures } from './TouchFreeToolingTypes';
-import { SessionState, WebSocketResponse } from 'Connection/TouchFreeServiceTypes';
+import { AnalyticsSessionRequestType, WebSocketResponse } from 'Connection/TouchFreeServiceTypes';
 
 let InputController: WebInputController | undefined;
 let CurrentCursor: TouchlessCursor | undefined;
@@ -44,11 +44,11 @@ const IsConnected = (): boolean => ConnectionManager.IsConnected;
 // Function: ControlAnalyticsSession
 // Used to start or stop an analytics session.
 const ControlAnalyticsSession = (
-    state: SessionState,
+    state: AnalyticsSessionRequestType,
     application: string,
     callback?: (detail: WebSocketResponse) => void
 ) => {
-    ConnectionManager.serviceConnection()?.RequestSessionStateChange(state, application, callback);
+    ConnectionManager.serviceConnection()?.AnalyticsSessionRequest(state, application, callback);
 };
 
 // Class: EventHandle

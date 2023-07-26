@@ -15,7 +15,7 @@ import {
     ServiceStatus,
     ServiceStatusCallback,
     ServiceStatusRequest,
-    SessionState,
+    AnalyticsSessionRequestType,
     SessionStateChangeRequest,
     SimpleRequest,
     TrackingStateCallback,
@@ -194,7 +194,7 @@ export class ServiceConnection {
                 break;
             }
 
-            case ActionCode.SESSION_STATE_CHANGE: {
+            case ActionCode.ANALYTICS_SESSION_REQUEST: {
                 ConnectionManager.messageReceiver.sessionStateQueue.push(looseData.content as WebSocketResponse);
                 break;
             }
@@ -444,10 +444,10 @@ export class ServiceConnection {
         this.webSocket.send(message);
     };
 
-    // Function: RequestSessionStateChange
+    // Function: AnalyticsSessionRequest
     // Used to either start a new analytics session, or stop the current session.
-    RequestSessionStateChange = (
-        state: SessionState,
+    AnalyticsSessionRequest = (
+        state: AnalyticsSessionRequestType,
         application: string,
         callback?: (detail: WebSocketResponse) => void
     ) => {
@@ -457,7 +457,10 @@ export class ServiceConnection {
             state: state,
             application: application,
         };
-        const wrapper = new CommunicationWrapper<SessionStateChangeRequest>(ActionCode.SESSION_STATE_CHANGE, content);
+        const wrapper = new CommunicationWrapper<SessionStateChangeRequest>(
+            ActionCode.ANALYTICS_SESSION_REQUEST,
+            content
+        );
         const message = JSON.stringify(wrapper);
 
         if (callback) {

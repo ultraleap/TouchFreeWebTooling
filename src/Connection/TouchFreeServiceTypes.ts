@@ -66,13 +66,13 @@ export enum ActionCode {
 
     RESET_INTERACTION_CONFIG_FILE = 'RESET_INTERACTION_CONFIG_FILE',
 
-    SESSION_STATE_CHANGE = 'SESSION_STATE_CHANGE',
+    ANALYTICS_SESSION_REQUEST = 'ANALYTICS_SESSION_REQUEST',
 }
 
-// Type: SessionState
+// Type: RequestSessionStateChange
 // START - Sent to the service to start an analytics session
 // STOP - Sent to the service to stop an analytics session
-export type SessionState = 'START' | 'STOP';
+export type AnalyticsSessionRequestType = 'START' | 'STOP';
 
 // Type: EventStatus
 // Represents whether the event has been processed by the service
@@ -410,7 +410,7 @@ export interface SessionStateChangeRequest {
     // Variable: requestID
     requestID: string;
     // Variable: state
-    state: SessionState;
+    state: AnalyticsSessionRequestType;
     // Variable: application
     application: string;
 }
