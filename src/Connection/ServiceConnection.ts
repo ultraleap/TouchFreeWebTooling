@@ -195,7 +195,9 @@ export class ServiceConnection {
             }
 
             case ActionCode.ANALYTICS_SESSION_REQUEST: {
-                ConnectionManager.messageReceiver.sessionStateQueue.push(looseData.content as WebSocketResponse);
+                ConnectionManager.messageReceiver.analyticsSessionRequestQueue.push(
+                    looseData.content as WebSocketResponse
+                );
                 break;
             }
         }
@@ -447,14 +449,14 @@ export class ServiceConnection {
     // Function: AnalyticsSessionRequest
     // Used to either start a new analytics session, or stop the current session.
     AnalyticsSessionRequest = (
-        state: AnalyticsSessionRequestType,
+        requestType: AnalyticsSessionRequestType,
         application: string,
         callback?: (detail: WebSocketResponse) => void
     ) => {
         const requestID = uuidgen();
         const content: SessionStateChangeRequest = {
             requestID: requestID,
-            state: state,
+            requestType: requestType,
             application: application,
         };
         const wrapper = new CommunicationWrapper<SessionStateChangeRequest>(
@@ -464,7 +466,7 @@ export class ServiceConnection {
         const message = JSON.stringify(wrapper);
 
         if (callback) {
-            ConnectionManager.messageReceiver.sessionStateCallbacks[requestID] = new ResponseCallback(
+            ConnectionManager.messageReceiver.analyticsSessionRequestCallbacks[requestID] = new ResponseCallback(
                 Date.now(),
                 callback
             );

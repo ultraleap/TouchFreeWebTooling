@@ -28,7 +28,7 @@ import { Mask } from '../Tracking/TrackingTypes';
 //                              the HAND_DATA stream or change the lens to have the hand position relative to.
 // INTERACTION_ZONE_EVENT - Represents the interaction zone state received from the Service
 //
-// SESSION_STATE - Represents a request to start or stop an analytics session
+// ANALYTICS_SESSION_REQUEST - Represents a request to start or stop an analytics session
 export enum ActionCode {
     INPUT_ACTION = 'INPUT_ACTION',
 
@@ -410,7 +410,7 @@ export interface SessionStateChangeRequest {
     // Variable: requestID
     requestID: string;
     // Variable: state
-    state: AnalyticsSessionRequestType;
+    requestType: AnalyticsSessionRequestType;
     // Variable: application
     application: string;
 }
