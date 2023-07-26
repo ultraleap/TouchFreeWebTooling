@@ -17,25 +17,23 @@ export interface TfInitParams {
 }
 
 const GetCurrentCursor = () => CurrentCursor;
-const SetCurrentCursor = (cursor: TouchlessCursor) => (CurrentCursor = cursor);
+const SetCurrentCursor = (cursor: TouchlessCursor | undefined) => (CurrentCursor = cursor);
 const GetInputController = () => InputController;
 
 // Function: Init
 // Initializes TouchFree - must be called before any functionality requiring a TouchFree service connection.
 const Init = (tfInitParams?: TfInitParams): void => {
-    ConnectionManager.init({ address: tfInitParams?.address } ?? undefined);
+    ConnectionManager.init({ address: tfInitParams?.address });
 
-    ConnectionManager.AddConnectionListener(() => {
-        InputController = new WebInputController();
+    InputController = new WebInputController();
 
-        if (tfInitParams === undefined) {
+    if (tfInitParams === undefined) {
+        CurrentCursor = new SVGCursor();
+    } else {
+        if (tfInitParams.initialiseCursor === undefined || tfInitParams.initialiseCursor === true) {
             CurrentCursor = new SVGCursor();
-        } else {
-            if (tfInitParams.initialiseCursor === undefined || tfInitParams.initialiseCursor === true) {
-                CurrentCursor = new SVGCursor();
-            }
         }
-    });
+    }
 };
 
 // Function: IsConnected

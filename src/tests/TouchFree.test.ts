@@ -1,6 +1,7 @@
 import { ConnectionManager } from '../Connection/ConnectionManager';
 import { DotCursor } from '../Cursors/DotCursor';
 import { SVGCursor } from '../Cursors/SvgCursor';
+import { WebInputController } from '../InputControllers/WebInputController';
 import TouchFree from '../TouchFree';
 import { TouchFreeEventSignatures, TouchFreeEvent } from '../TouchFreeToolingTypes';
 
@@ -26,7 +27,13 @@ describe('TouchFree', () => {
             it('Should pass WhenConnected callback through to OnConnected if there is no current connection', () => {
                 TouchFree.RegisterEventCallback('WhenConnected', fn);
                 TouchFree.DispatchEvent('OnConnected');
-                expect(fn).toBeCalled();
+                expect(fn).toBeCalledTimes(1);
+            });
+            it('Should pass WhenConnected callback through to OnConnected if there is a current connection', () => {
+                const mock = jest.spyOn(ConnectionManager, 'IsConnected', 'get').mockReturnValue(true);
+                TouchFree.RegisterEventCallback('WhenConnected', fn);
+                mock.mockRestore();
+                expect(fn).toBeCalledTimes(2);
             });
         } else {
             it(`Should trigger appropriate callbacks when ${key} event is dispatched`, () => {
@@ -39,21 +46,41 @@ describe('TouchFree', () => {
         }
     }
 
-    it('Should pass a given address to the ConnectionManager', () => {
-        const newAddress = { ip: '192.168.0.1', port: '8080' };
-        TouchFree.Init({ address: newAddress });
-        expect(ConnectionManager.iPAddress).toBe(newAddress.ip);
-        expect(ConnectionManager.port).toBe(newAddress.port);
+    describe('Init', () => {
+        const checkDefaultCursor = (initialiseCursor: boolean | undefined) => {
+            TouchFree.SetCurrentCursor(undefined);
+            let cursor = TouchFree.GetCurrentCursor();
+            expect(cursor).toBe(undefined);
+            TouchFree.Init({ initialiseCursor: initialiseCursor });
+            cursor = TouchFree.GetCurrentCursor();
+            expect(cursor instanceof SVGCursor).toBe(true);
+        };
+
+        it('Should create an SVGCursor when initialiseCursor is undefined', () => checkDefaultCursor(undefined));
+
+        it('Should create an SVGCursor when initialiseCursor is true', () => checkDefaultCursor(true));
+
+        it('Should pass a given address to the ConnectionManager', () => {
+            const newAddress = { ip: '192.168.0.1', port: '8080' };
+            TouchFree.Init({ address: newAddress });
+            expect(ConnectionManager.iPAddress).toBe(newAddress.ip);
+            expect(ConnectionManager.port).toBe(newAddress.port);
+        });
     });
 
-    it('Should set the cursor correctly', () => {
+    it('SetCurrentCursor should set the cursor correctly', () => {
         const cursor = new SVGCursor();
-        cursor.DisableCursor();
         TouchFree.SetCurrentCursor(cursor);
         expect(TouchFree.GetCurrentCursor()).toBe(cursor);
 
         const newCursor = new DotCursor(new Image(), new Image());
         TouchFree.SetCurrentCursor(newCursor);
         expect(TouchFree.GetCurrentCursor()).toBe(newCursor);
+    });
+
+    it('GetInputController should get the input controller correctly', () => {
+        TouchFree.Init();
+        const controller = TouchFree.GetInputController();
+        expect(controller instanceof WebInputController).toBe(true);
     });
 });
