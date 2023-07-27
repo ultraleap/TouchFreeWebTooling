@@ -15,6 +15,8 @@ import {
     ServiceStatus,
     ServiceStatusCallback,
     ServiceStatusRequest,
+    AnalyticsSessionRequestType,
+    SessionStateChangeRequest,
     SimpleRequest,
     TrackingStateCallback,
     TrackingStateRequest,
@@ -191,6 +193,13 @@ export class ServiceConnection {
                 ConnectionManager.messageReceiver.lastInteractionZoneUpdate = { status: 'UNPROCESSED', state: state };
                 break;
             }
+
+            case ActionCode.ANALYTICS_SESSION_REQUEST: {
+                ConnectionManager.messageReceiver.analyticsSessionRequestQueue.push(
+                    looseData.content as WebSocketResponse
+                );
+                break;
+            }
         }
     };
 
@@ -276,14 +285,16 @@ export class ServiceConnection {
 
         const guid: string = uuidgen();
         const request: ResetInteractionConfigFileRequest = new ResetInteractionConfigFileRequest(guid);
-        const wrapper = new CommunicationWrapper<ResetInteractionConfigFileRequest>
-            (ActionCode.RESET_INTERACTION_CONFIG_FILE, request);
+        const wrapper = new CommunicationWrapper<ResetInteractionConfigFileRequest>(
+            ActionCode.RESET_INTERACTION_CONFIG_FILE,
+            request
+        );
         const message: string = JSON.stringify(wrapper);
 
         ConnectionManager.messageReceiver.configStateCallbacks[guid] = new ConfigStateCallback(Date.now(), _callback);
 
         this.webSocket.send(message);
-    }
+    };
 
     // Function: RequestServiceStatus
     // Used internally to request information from the Service via the <webSocket>.
@@ -429,6 +440,35 @@ export class ServiceConnection {
             ConnectionManager.messageReceiver.trackingStateCallbacks[requestID] = new TrackingStateCallback(
                 Date.now(),
                 _callback
+            );
+        }
+
+        this.webSocket.send(message);
+    };
+
+    // Function: AnalyticsSessionRequest
+    // Used to either start a new analytics session, or stop the current session.
+    AnalyticsSessionRequest = (
+        requestType: AnalyticsSessionRequestType,
+        application: string,
+        callback?: (detail: WebSocketResponse) => void
+    ) => {
+        const requestID = uuidgen();
+        const content: SessionStateChangeRequest = {
+            requestID: requestID,
+            requestType: requestType,
+            application: application,
+        };
+        const wrapper = new CommunicationWrapper<SessionStateChangeRequest>(
+            ActionCode.ANALYTICS_SESSION_REQUEST,
+            content
+        );
+        const message = JSON.stringify(wrapper);
+
+        if (callback) {
+            ConnectionManager.messageReceiver.analyticsSessionRequestCallbacks[requestID] = new ResponseCallback(
+                Date.now(),
+                callback
             );
         }
 
