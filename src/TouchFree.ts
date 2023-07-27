@@ -44,11 +44,11 @@ const IsConnected = (): boolean => ConnectionManager.IsConnected;
 // Function: ControlAnalyticsSession
 // Used to start or stop an analytics session.
 const ControlAnalyticsSession = (
-    state: AnalyticsSessionRequestType,
+    requestType: AnalyticsSessionRequestType,
     application: string,
     callback?: (detail: WebSocketResponse) => void
 ) => {
-    ConnectionManager.serviceConnection()?.AnalyticsSessionRequest(state, application, callback);
+    ConnectionManager.serviceConnection()?.AnalyticsSessionRequest(requestType, application, callback);
 };
 
 // Class: EventHandle
