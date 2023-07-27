@@ -39,6 +39,40 @@ const Init = (tfInitParams?: TfInitParams): void => {
     }
 };
 
+type EventKey = keyof DocumentEventMap;
+const analyticEvents: { [key in EventKey]?: (e: Event) => void } = {};
+
+const defaultAnalyticEvents: EventKey[] = ['touchstart', 'touchmove', 'touchend'];
+
+// Function: RegisterAnalyticEvents
+// Registers a given list of event for the TouchFree service to record.
+// If no list of events is provided then the default set of events will be recorded.
+const RegisterAnalyticEvents = (eventsIn: EventKey[] = defaultAnalyticEvents) => {
+    eventsIn.forEach((evt) => {
+        const onEvent = (e: Event) => {
+            // SEND ANALYTIC EVENT TO SERVICE HERE
+            console.log(`${evt}:`, e);
+        };
+        analyticEvents[evt] = onEvent;
+        document.addEventListener(evt, onEvent, true);
+    });
+};
+
+// Function: UnregisterAnalyticEvents
+// Unregister any registered analytic events.
+// If no list of events is provided then all registered analytic events will be unregistered.
+const UnregisterAnalyticEvents = (eventsIn?: EventKey[]) => {
+    const events: EventKey[] = eventsIn ? eventsIn : (Object.keys(analyticEvents) as EventKey[]);
+
+    events.forEach((evt) => {
+        const evtFunc = analyticEvents[evt];
+        if (evtFunc) {
+            document.removeEventListener(evt, evtFunc, true);
+            delete analyticEvents[evt];
+        }
+    });
+};
+
 // Function: IsConnected
 // Are we connected to the TouchFree service?
 const IsConnected = (): boolean => ConnectionManager.IsConnected;
@@ -300,4 +334,6 @@ export default {
     IsConnected,
     RegisterEventCallback,
     ControlAnalytics: ControlAnalyticsSession,
+    RegisterAnalyticEvents,
+    UnregisterAnalyticEvents,
 };
