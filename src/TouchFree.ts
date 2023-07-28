@@ -6,7 +6,7 @@ import { HandDataManager } from './Plugins/HandDataManager';
 import { InputActionManager } from './Plugins/InputActionManager';
 import { TouchFreeEvent, TouchFreeEventSignatures } from './TouchFreeToolingTypes';
 import {
-    AnalyticEventCounts,
+    AnalyticSessionEvents,
     AnalyticEventKey,
     AnalyticsSessionRequestType,
     WebSocketResponse,
@@ -46,10 +46,7 @@ const Init = (tfInitParams?: TfInitParams): void => {
 
 const analyticEvents: { [key in AnalyticEventKey]?: () => void } = {};
 
-const eventCounts: AnalyticEventCounts = {};
-
-//Function: GetEventCounts
-const GetEventCounts = () => eventCounts;
+let sessionEvents: AnalyticSessionEvents = {};
 
 const defaultAnalyticEvents: AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
 // Function: RegisterAnalyticEvents
@@ -58,8 +55,8 @@ const defaultAnalyticEvents: AnalyticEventKey[] = ['touchstart', 'touchmove', 't
 const RegisterAnalyticEvents = (eventsIn: AnalyticEventKey[] = defaultAnalyticEvents) => {
     eventsIn.forEach((evt) => {
         const onEvent = () => {
-            const eventCount = eventCounts[evt];
-            eventCounts[evt] = eventCount === undefined ? 1 : eventCount + 1;
+            const eventCount = sessionEvents[evt];
+            sessionEvents[evt] = eventCount === undefined ? 1 : eventCount + 1;
         };
         analyticEvents[evt] = onEvent;
         document.addEventListener(evt, onEvent, true);
@@ -85,6 +82,8 @@ const UnregisterAnalyticEvents = (eventsIn?: AnalyticEventKey[]) => {
 // Are we connected to the TouchFree service?
 const IsConnected = (): boolean => ConnectionManager.IsConnected;
 
+let analyticsHeartbeat: number;
+
 // Function: ControlAnalyticsSession
 // Used to start or stop an analytics session.
 const ControlAnalyticsSession = (
@@ -104,6 +103,10 @@ const ControlAnalyticsSession = (
         serviceConnection?.AnalyticsSessionRequest(requestType, newID, (detail) => {
             if (detail.status !== 'Failure') {
                 CurrentSessionId = newID;
+                // analyticsHeartbeat = window.setInterval(
+                //     () => serviceConnection?.UpdateAnalyticSessionEvents(newID, sessionEvents),
+                //     1000
+                // );
                 callback?.(detail);
             }
         });
@@ -117,7 +120,11 @@ const ControlAnalyticsSession = (
         }
 
         serviceConnection?.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
+        serviceConnection?.UpdateAnalyticSessionEvents(CurrentSessionId, sessionEvents, (e) => console.log(e.message));
         CurrentSessionId = undefined;
+        // Clear session events
+        sessionEvents = {};
+        clearInterval(analyticsHeartbeat);
     }
 };
 
@@ -341,8 +348,7 @@ export default {
     GetInputController,
     IsConnected,
     RegisterEventCallback,
-    ControlAnalytics: ControlAnalyticsSession,
+    ControlAnalyticsSession,
     RegisterAnalyticEvents,
     UnregisterAnalyticEvents,
-    GetEventCounts,
 };

@@ -23,7 +23,8 @@ import {
     TrackingStateResponse,
     VersionHandshakeResponse,
     WebSocketResponse,
-    UpdateAnalyticEventCountsRequest,
+    UpdateAnalyticSessionEventsRequest,
+    AnalyticSessionEvents,
 } from './TouchFreeServiceTypes';
 import { v4 as uuidgen } from 'uuid';
 
@@ -479,16 +480,19 @@ export class ServiceConnection {
         this.webSocket.send(message);
     };
 
-    // Function: AnalyticsCountData
     // TODO.
-    UpdateAnalyticsEventCounts = (application: string, callback?: (detail: WebSocketResponse) => void) => {
+    UpdateAnalyticSessionEvents = (
+        sessionID: string,
+        sessionEvents: AnalyticSessionEvents,
+        callback?: (detail: WebSocketResponse) => void
+    ) => {
         const requestID = uuidgen();
-        const content: UpdateAnalyticEventCountsRequest = {
-            requestID: requestID,
-            application: application,
-            eventCounts: TouchFree.GetEventCounts(),
+        const content: UpdateAnalyticSessionEventsRequest = {
+            requestID,
+            sessionID,
+            sessionEvents,
         };
-        const wrapper = new CommunicationWrapper<UpdateAnalyticEventCountsRequest>(
+        const wrapper = new CommunicationWrapper<UpdateAnalyticSessionEventsRequest>(
             ActionCode.ANALYTICS_UPDATE_COUNTS_REQUEST,
             content
         );

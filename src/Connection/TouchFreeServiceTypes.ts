@@ -81,7 +81,7 @@ export type AnalyticsSessionRequestType = 'START' | 'STOP';
 export type EventStatus = 'PROCESSED' | 'UNPROCESSED';
 
 export type AnalyticEventKey = keyof DocumentEventMap;
-export type AnalyticEventCounts = { [key in AnalyticEventKey]?: number };
+export type AnalyticSessionEvents = { [key in AnalyticEventKey]?: number };
 
 // Enum: HandPresenceState
 // HAND_FOUND - Sent when the first hand is found when no hand has been present for a moment
@@ -420,15 +420,15 @@ export interface SessionStateChangeRequest {
     sessionID: string;
 }
 
-// Interface: UpdateAnalyticEventCountsRequest
+// Interface: UpdateAnalyticSessionEventsRequest
 // Represents a request to the service to update the event counts in the current analytics session.
-export interface UpdateAnalyticEventCountsRequest {
+export interface UpdateAnalyticSessionEventsRequest {
     // Variable: requestID
     requestID: string;
-    // Variable: application
-    application: string;
+    // Variable: sessionID
+    sessionID: string;
     // Variable: eventCounts
-    eventCounts: AnalyticEventCounts;
+    sessionEvents: AnalyticSessionEvents;
 }
 
 // Class: TrackingStateCallback
