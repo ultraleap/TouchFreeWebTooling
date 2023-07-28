@@ -51,16 +51,18 @@ const ControlAnalyticsSession = (
     callback?: (detail: WebSocketResponse) => void
 ) => {
     const serviceConnection = ConnectionManager.serviceConnection();
-    if (!serviceConnection) return;
 
     if (requestType === 'START') {
         if (CurrentSessionId) {
             console.warn(`Session: ${CurrentSessionId} already in progress`);
             return;
         }
+        const newID = `${application}:${uuidgen()}`;
 
-        CurrentSessionId = `${application}:${uuidgen()}`;
-        serviceConnection.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
+        serviceConnection?.AnalyticsSessionRequest(requestType, newID, (detail) => {
+            CurrentSessionId = newID;
+            callback?.(detail);
+        });
         return;
     }
 
@@ -70,7 +72,7 @@ const ControlAnalyticsSession = (
             return;
         }
 
-        serviceConnection.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
+        serviceConnection?.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
         CurrentSessionId = undefined;
     }
 };
