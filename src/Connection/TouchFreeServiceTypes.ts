@@ -29,6 +29,7 @@ import { Mask } from '../Tracking/TrackingTypes';
 // INTERACTION_ZONE_EVENT - Represents the interaction zone state received from the Service
 //
 // ANALYTICS_SESSION_REQUEST - Represents a request to start or stop an analytics session
+// ANALYTICS_UPDATE_COUNTS_REQUEST - Represents a request to update the analytic event counts for the current session.
 export enum ActionCode {
     INPUT_ACTION = 'INPUT_ACTION',
 
@@ -67,6 +68,7 @@ export enum ActionCode {
     RESET_INTERACTION_CONFIG_FILE = 'RESET_INTERACTION_CONFIG_FILE',
 
     ANALYTICS_SESSION_REQUEST = 'ANALYTICS_SESSION_REQUEST',
+    ANALYTICS_UPDATE_COUNTS_REQUEST = 'ANALYTICS_UPDATE_COUNTS_REQUEST',
 }
 
 // Type: RequestSessionStateChange
@@ -77,6 +79,9 @@ export type AnalyticsSessionRequestType = 'START' | 'STOP';
 // Type: EventStatus
 // Represents whether the event has been processed by the service
 export type EventStatus = 'PROCESSED' | 'UNPROCESSED';
+
+export type AnalyticEventKey = keyof DocumentEventMap;
+export type AnalyticEventCounts = { [key in AnalyticEventKey]?: number };
 
 // Enum: HandPresenceState
 // HAND_FOUND - Sent when the first hand is found when no hand has been present for a moment
@@ -413,6 +418,17 @@ export interface SessionStateChangeRequest {
     requestType: AnalyticsSessionRequestType;
     // Variable: sessionID
     sessionID: string;
+}
+
+// Interface: UpdateAnalyticEventCountsRequest
+// Represents a request to the service to update the event counts in the current analytics session.
+export interface UpdateAnalyticEventCountsRequest {
+    // Variable: requestID
+    requestID: string;
+    // Variable: application
+    application: string;
+    // Variable: eventCounts
+    eventCounts: AnalyticEventCounts;
 }
 
 // Class: TrackingStateCallback

@@ -23,6 +23,7 @@ import {
     TrackingStateResponse,
     VersionHandshakeResponse,
     WebSocketResponse,
+    UpdateAnalyticEventCountsRequest,
 } from './TouchFreeServiceTypes';
 import { v4 as uuidgen } from 'uuid';
 
@@ -195,9 +196,12 @@ export class ServiceConnection {
             }
 
             case ActionCode.ANALYTICS_SESSION_REQUEST: {
-                ConnectionManager.messageReceiver.analyticsSessionRequestQueue.push(
-                    looseData.content as WebSocketResponse
-                );
+                ConnectionManager.messageReceiver.analyticsRequestQueue.push(looseData.content as WebSocketResponse);
+                break;
+            }
+
+            case ActionCode.ANALYTICS_UPDATE_COUNTS_REQUEST: {
+                ConnectionManager.messageReceiver.analyticsRequestQueue.push(looseData.content as WebSocketResponse);
                 break;
             }
         }
@@ -466,7 +470,32 @@ export class ServiceConnection {
         const message = JSON.stringify(wrapper);
 
         if (callback) {
-            ConnectionManager.messageReceiver.analyticsSessionRequestCallbacks[requestID] = new ResponseCallback(
+            ConnectionManager.messageReceiver.analyticsRequestCallbacks[requestID] = new ResponseCallback(
+                Date.now(),
+                callback
+            );
+        }
+
+        this.webSocket.send(message);
+    };
+
+    // Function: AnalyticsCountData
+    // TODO.
+    UpdateAnalyticsEventCounts = (application: string, callback?: (detail: WebSocketResponse) => void) => {
+        const requestID = uuidgen();
+        const content: UpdateAnalyticEventCountsRequest = {
+            requestID: requestID,
+            application: application,
+            eventCounts: TouchFree.GetEventCounts(),
+        };
+        const wrapper = new CommunicationWrapper<UpdateAnalyticEventCountsRequest>(
+            ActionCode.ANALYTICS_UPDATE_COUNTS_REQUEST,
+            content
+        );
+        const message = JSON.stringify(wrapper);
+
+        if (callback) {
+            ConnectionManager.messageReceiver.analyticsRequestCallbacks[requestID] = new ResponseCallback(
                 Date.now(),
                 callback
             );

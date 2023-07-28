@@ -5,7 +5,12 @@ import { WebInputController } from './InputControllers/WebInputController';
 import { HandDataManager } from './Plugins/HandDataManager';
 import { InputActionManager } from './Plugins/InputActionManager';
 import { TouchFreeEvent, TouchFreeEventSignatures } from './TouchFreeToolingTypes';
-import { AnalyticsSessionRequestType, WebSocketResponse } from 'Connection/TouchFreeServiceTypes';
+import {
+    AnalyticEventCounts,
+    AnalyticEventKey,
+    AnalyticsSessionRequestType,
+    WebSocketResponse,
+} from 'Connection/TouchFreeServiceTypes';
 import { v4 as uuidgen } from 'uuid';
 
 let InputController: WebInputController | undefined;
@@ -39,19 +44,22 @@ const Init = (tfInitParams?: TfInitParams): void => {
     }
 };
 
-type EventKey = keyof DocumentEventMap;
-const analyticEvents: { [key in EventKey]?: (e: Event) => void } = {};
+const analyticEvents: { [key in AnalyticEventKey]?: () => void } = {};
 
-const defaultAnalyticEvents: EventKey[] = ['touchstart', 'touchmove', 'touchend'];
+const eventCounts: AnalyticEventCounts = {};
 
+//Function: GetEventCounts
+const GetEventCounts = () => eventCounts;
+
+const defaultAnalyticEvents: AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
 // Function: RegisterAnalyticEvents
 // Registers a given list of event for the TouchFree service to record.
 // If no list of events is provided then the default set of events will be recorded.
-const RegisterAnalyticEvents = (eventsIn: EventKey[] = defaultAnalyticEvents) => {
+const RegisterAnalyticEvents = (eventsIn: AnalyticEventKey[] = defaultAnalyticEvents) => {
     eventsIn.forEach((evt) => {
-        const onEvent = (e: Event) => {
-            // SEND ANALYTIC EVENT TO SERVICE HERE
-            console.log(`${evt}:`, e);
+        const onEvent = () => {
+            const eventCount = eventCounts[evt];
+            eventCounts[evt] = eventCount === undefined ? 1 : eventCount + 1;
         };
         analyticEvents[evt] = onEvent;
         document.addEventListener(evt, onEvent, true);
@@ -61,8 +69,8 @@ const RegisterAnalyticEvents = (eventsIn: EventKey[] = defaultAnalyticEvents) =>
 // Function: UnregisterAnalyticEvents
 // Unregister any registered analytic events.
 // If no list of events is provided then all registered analytic events will be unregistered.
-const UnregisterAnalyticEvents = (eventsIn?: EventKey[]) => {
-    const events: EventKey[] = eventsIn ? eventsIn : (Object.keys(analyticEvents) as EventKey[]);
+const UnregisterAnalyticEvents = (eventsIn?: AnalyticEventKey[]) => {
+    const events: AnalyticEventKey[] = eventsIn ? eventsIn : (Object.keys(analyticEvents) as AnalyticEventKey[]);
 
     events.forEach((evt) => {
         const evtFunc = analyticEvents[evt];
@@ -336,4 +344,5 @@ export default {
     ControlAnalytics: ControlAnalyticsSession,
     RegisterAnalyticEvents,
     UnregisterAnalyticEvents,
+    GetEventCounts,
 };
