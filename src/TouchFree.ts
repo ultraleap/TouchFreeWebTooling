@@ -60,8 +60,10 @@ const ControlAnalyticsSession = (
         const newID = `${application}:${uuidgen()}`;
 
         serviceConnection?.AnalyticsSessionRequest(requestType, newID, (detail) => {
-            CurrentSessionId = newID;
-            callback?.(detail);
+            if (detail.status !== 'Failure') {
+                CurrentSessionId = newID;
+                callback?.(detail);
+            }
         });
         return;
     }
