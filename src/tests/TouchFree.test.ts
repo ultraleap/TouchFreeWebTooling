@@ -123,13 +123,14 @@ describe('TouchFree', () => {
                     callback?.(new WebSocketResponse('test', 'Success', 'test', 'test'));
                 }
             );
-            jest.spyOn(console, 'warn').mockImplementation((arg) => {
+            const testFn = jest.spyOn(console, 'warn').mockImplementation((arg) => {
                 expect(arg).toBe(`Session: ${id} already in progress`);
             });
 
             TouchFree.ControlAnalytics('START', applicationName);
             TouchFree.ControlAnalytics('START', applicationName);
             TouchFree.ControlAnalytics('STOP', applicationName);
+            expect(testFn).toBeCalled();
         });
 
         it('should give appropriate warnings on STOP', () => {
