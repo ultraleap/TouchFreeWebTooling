@@ -6,9 +6,11 @@ import { HandDataManager } from './Plugins/HandDataManager';
 import { InputActionManager } from './Plugins/InputActionManager';
 import { TouchFreeEvent, TouchFreeEventSignatures } from './TouchFreeToolingTypes';
 import { AnalyticsSessionRequestType, WebSocketResponse } from 'Connection/TouchFreeServiceTypes';
+import { v4 as uuidgen } from 'uuid';
 
 let InputController: WebInputController | undefined;
 let CurrentCursor: TouchlessCursor | undefined;
+let CurrentSessionId: string | undefined;
 
 // Class: TfInitParams
 // Extra options for use when initializing TouchFree
@@ -48,7 +50,28 @@ const ControlAnalyticsSession = (
     application: string,
     callback?: (detail: WebSocketResponse) => void
 ) => {
-    ConnectionManager.serviceConnection()?.AnalyticsSessionRequest(requestType, application, callback);
+    const serviceConnection = ConnectionManager.serviceConnection();
+    if (!serviceConnection) return;
+
+    if (requestType === 'START') {
+        if (CurrentSessionId) {
+            console.warn(`Session: ${CurrentSessionId} already in progress`);
+            return;
+        }
+
+        CurrentSessionId = `${application}:${uuidgen()}`;
+        serviceConnection.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
+    }
+
+    if (requestType === 'STOP') {
+        if (!CurrentSessionId) {
+            console.warn('No active session');
+            return;
+        }
+
+        serviceConnection.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
+        CurrentSessionId = undefined;
+    }
 };
 
 // Class: EventHandle
