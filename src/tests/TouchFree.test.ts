@@ -1,9 +1,11 @@
 import { ConnectionManager } from '../Connection/ConnectionManager';
+import { WebSocketResponse } from '../Connection/TouchFreeServiceTypes';
 import { DotCursor } from '../Cursors/DotCursor';
 import { SVGCursor } from '../Cursors/SvgCursor';
 import { WebInputController } from '../InputControllers/WebInputController';
 import TouchFree from '../TouchFree';
 import { TouchFreeEventSignatures, TouchFreeEvent } from '../TouchFreeToolingTypes';
+import { ServiceConnection } from 'Connection/ServiceConnection';
 
 const events: TouchFreeEventSignatures = {
     OnConnected: jest.fn(),
@@ -68,7 +70,7 @@ describe('TouchFree', () => {
         });
     });
 
-    it('SetCurrentCursor should set the cursor correctly', () => {
+    test('SetCurrentCursor should set the cursor correctly', () => {
         const cursor = new SVGCursor();
         TouchFree.SetCurrentCursor(cursor);
         expect(TouchFree.GetCurrentCursor()).toBe(cursor);
@@ -78,9 +80,69 @@ describe('TouchFree', () => {
         expect(TouchFree.GetCurrentCursor()).toBe(newCursor);
     });
 
-    it('GetInputController should get the input controller correctly', () => {
+    test('GetInputController should get the input controller correctly', () => {
         TouchFree.Init();
         const controller = TouchFree.GetInputController();
         expect(controller instanceof WebInputController).toBe(true);
+    });
+
+    describe('ControlAnalyticsSession', () => {
+        let serviceConnection: ServiceConnection | null = null;
+        const applicationName = 'testApplication';
+
+        beforeAll(() => {
+            ConnectionManager.init();
+            serviceConnection = ConnectionManager.serviceConnection();
+        });
+
+        it('should call AnalyticsSessionRequest with the correct arguments', () => {
+            if (!serviceConnection) fail('Service connection not available');
+            const testFn = jest
+                .spyOn(serviceConnection, 'AnalyticsSessionRequest')
+                .mockImplementation((requestType, sessionID, callback) => {
+                    expect(sessionID.includes(applicationName)).toBe(true);
+                    callback?.(new WebSocketResponse('test', 'Success', 'test', 'test'));
+                    return requestType;
+                });
+
+            TouchFree.ControlAnalytics('START', applicationName);
+            expect(testFn).toReturnWith('START');
+
+            TouchFree.ControlAnalytics('STOP', applicationName);
+            expect(testFn).toReturnWith('STOP');
+        });
+
+        it('should give appropriate warnings on START', () => {
+            if (!serviceConnection) fail('Service connection not available');
+            let id = '';
+
+            jest.spyOn(serviceConnection, 'AnalyticsSessionRequest').mockImplementation(
+                (_arg1, sessionID, callback) => {
+                    id = sessionID;
+                    // This callback is here to mimic the Service sending a successful response
+                    callback?.(new WebSocketResponse('test', 'Success', 'test', 'test'));
+                }
+            );
+            const testFn = jest.spyOn(console, 'warn').mockImplementation((arg) => {
+                expect(arg).toBe(`Session: ${id} already in progress`);
+            });
+
+            TouchFree.ControlAnalytics('START', applicationName);
+            TouchFree.ControlAnalytics('START', applicationName);
+            TouchFree.ControlAnalytics('STOP', applicationName);
+            expect(testFn).toBeCalled();
+        });
+
+        it('should give appropriate warnings on STOP', () => {
+            if (!serviceConnection) fail('Service connection not available');
+
+            jest.spyOn(serviceConnection, 'AnalyticsSessionRequest').mockImplementation(() => {});
+            const testFn = jest.spyOn(console, 'warn').mockImplementation((arg) => {
+                expect(arg).toBe('No active session');
+            });
+
+            TouchFree.ControlAnalytics('STOP', applicationName);
+            expect(testFn).toBeCalled();
+        });
     });
 });
