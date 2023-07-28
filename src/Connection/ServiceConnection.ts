@@ -450,14 +450,14 @@ export class ServiceConnection {
     // Used to either start a new analytics session, or stop the current session.
     AnalyticsSessionRequest = (
         requestType: AnalyticsSessionRequestType,
-        application: string,
+        sessionID: string,
         callback?: (detail: WebSocketResponse) => void
     ) => {
         const requestID = uuidgen();
         const content: SessionStateChangeRequest = {
             requestID: requestID,
             requestType: requestType,
-            application: application,
+            sessionID: sessionID,
         };
         const wrapper = new CommunicationWrapper<SessionStateChangeRequest>(
             ActionCode.ANALYTICS_SESSION_REQUEST,

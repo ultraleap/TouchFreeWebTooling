@@ -411,8 +411,8 @@ export interface SessionStateChangeRequest {
     requestID: string;
     // Variable: state
     requestType: AnalyticsSessionRequestType;
-    // Variable: application
-    application: string;
+    // Variable: sessionID
+    sessionID: string;
 }
 
 // Class: TrackingStateCallback
