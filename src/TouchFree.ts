@@ -61,6 +61,7 @@ const ControlAnalyticsSession = (
 
         CurrentSessionId = `${application}:${uuidgen()}`;
         serviceConnection.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
+        return;
     }
 
     if (requestType === 'STOP') {
