@@ -201,7 +201,7 @@ export class ServiceConnection {
                 break;
             }
 
-            case ActionCode.ANALYTICS_UPDATE_COUNTS_REQUEST: {
+            case ActionCode.ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST: {
                 ConnectionManager.messageReceiver.analyticsRequestQueue.push(looseData.content as WebSocketResponse);
                 break;
             }
@@ -460,9 +460,9 @@ export class ServiceConnection {
     ) => {
         const requestID = uuidgen();
         const content: SessionStateChangeRequest = {
-            requestID: requestID,
-            requestType: requestType,
-            sessionID: sessionID,
+            requestID,
+            requestType,
+            sessionID,
         };
         const wrapper = new CommunicationWrapper<SessionStateChangeRequest>(
             ActionCode.ANALYTICS_SESSION_REQUEST,
@@ -493,7 +493,7 @@ export class ServiceConnection {
             sessionEvents,
         };
         const wrapper = new CommunicationWrapper<UpdateAnalyticSessionEventsRequest>(
-            ActionCode.ANALYTICS_UPDATE_COUNTS_REQUEST,
+            ActionCode.ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST,
             content
         );
         const message = JSON.stringify(wrapper);

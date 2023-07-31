@@ -29,7 +29,7 @@ import { Mask } from '../Tracking/TrackingTypes';
 // INTERACTION_ZONE_EVENT - Represents the interaction zone state received from the Service
 //
 // ANALYTICS_SESSION_REQUEST - Represents a request to start or stop an analytics session
-// ANALYTICS_UPDATE_COUNTS_REQUEST - Represents a request to update the analytic event counts for the current session.
+// ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST - Represents a request to update the analytic events for the current session.
 export enum ActionCode {
     INPUT_ACTION = 'INPUT_ACTION',
 
@@ -68,7 +68,7 @@ export enum ActionCode {
     RESET_INTERACTION_CONFIG_FILE = 'RESET_INTERACTION_CONFIG_FILE',
 
     ANALYTICS_SESSION_REQUEST = 'ANALYTICS_SESSION_REQUEST',
-    ANALYTICS_UPDATE_COUNTS_REQUEST = 'ANALYTICS_UPDATE_COUNTS_REQUEST',
+    ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST = 'ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST',
 }
 
 // Type: RequestSessionStateChange
