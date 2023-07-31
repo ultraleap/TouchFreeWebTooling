@@ -101,6 +101,8 @@ describe('TouchFree', () => {
             );
         });
 
+        afterAll(() => jest.clearAllMocks());
+
         it('should call AnalyticsSessionRequest with the correct arguments', () => {
             if (!serviceConnection) fail('Service connection not available');
             const testFn = jest
