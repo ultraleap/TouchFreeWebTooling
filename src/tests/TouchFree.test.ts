@@ -169,4 +169,23 @@ describe('TouchFree', () => {
             expect(TouchFree.IsAnalyticsActive()).toBe(false);
         });
     });
+
+    describe('RegisterAnalyticEvents', () => {
+        it('should add specified events', () => {
+            TouchFree.RegisterAnalyticEvents(['pointerdown', 'keypress']);
+        });
+
+        it('should add default events if none specified', () => {
+            TouchFree.RegisterAnalyticEvents();
+        });
+
+        // eventsIn.forEach((evt) => {
+        //     const onEvent = () => {
+        //         const eventCount = sessionEvents[evt];
+        //         sessionEvents[evt] = eventCount === undefined ? 1 : eventCount + 1;
+        //     };
+        //     analyticEvents[evt] = onEvent;
+        //     document.addEventListener(evt, onEvent, true);
+        // });
+    });
 });
