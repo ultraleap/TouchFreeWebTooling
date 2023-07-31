@@ -1,16 +1,16 @@
 import { Address, ConnectionManager } from './Connection/ConnectionManager';
+import {
+    AnalyticSessionEvents,
+    AnalyticEventKey,
+    AnalyticsSessionRequestType,
+    WebSocketResponse,
+} from './Connection/TouchFreeServiceTypes';
 import { SVGCursor } from './Cursors/SvgCursor';
 import { TouchlessCursor } from './Cursors/TouchlessCursor';
 import { WebInputController } from './InputControllers/WebInputController';
 import { HandDataManager } from './Plugins/HandDataManager';
 import { InputActionManager } from './Plugins/InputActionManager';
 import { TouchFreeEvent, TouchFreeEventSignatures } from './TouchFreeToolingTypes';
-import {
-    AnalyticSessionEvents,
-    AnalyticEventKey,
-    AnalyticsSessionRequestType,
-    WebSocketResponse,
-} from 'Connection/TouchFreeServiceTypes';
 import { v4 as uuidgen } from 'uuid';
 
 let InputController: WebInputController | undefined;
