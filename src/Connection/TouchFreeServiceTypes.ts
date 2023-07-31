@@ -423,9 +423,9 @@ interface BaseAnalyticsRequest {
     sessionID: string;
 }
 
-// Interface: SessionStateChangeRequest
+// Interface: AnalyticsSessionStateChangeRequest
 // Represents a request to the service to change the state of an analytics session.
-export interface SessionStateChangeRequest extends BaseAnalyticsRequest {
+export interface AnalyticsSessionStateChangeRequest extends BaseAnalyticsRequest {
     // Variable: state
     requestType: AnalyticsSessionRequestType;
 }

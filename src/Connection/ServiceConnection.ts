@@ -16,7 +16,7 @@ import {
     ServiceStatusCallback,
     ServiceStatusRequest,
     AnalyticsSessionRequestType,
-    SessionStateChangeRequest,
+    AnalyticsSessionStateChangeRequest,
     SimpleRequest,
     TrackingStateCallback,
     TrackingStateRequest,
@@ -451,23 +451,16 @@ export class ServiceConnection {
         this.webSocket.send(message);
     };
 
-    // Function: AnalyticsSessionRequest
-    // Used to either start a new analytics session, or stop the current session.
-    AnalyticsSessionRequest = (
-        requestType: AnalyticsSessionRequestType,
-        sessionID: string,
+    // Function: BaseAnalyticsRequest
+    // Base functionality for sending an analytics request to the Service
+    private BaseAnalyticsRequest = <T extends UpdateAnalyticSessionEventsRequest | AnalyticsSessionStateChangeRequest>(
+        fields: Omit<T, 'requestID'>,
+        actionCode: ActionCode,
         callback?: (detail: WebSocketResponse) => void
     ) => {
         const requestID = uuidgen();
-        const content: SessionStateChangeRequest = {
-            requestID,
-            requestType,
-            sessionID,
-        };
-        const wrapper = new CommunicationWrapper<SessionStateChangeRequest>(
-            ActionCode.ANALYTICS_SESSION_REQUEST,
-            content
-        );
+        const content = { ...fields, requestID } as T;
+        const wrapper = new CommunicationWrapper<T>(actionCode, content);
         const message = JSON.stringify(wrapper);
 
         if (callback) {
@@ -479,6 +472,19 @@ export class ServiceConnection {
 
         this.webSocket.send(message);
     };
+
+    // Function: AnalyticsSessionRequest
+    // Used to either start a new analytics session, or stop the current session.
+    AnalyticsSessionRequest = (
+        requestType: AnalyticsSessionRequestType,
+        sessionID: string,
+        callback?: (detail: WebSocketResponse) => void
+    ) =>
+        this.BaseAnalyticsRequest<AnalyticsSessionStateChangeRequest>(
+            { sessionID, requestType },
+            ActionCode.ANALYTICS_SESSION_REQUEST,
+            callback
+        );
 
     // Function: UpdateAnalyticSessionEvents
     // Used to send a request to update the analytic session's events stored in the Service
@@ -486,28 +492,12 @@ export class ServiceConnection {
         sessionID: string,
         sessionEvents: AnalyticSessionEvents,
         callback?: (detail: WebSocketResponse) => void
-    ) => {
-        const requestID = uuidgen();
-        const content: UpdateAnalyticSessionEventsRequest = {
-            requestID,
-            sessionID,
-            sessionEvents,
-        };
-        const wrapper = new CommunicationWrapper<UpdateAnalyticSessionEventsRequest>(
+    ) =>
+        this.BaseAnalyticsRequest<UpdateAnalyticSessionEventsRequest>(
+            { sessionID, sessionEvents },
             ActionCode.ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST,
-            content
+            callback
         );
-        const message = JSON.stringify(wrapper);
-
-        if (callback) {
-            ConnectionManager.messageReceiver.analyticsRequestCallbacks[requestID] = new ResponseCallback(
-                Date.now(),
-                callback
-            );
-        }
-
-        this.webSocket.send(message);
-    };
 }
 
 enum ServiceBinaryDataTypes {
