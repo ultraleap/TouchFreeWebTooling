@@ -80,7 +80,12 @@ export type AnalyticsSessionRequestType = 'START' | 'STOP';
 // Represents whether the event has been processed by the service
 export type EventStatus = 'PROCESSED' | 'UNPROCESSED';
 
+// Type: AnalyticEventKey
+// Supported analytic event types
 export type AnalyticEventKey = keyof DocumentEventMap;
+
+// Type: AnalyticSessionEvents
+// Indexed object storing how many times each analytics event has been called
 export type AnalyticSessionEvents = { [key in AnalyticEventKey]?: number };
 
 // Enum: HandPresenceState

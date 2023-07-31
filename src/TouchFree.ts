@@ -47,8 +47,8 @@ const Init = (tfInitParams?: TfInitParams): void => {
 const analyticEvents: { [key in AnalyticEventKey]?: () => void } = {};
 
 let sessionEvents: AnalyticSessionEvents = {};
-
 const defaultAnalyticEvents: AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
+
 // Function: RegisterAnalyticEvents
 // Registers a given list of event for the TouchFree service to record.
 // If no list of events is provided then the default set of events will be recorded.
@@ -103,10 +103,13 @@ const ControlAnalyticsSession = (
         serviceConnection?.AnalyticsSessionRequest(requestType, newID, (detail) => {
             if (detail.status !== 'Failure') {
                 CurrentSessionId = newID;
-                // analyticsHeartbeat = window.setInterval(
-                //     () => serviceConnection?.UpdateAnalyticSessionEvents(newID, sessionEvents),
-                //     1000
-                // );
+                analyticsHeartbeat = window.setInterval(
+                    () =>
+                        serviceConnection?.UpdateAnalyticSessionEvents(newID, sessionEvents, (e) =>
+                            console.log(e.message)
+                        ),
+                    1000
+                );
                 callback?.(detail);
             }
         });

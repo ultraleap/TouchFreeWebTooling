@@ -480,7 +480,8 @@ export class ServiceConnection {
         this.webSocket.send(message);
     };
 
-    // TODO.
+    // Function: UpdateAnalyticSessionEvents
+    // Used to send a request to update the analytic session's events stored in the Service
     UpdateAnalyticSessionEvents = (
         sessionID: string,
         sessionEvents: AnalyticSessionEvents,
