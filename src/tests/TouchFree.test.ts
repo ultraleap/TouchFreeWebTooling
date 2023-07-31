@@ -105,10 +105,10 @@ describe('TouchFree', () => {
                     return requestType;
                 });
 
-            TouchFree.ControlAnalytics('START', applicationName);
+            TouchFree.ControlAnalyticsSession('START', applicationName);
             expect(testFn).toReturnWith('START');
 
-            TouchFree.ControlAnalytics('STOP', applicationName);
+            TouchFree.ControlAnalyticsSession('STOP', applicationName);
             expect(testFn).toReturnWith('STOP');
         });
 
@@ -127,9 +127,9 @@ describe('TouchFree', () => {
                 expect(arg).toBe(`Session: ${id} already in progress`);
             });
 
-            TouchFree.ControlAnalytics('START', applicationName);
-            TouchFree.ControlAnalytics('START', applicationName);
-            TouchFree.ControlAnalytics('STOP', applicationName);
+            TouchFree.ControlAnalyticsSession('START', applicationName);
+            TouchFree.ControlAnalyticsSession('START', applicationName);
+            TouchFree.ControlAnalyticsSession('STOP', applicationName);
             expect(testFn).toBeCalled();
         });
 
@@ -141,7 +141,7 @@ describe('TouchFree', () => {
                 expect(arg).toBe('No active session');
             });
 
-            TouchFree.ControlAnalytics('STOP', applicationName);
+            TouchFree.ControlAnalyticsSession('STOP', applicationName);
             expect(testFn).toBeCalled();
         });
     });
