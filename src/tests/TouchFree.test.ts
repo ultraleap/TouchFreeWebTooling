@@ -93,6 +93,12 @@ describe('TouchFree', () => {
         beforeAll(() => {
             ConnectionManager.init();
             serviceConnection = ConnectionManager.serviceConnection();
+            if (!serviceConnection) fail('Service connection not available');
+            jest.spyOn(serviceConnection, 'UpdateAnalyticSessionEvents').mockImplementation(
+                (_sessionID, _sessionEvents, callback) => {
+                    callback?.(new WebSocketResponse('test', 'Success', 'test', 'test'));
+                }
+            );
         });
 
         it('should call AnalyticsSessionRequest with the correct arguments', () => {
