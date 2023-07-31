@@ -119,12 +119,14 @@ const ControlAnalyticsSession = (
             return;
         }
 
-        serviceConnection?.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
         clearInterval(analyticsHeartbeat);
-        serviceConnection?.UpdateAnalyticSessionEvents(CurrentSessionId, sessionEvents);
-        CurrentSessionId = undefined;
-        // Clear session events
-        sessionEvents = {};
+        serviceConnection?.UpdateAnalyticSessionEvents(CurrentSessionId, sessionEvents, () => {
+            if (!CurrentSessionId) return;
+            // Clear session events
+            sessionEvents = {};
+            serviceConnection?.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
+            CurrentSessionId = undefined;
+        });
     }
 };
 
