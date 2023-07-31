@@ -104,11 +104,8 @@ const ControlAnalyticsSession = (
             if (detail.status !== 'Failure') {
                 CurrentSessionId = newID;
                 analyticsHeartbeat = window.setInterval(
-                    () =>
-                        serviceConnection?.UpdateAnalyticSessionEvents(newID, sessionEvents, (e) =>
-                            console.log(e.message)
-                        ),
-                    1000
+                    () => serviceConnection?.UpdateAnalyticSessionEvents(newID, sessionEvents),
+                    2000
                 );
                 callback?.(detail);
             }
@@ -123,11 +120,11 @@ const ControlAnalyticsSession = (
         }
 
         serviceConnection?.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
-        serviceConnection?.UpdateAnalyticSessionEvents(CurrentSessionId, sessionEvents, (e) => console.log(e.message));
+        clearInterval(analyticsHeartbeat);
+        serviceConnection?.UpdateAnalyticSessionEvents(CurrentSessionId, sessionEvents);
         CurrentSessionId = undefined;
         // Clear session events
         sessionEvents = {};
-        clearInterval(analyticsHeartbeat);
     }
 };
 
