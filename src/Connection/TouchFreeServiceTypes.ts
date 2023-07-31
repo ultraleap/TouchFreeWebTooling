@@ -414,24 +414,25 @@ export class SimpleRequest {
     }
 }
 
-// Interface: SessionStateChangeRequest
-// Represents a request to the service to change the state of an analytics session.
-export interface SessionStateChangeRequest {
+// Interface BaseAnalyticsRequest
+// Represents the base information needed for an Analytics related request to the Service
+interface BaseAnalyticsRequest {
     // Variable: requestID
     requestID: string;
-    // Variable: state
-    requestType: AnalyticsSessionRequestType;
     // Variable: sessionID
     sessionID: string;
 }
 
+// Interface: SessionStateChangeRequest
+// Represents a request to the service to change the state of an analytics session.
+export interface SessionStateChangeRequest extends BaseAnalyticsRequest {
+    // Variable: state
+    requestType: AnalyticsSessionRequestType;
+}
+
 // Interface: UpdateAnalyticSessionEventsRequest
 // Represents a request to the service to update the event counts in the current analytics session.
-export interface UpdateAnalyticSessionEventsRequest {
-    // Variable: requestID
-    requestID: string;
-    // Variable: sessionID
-    sessionID: string;
+export interface UpdateAnalyticSessionEventsRequest extends BaseAnalyticsRequest {
     // Variable: eventCounts
     sessionEvents: AnalyticSessionEvents;
 }

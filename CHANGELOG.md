@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New API to reset the interaction settings to their defaults.
 - `SVGCursor.SetCursorOptimise(bool)` allows control over whether the SVG cursor is rendered optimised for speed or not.
 - New `TouchFree.ControlAnalyticsSession()` function that can start and stop an analytics session in the Service.
-- New `TouchFree.RegisterAnalyticEvents()` and `TouchFree.UnegisterAnalyticEvents()` functions to register / unregister non-TouchFree events (e.g. `pointerdown` or `touchstart`) to record analytics for
+- New `TouchFree.RegisterAnalyticEvents()` and `TouchFree.UnegisterAnalyticEvents()` functions to register / unregister non-TouchFree analytic events (e.g. `pointerdown` or `touchstart`)
 
 ## [1.4.0] - 2023-04-06
 

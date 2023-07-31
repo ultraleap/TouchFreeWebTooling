@@ -67,7 +67,7 @@ const RegisterAnalyticEvents = (eventsIn: AnalyticEventKey[] = defaultAnalyticEv
 // Unregister any registered analytic events.
 // If no list of events is provided then all registered analytic events will be unregistered.
 const UnregisterAnalyticEvents = (eventsIn?: AnalyticEventKey[]) => {
-    const events: AnalyticEventKey[] = eventsIn ? eventsIn : (Object.keys(analyticEvents) as AnalyticEventKey[]);
+    const events: AnalyticEventKey[] = eventsIn ?? (Object.keys(analyticEvents) as AnalyticEventKey[]);
 
     events.forEach((evt) => {
         const evtFunc = analyticEvents[evt];
