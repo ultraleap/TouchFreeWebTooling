@@ -29,6 +29,7 @@ import { Mask } from '../Tracking/TrackingTypes';
 // INTERACTION_ZONE_EVENT - Represents the interaction zone state received from the Service
 //
 // ANALYTICS_SESSION_REQUEST - Represents a request to start or stop an analytics session
+// ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST - Represents a request to update the analytic events for the current session.
 export enum ActionCode {
     INPUT_ACTION = 'INPUT_ACTION',
 
@@ -67,6 +68,7 @@ export enum ActionCode {
     RESET_INTERACTION_CONFIG_FILE = 'RESET_INTERACTION_CONFIG_FILE',
 
     ANALYTICS_SESSION_REQUEST = 'ANALYTICS_SESSION_REQUEST',
+    ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST = 'ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST',
 }
 
 // Type: RequestSessionStateChange
@@ -77,6 +79,14 @@ export type AnalyticsSessionRequestType = 'START' | 'STOP';
 // Type: EventStatus
 // Represents whether the event has been processed by the service
 export type EventStatus = 'PROCESSED' | 'UNPROCESSED';
+
+// Type: AnalyticEventKey
+// Supported analytic event types
+export type AnalyticEventKey = keyof DocumentEventMap;
+
+// Type: AnalyticSessionEvents
+// Indexed object storing how many times each analytics event has been called
+export type AnalyticSessionEvents = { [key in AnalyticEventKey]?: number };
 
 // Enum: HandPresenceState
 // HAND_FOUND - Sent when the first hand is found when no hand has been present for a moment
@@ -404,15 +414,27 @@ export class SimpleRequest {
     }
 }
 
-// Interface: SessionStateChangeRequest
-// Represents a request to the service to change the state of an analytics session.
-export interface SessionStateChangeRequest {
+// Interface BaseAnalyticsRequest
+// Represents the base information needed for an Analytics related request to the Service
+interface BaseAnalyticsRequest {
     // Variable: requestID
     requestID: string;
-    // Variable: state
-    requestType: AnalyticsSessionRequestType;
     // Variable: sessionID
     sessionID: string;
+}
+
+// Interface: AnalyticsSessionStateChangeRequest
+// Represents a request to the service to change the state of an analytics session.
+export interface AnalyticsSessionStateChangeRequest extends BaseAnalyticsRequest {
+    // Variable: state
+    requestType: AnalyticsSessionRequestType;
+}
+
+// Interface: UpdateAnalyticSessionEventsRequest
+// Represents a request to the service to update the event counts in the current analytics session.
+export interface UpdateAnalyticSessionEventsRequest extends BaseAnalyticsRequest {
+    // Variable: eventCounts
+    sessionEvents: AnalyticSessionEvents;
 }
 
 // Class: TrackingStateCallback

@@ -93,7 +93,15 @@ describe('TouchFree', () => {
         beforeAll(() => {
             ConnectionManager.init();
             serviceConnection = ConnectionManager.serviceConnection();
+            if (!serviceConnection) fail('Service connection not available');
+            jest.spyOn(serviceConnection, 'UpdateAnalyticSessionEvents').mockImplementation(
+                (_sessionID, _sessionEvents, callback) => {
+                    callback?.(new WebSocketResponse('test', 'Success', 'test', 'test'));
+                }
+            );
         });
+
+        afterAll(() => jest.clearAllMocks());
 
         it('should call AnalyticsSessionRequest with the correct arguments', () => {
             if (!serviceConnection) fail('Service connection not available');
@@ -105,10 +113,10 @@ describe('TouchFree', () => {
                     return requestType;
                 });
 
-            TouchFree.ControlAnalytics('START', applicationName);
+            TouchFree.ControlAnalyticsSession('START', applicationName);
             expect(testFn).toReturnWith('START');
 
-            TouchFree.ControlAnalytics('STOP', applicationName);
+            TouchFree.ControlAnalyticsSession('STOP', applicationName);
             expect(testFn).toReturnWith('STOP');
         });
 
@@ -127,9 +135,9 @@ describe('TouchFree', () => {
                 expect(arg).toBe(`Session: ${id} already in progress`);
             });
 
-            TouchFree.ControlAnalytics('START', applicationName);
-            TouchFree.ControlAnalytics('START', applicationName);
-            TouchFree.ControlAnalytics('STOP', applicationName);
+            TouchFree.ControlAnalyticsSession('START', applicationName);
+            TouchFree.ControlAnalyticsSession('START', applicationName);
+            TouchFree.ControlAnalyticsSession('STOP', applicationName);
             expect(testFn).toBeCalled();
         });
 
@@ -141,7 +149,7 @@ describe('TouchFree', () => {
                 expect(arg).toBe('No active session');
             });
 
-            TouchFree.ControlAnalytics('STOP', applicationName);
+            TouchFree.ControlAnalyticsSession('STOP', applicationName);
             expect(testFn).toBeCalled();
         });
     });

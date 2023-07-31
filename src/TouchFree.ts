@@ -5,7 +5,12 @@ import { WebInputController } from './InputControllers/WebInputController';
 import { HandDataManager } from './Plugins/HandDataManager';
 import { InputActionManager } from './Plugins/InputActionManager';
 import { TouchFreeEvent, TouchFreeEventSignatures } from './TouchFreeToolingTypes';
-import { AnalyticsSessionRequestType, WebSocketResponse } from 'Connection/TouchFreeServiceTypes';
+import {
+    AnalyticSessionEvents,
+    AnalyticEventKey,
+    AnalyticsSessionRequestType,
+    WebSocketResponse,
+} from 'Connection/TouchFreeServiceTypes';
 import { v4 as uuidgen } from 'uuid';
 
 let InputController: WebInputController | undefined;
@@ -39,9 +44,45 @@ const Init = (tfInitParams?: TfInitParams): void => {
     }
 };
 
+const analyticEvents: { [key in AnalyticEventKey]?: () => void } = {};
+
+let sessionEvents: AnalyticSessionEvents = {};
+const defaultAnalyticEvents: AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
+
+// Function: RegisterAnalyticEvents
+// Registers a given list of event for the TouchFree service to record.
+// If no list of events is provided then the default set of events will be recorded.
+const RegisterAnalyticEvents = (eventsIn: AnalyticEventKey[] = defaultAnalyticEvents) => {
+    eventsIn.forEach((evt) => {
+        const onEvent = () => {
+            const eventCount = sessionEvents[evt];
+            sessionEvents[evt] = eventCount === undefined ? 1 : eventCount + 1;
+        };
+        analyticEvents[evt] = onEvent;
+        document.addEventListener(evt, onEvent, true);
+    });
+};
+
+// Function: UnregisterAnalyticEvents
+// Unregister any registered analytic events.
+// If no list of events is provided then all registered analytic events will be unregistered.
+const UnregisterAnalyticEvents = (eventsIn?: AnalyticEventKey[]) => {
+    const events: AnalyticEventKey[] = eventsIn ?? (Object.keys(analyticEvents) as AnalyticEventKey[]);
+
+    events.forEach((evt) => {
+        const evtFunc = analyticEvents[evt];
+        if (evtFunc) {
+            document.removeEventListener(evt, evtFunc, true);
+            delete analyticEvents[evt];
+        }
+    });
+};
+
 // Function: IsConnected
 // Are we connected to the TouchFree service?
 const IsConnected = (): boolean => ConnectionManager.IsConnected;
+
+let analyticsHeartbeat: number;
 
 // Function: ControlAnalyticsSession
 // Used to start or stop an analytics session.
@@ -62,6 +103,10 @@ const ControlAnalyticsSession = (
         serviceConnection?.AnalyticsSessionRequest(requestType, newID, (detail) => {
             if (detail.status !== 'Failure') {
                 CurrentSessionId = newID;
+                analyticsHeartbeat = window.setInterval(
+                    () => serviceConnection?.UpdateAnalyticSessionEvents(newID, sessionEvents),
+                    2000
+                );
                 callback?.(detail);
             }
         });
@@ -74,8 +119,14 @@ const ControlAnalyticsSession = (
             return;
         }
 
-        serviceConnection?.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
-        CurrentSessionId = undefined;
+        clearInterval(analyticsHeartbeat);
+        serviceConnection?.UpdateAnalyticSessionEvents(CurrentSessionId, sessionEvents, () => {
+            if (!CurrentSessionId) return;
+            // Clear session events
+            sessionEvents = {};
+            serviceConnection?.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
+            CurrentSessionId = undefined;
+        });
     }
 };
 
@@ -299,5 +350,7 @@ export default {
     GetInputController,
     IsConnected,
     RegisterEventCallback,
-    ControlAnalytics: ControlAnalyticsSession,
+    ControlAnalyticsSession,
+    RegisterAnalyticEvents,
+    UnregisterAnalyticEvents,
 };

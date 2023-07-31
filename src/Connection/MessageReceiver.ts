@@ -114,14 +114,14 @@ export class MessageReceiver {
     // that are awaiting response from the Service.
     trackingStateCallbacks: { [id: string]: TrackingStateCallback } = {};
 
-    // Variable: analyticsSessionRequestQueue
-    // A queue of responses from RequestSessionStateChange calls.
-    analyticsSessionRequestQueue: WebSocketResponse[] = [];
+    // Variable: analyticsRequestQueue
+    // A queue of responses from service analytic calls.
+    analyticsRequestQueue: WebSocketResponse[] = [];
 
-    // Variable: analyticsSessionRequestCallbacks
+    // Variable: analyticsRequestCallbacks
     // A dictionary of unique request IDs and <ResponseCallback> that represent requests
     // that are awaiting response from the Service.
-    analyticsSessionRequestCallbacks: CallbackList<WebSocketResponse> = {};
+    analyticsRequestCallbacks: CallbackList<WebSocketResponse> = {};
 
     // Variable: callbackClearInterval
     // Stores the reference number for the interval running <ClearUnresponsiveCallbacks>, allowing
@@ -164,7 +164,7 @@ export class MessageReceiver {
         this.CheckQueue(this.trackingStateQueue, this.trackingStateCallbacks);
         this.CheckForAction();
         this.CheckForHandData();
-        this.CheckQueue(this.analyticsSessionRequestQueue, this.analyticsSessionRequestCallbacks);
+        this.CheckQueue(this.analyticsRequestQueue, this.analyticsRequestCallbacks);
     }
 
     // Function: CheckForHandshakeResponse
