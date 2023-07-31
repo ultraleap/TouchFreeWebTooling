@@ -47,8 +47,15 @@ const Init = (tfInitParams?: TfInitParams): void => {
 };
 
 const analyticEvents: { [key in AnalyticEventKey]?: () => void } = {};
+// Function: GetRegisteredAnalyticEvents
+// Returns a list of registered analytic event keys
+const GetRegisteredAnalyticEventKeys = (): string[] => Object.keys(analyticEvents);
 
 let sessionEvents: AnalyticSessionEvents = {};
+// Function: GetRegisteredAnalyticEvents
+// Returns a copy of an indexed object detailing how many times each analytics event has been trigger
+const GetAnalyticSessionEvents = (): AnalyticSessionEvents => Object.assign({}, sessionEvents);
+
 const defaultAnalyticEvents: AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
 
 // Function: RegisterAnalyticEvents
@@ -356,4 +363,6 @@ export default {
     RegisterAnalyticEvents,
     UnregisterAnalyticEvents,
     IsAnalyticsActive,
+    GetRegisteredAnalyticEventKeys,
+    GetAnalyticSessionEvents,
 };

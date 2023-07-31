@@ -1,5 +1,5 @@
 import { ConnectionManager } from '../Connection/ConnectionManager';
-import { WebSocketResponse } from '../Connection/TouchFreeServiceTypes';
+import { AnalyticEventKey, AnalyticSessionEvents, WebSocketResponse } from '../Connection/TouchFreeServiceTypes';
 import { DotCursor } from '../Cursors/DotCursor';
 import { SVGCursor } from '../Cursors/SvgCursor';
 import { WebInputController } from '../InputControllers/WebInputController';
@@ -172,11 +172,21 @@ describe('TouchFree', () => {
 
     describe('RegisterAnalyticEvents', () => {
         it('should add specified events', () => {
+            const addedEvents: AnalyticEventKey[] = ['pointerdown', 'keypress', 'touchstart'];
+            const listeners: string[] = [];
+            jest.spyOn(document, 'addEventListener').mockImplementation((event, _callback, option) => {
+                listeners.push(event);
+                expect(option).toBeTruthy();
+            });
+
             TouchFree.RegisterAnalyticEvents(['pointerdown', 'keypress']);
+            TouchFree.RegisterAnalyticEvents(['touchstart']);
+
+            expect(addedEvents).toEqual(listeners);
         });
 
         it('should add default events if none specified', () => {
-            TouchFree.RegisterAnalyticEvents();
+            // TouchFree.RegisterAnalyticEvents();
         });
 
         // eventsIn.forEach((evt) => {
