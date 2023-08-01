@@ -28,7 +28,7 @@ const GetCurrentCursor = () => CurrentCursor;
 const SetCurrentCursor = (cursor: TouchlessCursor | undefined) => (CurrentCursor = cursor);
 const GetInputController = () => InputController;
 
-const IsAnalyticsActive = (): boolean => CurrentSessionId !== undefined;
+const IsAnalyticsActive = () => CurrentSessionId !== undefined;
 
 // Function: Init
 // Initializes TouchFree - must be called before any functionality requiring a TouchFree service connection.
