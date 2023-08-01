@@ -5,7 +5,6 @@ import { SVGCursor } from '../Cursors/SvgCursor';
 import { WebInputController } from '../InputControllers/WebInputController';
 import TouchFree from '../TouchFree';
 import { TouchFreeEventSignatures, TouchFreeEvent } from '../TouchFreeToolingTypes';
-import { sleep } from './testUtils';
 import { ServiceConnection } from 'Connection/ServiceConnection';
 
 const events: TouchFreeEventSignatures = {
