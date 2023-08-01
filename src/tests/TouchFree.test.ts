@@ -152,5 +152,21 @@ describe('TouchFree', () => {
             TouchFree.ControlAnalyticsSession('STOP', applicationName);
             expect(testFn).toBeCalled();
         });
+
+        test('IsAnalyticsActive should correctly return the status of the session', () => {
+            if (!serviceConnection) fail('Service connection not available');
+
+            expect(TouchFree.IsAnalyticsActive()).toBe(false);
+
+            TouchFree.ControlAnalyticsSession('START', 'test');
+            jest.spyOn(serviceConnection, 'AnalyticsSessionRequest').mockImplementation((_arg1, _arg2, callback) => {
+                // This callback is here to mimic the Service sending a successful response
+                callback?.(new WebSocketResponse('test', 'Success', 'test', 'test'));
+                expect(TouchFree.IsAnalyticsActive()).toBe(true);
+            });
+
+            TouchFree.ControlAnalyticsSession('STOP', 'test');
+            expect(TouchFree.IsAnalyticsActive()).toBe(false);
+        });
     });
 });
