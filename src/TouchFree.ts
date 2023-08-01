@@ -63,6 +63,7 @@ const defaultAnalyticEvents: AnalyticEventKey[] = ['touchstart', 'touchmove', 't
 // If no list of events is provided then the default set of events will be recorded.
 const RegisterAnalyticEvents = (eventsIn: AnalyticEventKey[] = defaultAnalyticEvents) => {
     eventsIn.forEach((evt) => {
+        if (analyticEvents[evt]) return;
         const onEvent = () => {
             const eventCount = sessionEvents[evt];
             sessionEvents[evt] = eventCount === undefined ? 1 : eventCount + 1;
@@ -113,7 +114,7 @@ const ControlAnalyticsSession = (
             if (detail.status !== 'Failure') {
                 CurrentSessionId = newID;
                 analyticsHeartbeat = window.setInterval(
-                    () => serviceConnection?.UpdateAnalyticSessionEvents(newID, sessionEvents),
+                    () => serviceConnection?.UpdateAnalyticSessionEvents(newID),
                     2000
                 );
                 callback?.(detail);
@@ -129,7 +130,7 @@ const ControlAnalyticsSession = (
         }
 
         clearInterval(analyticsHeartbeat);
-        serviceConnection?.UpdateAnalyticSessionEvents(CurrentSessionId, sessionEvents, () => {
+        serviceConnection?.UpdateAnalyticSessionEvents(CurrentSessionId, () => {
             if (!CurrentSessionId) return;
             // Clear session events
             sessionEvents = {};

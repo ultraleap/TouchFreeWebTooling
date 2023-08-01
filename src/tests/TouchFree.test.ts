@@ -1,10 +1,11 @@
 import { ConnectionManager } from '../Connection/ConnectionManager';
-import { AnalyticEventKey, AnalyticSessionEvents, WebSocketResponse } from '../Connection/TouchFreeServiceTypes';
+import { AnalyticEventKey, WebSocketResponse } from '../Connection/TouchFreeServiceTypes';
 import { DotCursor } from '../Cursors/DotCursor';
 import { SVGCursor } from '../Cursors/SvgCursor';
 import { WebInputController } from '../InputControllers/WebInputController';
 import TouchFree from '../TouchFree';
 import { TouchFreeEventSignatures, TouchFreeEvent } from '../TouchFreeToolingTypes';
+import { sleep } from './testUtils';
 import { ServiceConnection } from 'Connection/ServiceConnection';
 
 const events: TouchFreeEventSignatures = {
@@ -94,11 +95,9 @@ describe('TouchFree', () => {
             ConnectionManager.init();
             serviceConnection = ConnectionManager.serviceConnection();
             if (!serviceConnection) fail('Service connection not available');
-            jest.spyOn(serviceConnection, 'UpdateAnalyticSessionEvents').mockImplementation(
-                (_sessionID, _sessionEvents, callback) => {
-                    callback?.(new WebSocketResponse('test', 'Success', 'test', 'test'));
-                }
-            );
+            jest.spyOn(serviceConnection, 'UpdateAnalyticSessionEvents').mockImplementation((_sessionID, callback) => {
+                callback?.(new WebSocketResponse('test', 'Success', 'test', 'test'));
+            });
         });
 
         afterAll(() => jest.clearAllMocks());
@@ -171,31 +170,108 @@ describe('TouchFree', () => {
     });
 
     describe('RegisterAnalyticEvents', () => {
-        it('should add specified events', () => {
-            const addedEvents: AnalyticEventKey[] = ['pointerdown', 'keypress', 'touchstart'];
-            const listeners: string[] = [];
-            jest.spyOn(document, 'addEventListener').mockImplementation((event, _callback, option) => {
-                listeners.push(event);
-                expect(option).toBeTruthy();
-            });
+        const listeners: string[] = [];
+        const addedEvents: AnalyticEventKey[] = [];
 
-            TouchFree.RegisterAnalyticEvents(['pointerdown', 'keypress']);
-            TouchFree.RegisterAnalyticEvents(['touchstart']);
+        const mock = jest.spyOn(document, 'addEventListener').mockImplementation((event, _callback, option) => {
+            listeners.push(event);
+            expect(option).toBeTruthy();
+        });
+        afterAll(mock.mockClear);
+
+        beforeEach(() => {
+            TouchFree.UnregisterAnalyticEvents();
+            expect(TouchFree.GetRegisteredAnalyticEventKeys()).toEqual([]);
+            listeners.length = 0;
+            addedEvents.length = 0;
+        });
+
+        it('should register specified events', () => {
+            const testRegisteringEvent = (events: AnalyticEventKey[]) => {
+                TouchFree.RegisterAnalyticEvents(events);
+                addedEvents.push(...events);
+                expect(TouchFree.GetRegisteredAnalyticEventKeys()).toEqual(addedEvents);
+            };
+
+            testRegisteringEvent(['pointerdown', 'keypress']);
+            testRegisteringEvent(['touchstart']);
+            testRegisteringEvent(['click']);
 
             expect(addedEvents).toEqual(listeners);
         });
 
-        it('should add default events if none specified', () => {
-            // TouchFree.RegisterAnalyticEvents();
+        it('should register default events if none specified', () => {
+            const defaults: AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
+            TouchFree.RegisterAnalyticEvents();
+            addedEvents.push(...defaults);
+            expect(TouchFree.GetRegisteredAnalyticEventKeys()).toEqual(defaults);
+
+            expect(addedEvents).toEqual(listeners);
         });
 
-        // eventsIn.forEach((evt) => {
-        //     const onEvent = () => {
-        //         const eventCount = sessionEvents[evt];
-        //         sessionEvents[evt] = eventCount === undefined ? 1 : eventCount + 1;
-        //     };
-        //     analyticEvents[evt] = onEvent;
-        //     document.addEventListener(evt, onEvent, true);
-        // });
+        it('should handle registering duplicate events', () => {
+            TouchFree.RegisterAnalyticEvents(['pointerdown']);
+            addedEvents.push('pointerdown');
+            expect(TouchFree.GetRegisteredAnalyticEventKeys()).toEqual(addedEvents);
+            TouchFree.RegisterAnalyticEvents(['pointerdown']);
+            expect(TouchFree.GetRegisteredAnalyticEventKeys()).toEqual(addedEvents);
+            TouchFree.RegisterAnalyticEvents(['keypress', 'keypress']);
+            addedEvents.push('keypress');
+            expect(TouchFree.GetRegisteredAnalyticEventKeys()).toEqual(addedEvents);
+
+            expect(addedEvents).toEqual(listeners);
+        });
+    });
+
+    describe('UnregisterAnalyticEvents', () => {
+        const listeners: string[] = [];
+        const defaults: AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
+
+        const mock = jest.spyOn(document, 'removeEventListener').mockImplementation((event, _callback, option) => {
+            listeners.push(event);
+            expect(option).toBeTruthy();
+        });
+        afterAll(mock.mockClear);
+
+        beforeEach(() => {
+            TouchFree.UnregisterAnalyticEvents();
+            TouchFree.RegisterAnalyticEvents(defaults);
+            expect(TouchFree.GetRegisteredAnalyticEventKeys()).toEqual(defaults);
+            listeners.length = 0;
+        });
+
+        it('should unregister specified events', () => {
+            TouchFree.UnregisterAnalyticEvents(['touchstart', 'touchmove']);
+            expect(TouchFree.GetRegisteredAnalyticEventKeys()).toEqual(['touchend']);
+            TouchFree.UnregisterAnalyticEvents(['touchend']);
+            expect(TouchFree.GetRegisteredAnalyticEventKeys()).toEqual([]);
+
+            expect(listeners).toEqual(defaults);
+        });
+
+        it('should unregister all events if none specified', () => {
+            TouchFree.UnregisterAnalyticEvents();
+            expect(TouchFree.GetRegisteredAnalyticEventKeys()).toEqual([]);
+            expect(listeners).toEqual(defaults);
+        });
+
+        it('should handle un-registering non registered events', () => {
+            expect(TouchFree.GetRegisteredAnalyticEventKeys()).not.toContain('pointerdown');
+            TouchFree.UnregisterAnalyticEvents(['pointerdown']);
+            expect(TouchFree.GetRegisteredAnalyticEventKeys()).toEqual(defaults);
+
+            expect(listeners).toEqual([]);
+        });
+    });
+
+    describe('AnalyticSessionEvents', () => {
+        it('should increment AnalyticSessionEvents count when event is trigger', async () => {
+            TouchFree.RegisterAnalyticEvents(['pointerdown', 'keypress']);
+            console.log(TouchFree.GetRegisteredAnalyticEventKeys());
+            document.dispatchEvent(new Event('pointerdown'));
+            await sleep(1000);
+            console.log(TouchFree.GetAnalyticSessionEvents());
+            expect(TouchFree.GetAnalyticSessionEvents()).toEqual({});
+        });
     });
 });
