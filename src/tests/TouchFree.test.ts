@@ -90,17 +90,20 @@ describe('TouchFree', () => {
     describe('ControlAnalyticsSession', () => {
         let serviceConnection: ServiceConnection | null = null;
         const applicationName = 'testApplication';
+        const mocks: jest.SpyInstance[] = [];
+        let updateSessionEventsMock: jest.SpyInstance;
 
         beforeAll(() => {
             ConnectionManager.init();
             serviceConnection = ConnectionManager.serviceConnection();
             if (!serviceConnection) fail('Service connection not available');
-            jest.spyOn(serviceConnection, 'UpdateAnalyticSessionEvents').mockImplementation((_sessionID, callback) => {
-                callback?.(new WebSocketResponse('test', 'Success', 'test', 'test'));
-            });
+            updateSessionEventsMock = jest
+                .spyOn(serviceConnection, 'UpdateAnalyticSessionEvents')
+                .mockImplementation((_sessionID, callback) => {
+                    callback?.(new WebSocketResponse('test', 'Success', 'test', 'test'));
+                });
         });
-
-        afterAll(() => jest.clearAllMocks());
+        afterAll(() => mocks.forEach((mock) => mock.mockRestore()));
 
         it('should call AnalyticsSessionRequest with the correct arguments', () => {
             if (!serviceConnection) fail('Service connection not available');
@@ -111,6 +114,7 @@ describe('TouchFree', () => {
                     callback?.(new WebSocketResponse('test', 'Success', 'test', 'test'));
                     return requestType;
                 });
+            mocks.push(testFn);
 
             TouchFree.ControlAnalyticsSession('START', applicationName);
             expect(testFn).toReturnWith('START');
@@ -119,20 +123,39 @@ describe('TouchFree', () => {
             expect(testFn).toReturnWith('STOP');
         });
 
+        it('should call UpdateAnalyticSessionEvents every 2 seconds on successful start', async () => {
+            const mockCalls = updateSessionEventsMock.mock.calls.length;
+            expect(updateSessionEventsMock).toBeCalledTimes(mockCalls);
+            jest.useFakeTimers();
+            TouchFree.ControlAnalyticsSession('START', applicationName);
+            jest.advanceTimersByTime(2000);
+            expect(updateSessionEventsMock).toBeCalledTimes(mockCalls + 1);
+            jest.advanceTimersByTime(1000);
+            expect(updateSessionEventsMock).toBeCalledTimes(mockCalls + 1);
+            jest.advanceTimersByTime(1000);
+            expect(updateSessionEventsMock).toBeCalledTimes(mockCalls + 2);
+            TouchFree.ControlAnalyticsSession('STOP', applicationName);
+            expect(updateSessionEventsMock).toBeCalledTimes(mockCalls + 3);
+            jest.advanceTimersByTime(4000);
+            expect(updateSessionEventsMock).toBeCalledTimes(mockCalls + 3);
+            jest.useRealTimers();
+        });
+
         it('should give appropriate warnings on START', () => {
             if (!serviceConnection) fail('Service connection not available');
             let id = '';
 
-            jest.spyOn(serviceConnection, 'AnalyticsSessionRequest').mockImplementation(
-                (_arg1, sessionID, callback) => {
+            const mock = jest
+                .spyOn(serviceConnection, 'AnalyticsSessionRequest')
+                .mockImplementation((_arg1, sessionID, callback) => {
                     id = sessionID;
                     // This callback is here to mimic the Service sending a successful response
                     callback?.(new WebSocketResponse('test', 'Success', 'test', 'test'));
-                }
-            );
+                });
             const testFn = jest.spyOn(console, 'warn').mockImplementation((arg) => {
                 expect(arg).toBe(`Session: ${id} already in progress`);
             });
+            mocks.push(testFn, mock);
 
             TouchFree.ControlAnalyticsSession('START', applicationName);
             TouchFree.ControlAnalyticsSession('START', applicationName);
@@ -143,10 +166,11 @@ describe('TouchFree', () => {
         it('should give appropriate warnings on STOP', () => {
             if (!serviceConnection) fail('Service connection not available');
 
-            jest.spyOn(serviceConnection, 'AnalyticsSessionRequest').mockImplementation(() => {});
+            const mock = jest.spyOn(serviceConnection, 'AnalyticsSessionRequest').mockImplementation(() => {});
             const testFn = jest.spyOn(console, 'warn').mockImplementation((arg) => {
                 expect(arg).toBe('No active session');
             });
+            mocks.push(testFn, mock);
 
             TouchFree.ControlAnalyticsSession('STOP', applicationName);
             expect(testFn).toBeCalled();
@@ -177,7 +201,7 @@ describe('TouchFree', () => {
             listeners.push(event);
             expect(option).toBeTruthy();
         });
-        afterAll(mock.mockClear);
+        afterAll(mock.mockRestore);
 
         beforeEach(() => {
             TouchFree.UnregisterAnalyticEvents();
@@ -231,7 +255,7 @@ describe('TouchFree', () => {
             listeners.push(event);
             expect(option).toBeTruthy();
         });
-        afterAll(mock.mockClear);
+        afterAll(mock.mockRestore);
 
         beforeEach(() => {
             TouchFree.UnregisterAnalyticEvents();
@@ -265,13 +289,32 @@ describe('TouchFree', () => {
     });
 
     describe('AnalyticSessionEvents', () => {
-        it('should increment AnalyticSessionEvents count when event is trigger', async () => {
+        beforeAll(() => {
             TouchFree.RegisterAnalyticEvents(['pointerdown', 'keypress']);
-            console.log(TouchFree.GetRegisteredAnalyticEventKeys());
+        });
+        it('should increment AnalyticSessionEvents count when event is triggered', () => {
+            TouchFree.RegisterAnalyticEvents(['pointerdown', 'keypress']);
             document.dispatchEvent(new Event('pointerdown'));
-            await sleep(1000);
-            console.log(TouchFree.GetAnalyticSessionEvents());
-            expect(TouchFree.GetAnalyticSessionEvents()).toEqual({});
+            expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 1 });
+            document.dispatchEvent(new Event('pointerdown'));
+            document.dispatchEvent(new Event('pointerdown'));
+            document.dispatchEvent(new Event('pointerdown'));
+            expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 4 });
+            document.dispatchEvent(new Event('keypress'));
+            document.dispatchEvent(new Event('keypress'));
+            document.dispatchEvent(new Event('keypress'));
+            document.dispatchEvent(new Event('pointerdown'));
+            expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 5, keypress: 3 });
+        });
+        it('should not increment when a non-registered event is triggered', () => {
+            document.dispatchEvent(new Event('pointerup'));
+            expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 5, keypress: 3 });
+        });
+        it('should not increment when an un-registered event is trigger', () => {
+            TouchFree.UnregisterAnalyticEvents(['pointerdown']);
+            document.dispatchEvent(new Event('pointerdown'));
+            document.dispatchEvent(new Event('keypress'));
+            expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 5, keypress: 4 });
         });
     });
 });

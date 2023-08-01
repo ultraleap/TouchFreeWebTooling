@@ -129,12 +129,12 @@ const ControlAnalyticsSession = (
             return;
         }
 
+        const validSessionId = CurrentSessionId;
         clearInterval(analyticsHeartbeat);
-        serviceConnection?.UpdateAnalyticSessionEvents(CurrentSessionId, () => {
-            if (!CurrentSessionId) return;
+        serviceConnection?.UpdateAnalyticSessionEvents(validSessionId, () => {
             // Clear session events
             sessionEvents = {};
-            serviceConnection?.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
+            serviceConnection?.AnalyticsSessionRequest(requestType, validSessionId, callback);
             CurrentSessionId = undefined;
         });
     }
