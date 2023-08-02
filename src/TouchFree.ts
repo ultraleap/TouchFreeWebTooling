@@ -47,8 +47,15 @@ const Init = (tfInitParams?: TfInitParams): void => {
 };
 
 const analyticEvents: { [key in AnalyticEventKey]?: () => void } = {};
+// Function: GetRegisteredAnalyticEvents
+// Returns a list of registered analytic event keys
+const GetRegisteredAnalyticEventKeys = (): string[] => Object.keys(analyticEvents);
 
 let sessionEvents: AnalyticSessionEvents = {};
+// Function: GetRegisteredAnalyticEvents
+// Returns a copy of an indexed object detailing how many times each analytics event has been trigger
+const GetAnalyticSessionEvents = (): AnalyticSessionEvents => Object.assign({}, sessionEvents);
+
 const defaultAnalyticEvents: AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
 
 // Function: RegisterAnalyticEvents
@@ -56,6 +63,7 @@ const defaultAnalyticEvents: AnalyticEventKey[] = ['touchstart', 'touchmove', 't
 // If no list of events is provided then the default set of events will be recorded.
 const RegisterAnalyticEvents = (eventsIn: AnalyticEventKey[] = defaultAnalyticEvents) => {
     eventsIn.forEach((evt) => {
+        if (analyticEvents[evt]) return;
         const onEvent = () => {
             const eventCount = sessionEvents[evt];
             sessionEvents[evt] = eventCount === undefined ? 1 : eventCount + 1;
@@ -106,7 +114,7 @@ const ControlAnalyticsSession = (
             if (detail.status !== 'Failure') {
                 CurrentSessionId = newID;
                 analyticsHeartbeat = window.setInterval(
-                    () => serviceConnection?.UpdateAnalyticSessionEvents(newID, sessionEvents),
+                    () => serviceConnection?.UpdateAnalyticSessionEvents(newID),
                     2000
                 );
                 callback?.(detail);
@@ -121,12 +129,12 @@ const ControlAnalyticsSession = (
             return;
         }
 
+        const validSessionId = CurrentSessionId;
         clearInterval(analyticsHeartbeat);
-        serviceConnection?.UpdateAnalyticSessionEvents(CurrentSessionId, sessionEvents, () => {
-            if (!CurrentSessionId) return;
+        serviceConnection?.UpdateAnalyticSessionEvents(validSessionId, () => {
             // Clear session events
             sessionEvents = {};
-            serviceConnection?.AnalyticsSessionRequest(requestType, CurrentSessionId, callback);
+            serviceConnection?.AnalyticsSessionRequest(requestType, validSessionId, callback);
             CurrentSessionId = undefined;
         });
     }
@@ -356,4 +364,6 @@ export default {
     RegisterAnalyticEvents,
     UnregisterAnalyticEvents,
     IsAnalyticsActive,
+    GetRegisteredAnalyticEventKeys,
+    GetAnalyticSessionEvents,
 };

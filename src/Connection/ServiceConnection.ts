@@ -24,7 +24,6 @@ import {
     VersionHandshakeResponse,
     WebSocketResponse,
     UpdateAnalyticSessionEventsRequest,
-    AnalyticSessionEvents,
 } from './TouchFreeServiceTypes';
 import { v4 as uuidgen } from 'uuid';
 
@@ -488,13 +487,9 @@ export class ServiceConnection {
 
     // Function: UpdateAnalyticSessionEvents
     // Used to send a request to update the analytic session's events stored in the Service
-    UpdateAnalyticSessionEvents = (
-        sessionID: string,
-        sessionEvents: AnalyticSessionEvents,
-        callback?: (detail: WebSocketResponse) => void
-    ) =>
+    UpdateAnalyticSessionEvents = (sessionID: string, callback?: (detail: WebSocketResponse) => void) =>
         this.BaseAnalyticsRequest<UpdateAnalyticSessionEventsRequest>(
-            { sessionID, sessionEvents },
+            { sessionID, sessionEvents: TouchFree.GetAnalyticSessionEvents() },
             ActionCode.ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST,
             callback
         );
