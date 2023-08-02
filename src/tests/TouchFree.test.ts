@@ -288,21 +288,22 @@ describe('TouchFree', () => {
     });
 
     describe('AnalyticSessionEvents', () => {
-        beforeAll(() => {
-            TouchFree.RegisterAnalyticEvents(['pointerdown', 'keypress']);
-        });
+        const pointerDownEvent = new Event('pointerdown');
+        const keypressEvent = new Event('keypress');
+
         it('should increment AnalyticSessionEvents count when event is triggered', () => {
             TouchFree.RegisterAnalyticEvents(['pointerdown', 'keypress']);
-            document.dispatchEvent(new Event('pointerdown'));
+            TouchFree.RegisterAnalyticEvents(['pointerdown', 'keypress']);
+            document.dispatchEvent(pointerDownEvent);
             expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 1 });
-            document.dispatchEvent(new Event('pointerdown'));
-            document.dispatchEvent(new Event('pointerdown'));
-            document.dispatchEvent(new Event('pointerdown'));
+            document.dispatchEvent(pointerDownEvent);
+            document.dispatchEvent(pointerDownEvent);
+            document.dispatchEvent(pointerDownEvent);
             expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 4 });
-            document.dispatchEvent(new Event('keypress'));
-            document.dispatchEvent(new Event('keypress'));
-            document.dispatchEvent(new Event('keypress'));
-            document.dispatchEvent(new Event('pointerdown'));
+            document.dispatchEvent(keypressEvent);
+            document.dispatchEvent(keypressEvent);
+            document.dispatchEvent(keypressEvent);
+            document.dispatchEvent(pointerDownEvent);
             expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 5, keypress: 3 });
         });
         it('should not increment when a non-registered event is triggered', () => {
@@ -311,8 +312,8 @@ describe('TouchFree', () => {
         });
         it('should not increment when an un-registered event is trigger', () => {
             TouchFree.UnregisterAnalyticEvents(['pointerdown']);
-            document.dispatchEvent(new Event('pointerdown'));
-            document.dispatchEvent(new Event('keypress'));
+            document.dispatchEvent(pointerDownEvent);
+            document.dispatchEvent(keypressEvent);
             expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 5, keypress: 4 });
         });
     });
