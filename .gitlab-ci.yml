@@ -24,11 +24,11 @@ TF_Tooling::Web::build:
     - win10
   script:
     # Get the TF Tooling for web version
-    - [Environment]::SetEnvironmentVariable('TF_TOOLING_API_VERSION', (Select-String -Path ".\src\TouchFreeToolingTypes.ts" "public static readonly ApiVersion: string = '(.*)';" | Select-Object * -First 1).Matches.Groups[1].Value)
-    - [Environment]::SetEnvironmentVariable('TF_TFW_VERSION', (Select-String -Path ".\package.json" "  `"version`": `"(.*)`"," | Select-Object * -First 1).Matches.Groups[1].Value)
+    - set -Name TF_TOOLING_API_VERSION -Value "$((Select-String -Path ".\src\TouchFreeToolingTypes.ts" "public static readonly ApiVersion: string = '(.*)';" | Select-Object * -First 1).Matches.Groups[1].Value)"
+    - set -Name TF_TFW_VERSION -Value "$((Select-String -Path ".\package.json" "  .version.: .(.*).," | Select-Object * -First 1).Matches.Groups[1].Value)"
 
     # Update Version.txt with latest information before packaging
-    - python ./Scripts/UpdateVersionFile.py --path ${CI_PROJECT_DIR}/Version.txt --swVer ${env:TF_TFW_VERSION} --apiVer ${env:TF_TOOLING_API_VERSION} --ref ${CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
+    - python ./Scripts/UpdateVersionFile.py --path ${CI_PROJECT_DIR}/Version.txt --swVer $TF_TFW_VERSION --apiVer $TF_TOOLING_API_VERSION --ref ${CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
     - Get-Content ${CI_PROJECT_DIR}/Version.txt
 
     # Build Tooling
