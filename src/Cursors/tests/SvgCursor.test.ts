@@ -3,7 +3,7 @@ import { InputType } from '../../TouchFreeToolingTypes';
 import { mockTfInputAction } from '../../tests/testUtils';
 import { CursorPart, SVGCursor } from '../SvgCursor';
 
-TouchFree.Init();
+TouchFree.Init({ initialiseCursor: false });
 let svgCursor = new SVGCursor();
 let cursor = document.getElementById('svg-cursor');
 let cursorRing = document.getElementById('svg-cursor-ring');

@@ -21,12 +21,15 @@ import {
     ServiceStatus,
     ServiceStatusCallback,
     ServiceStatusRequest,
+    AnalyticsSessionRequestType,
+    AnalyticsSessionStateChangeRequest,
     SimpleRequest,
     TrackingStateCallback,
     TrackingStateRequest,
     TrackingStateResponse,
     VersionHandshakeResponse,
     WebSocketResponse,
+    UpdateAnalyticSessionEventsRequest,
 } from './TouchFreeServiceTypes';
 import { v4 as uuidgen } from 'uuid';
 import { LicenseManager } from '../Licensing/Licensing';
@@ -199,6 +202,16 @@ export class ServiceConnection {
                 break;
             }
 
+            case ActionCode.ANALYTICS_SESSION_REQUEST: {
+                ConnectionManager.messageReceiver.analyticsRequestQueue.push(looseData.content as WebSocketResponse);
+                break;
+            }
+
+            case ActionCode.ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST: {
+                ConnectionManager.messageReceiver.analyticsRequestQueue.push(looseData.content as WebSocketResponse);
+                break;
+            }
+
             case ActionCode.LICENSE_STATE: {
                 const response = looseData.content as LicenseStateResponse;
                 LicenseManager.currentState = response.licenseState;
@@ -216,7 +229,6 @@ export class ServiceConnection {
             case ActionCode.REMOVE_LICENSE_RESPONSE: {
                 const response = looseData.content as LicenseChangeResponse;
                 ConnectionManager.messageReceiver.licenseChangeResponseQueue.push(response);
-                break;
             }
         }
     };
@@ -303,14 +315,16 @@ export class ServiceConnection {
 
         const guid: string = uuidgen();
         const request: ResetInteractionConfigFileRequest = new ResetInteractionConfigFileRequest(guid);
-        const wrapper = new CommunicationWrapper<ResetInteractionConfigFileRequest>
-            (ActionCode.RESET_INTERACTION_CONFIG_FILE, request);
+        const wrapper = new CommunicationWrapper<ResetInteractionConfigFileRequest>(
+            ActionCode.RESET_INTERACTION_CONFIG_FILE,
+            request
+        );
         const message: string = JSON.stringify(wrapper);
 
         ConnectionManager.messageReceiver.configStateCallbacks[guid] = new ConfigStateCallback(Date.now(), _callback);
 
         this.webSocket.send(message);
-    }
+    };
 
     // Function: RequestServiceStatus
     // Used internally to request information from the Service via the <webSocket>.
@@ -513,6 +527,50 @@ export class ServiceConnection {
 
         this.webSocket.send(message);
     };
+
+    // Function: BaseAnalyticsRequest
+    // Base functionality for sending an analytics request to the Service
+    private BaseAnalyticsRequest = <T extends UpdateAnalyticSessionEventsRequest | AnalyticsSessionStateChangeRequest>(
+        fields: Omit<T, 'requestID'>,
+        actionCode: ActionCode,
+        callback?: (detail: WebSocketResponse) => void
+    ) => {
+        const requestID = uuidgen();
+        const content = { ...fields, requestID } as T;
+        const wrapper = new CommunicationWrapper<T>(actionCode, content);
+        const message = JSON.stringify(wrapper);
+
+        if (callback) {
+            ConnectionManager.messageReceiver.analyticsRequestCallbacks[requestID] = new ResponseCallback(
+                Date.now(),
+                callback
+            );
+        }
+
+        this.webSocket.send(message);
+    };
+
+    // Function: AnalyticsSessionRequest
+    // Used to either start a new analytics session, or stop the current session.
+    AnalyticsSessionRequest = (
+        requestType: AnalyticsSessionRequestType,
+        sessionID: string,
+        callback?: (detail: WebSocketResponse) => void
+    ) =>
+        this.BaseAnalyticsRequest<AnalyticsSessionStateChangeRequest>(
+            { sessionID, requestType },
+            ActionCode.ANALYTICS_SESSION_REQUEST,
+            callback
+        );
+
+    // Function: UpdateAnalyticSessionEvents
+    // Used to send a request to update the analytic session's events stored in the Service
+    UpdateAnalyticSessionEvents = (sessionID: string, callback?: (detail: WebSocketResponse) => void) =>
+        this.BaseAnalyticsRequest<UpdateAnalyticSessionEventsRequest>(
+            { sessionID, sessionEvents: TouchFree.GetAnalyticSessionEvents() },
+            ActionCode.ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST,
+            callback
+        );
 }
 
 enum ServiceBinaryDataTypes {

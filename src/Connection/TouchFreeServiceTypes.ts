@@ -28,6 +28,8 @@ import { Mask } from '../Tracking/TrackingTypes';
 // SET_HAND_DATA_STREAM_STATE - Represents a request to the Service to enable/disable
 //                              the HAND_DATA stream or change the lens to have the hand position relative to.
 // INTERACTION_ZONE_EVENT - Represents the interaction zone state received from the Service
+// ANALYTICS_SESSION_REQUEST - Represents a request to start or stop an analytics session
+// ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST - Represents a request to update the analytic events for the current session.
 // GET_LICENSE_STATE - Represents a request to receive current Licensing state of TouchFree Service
 // LICENSE_STATE_RESPONSE - Represents a response to a request for the current Licensing state of
 //                          TouchFree Service
@@ -36,6 +38,7 @@ import { Mask } from '../Tracking/TrackingTypes';
 // REMOVE_LICENSE_KEY - Represents a request to remove a License Key to TouchFree Service
 // REMOVE_LICENSE_RESPONSE - Represents a response to an remove License Key request
 // LICENSE_STATE - Represents an event emitted by the Service whenever TouchFree's Licensing Service changes
+//
 export enum ActionCode {
     INPUT_ACTION = 'INPUT_ACTION',
 
@@ -73,6 +76,9 @@ export enum ActionCode {
 
     RESET_INTERACTION_CONFIG_FILE = 'RESET_INTERACTION_CONFIG_FILE',
 
+    ANALYTICS_SESSION_REQUEST = 'ANALYTICS_SESSION_REQUEST',
+    ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST = 'ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST',
+
     GET_LICENSE_STATE = 'GET_LICENSE_STATE',
     LICENSE_STATE_RESPONSE = 'LICENSE_STATE_RESPONSE',
     ADD_LICENSE_KEY = 'ADD_LICENSE_KEY',
@@ -82,7 +88,22 @@ export enum ActionCode {
     LICENSE_STATE = 'LICENSE_STATE',
 }
 
+// Type: RequestSessionStateChange
+// START - Sent to the service to start an analytics session
+// STOP - Sent to the service to stop an analytics session
+export type AnalyticsSessionRequestType = 'START' | 'STOP';
+
+// Type: EventStatus
+// Represents whether the event has been processed by the service
 export type EventStatus = 'PROCESSED' | 'UNPROCESSED';
+
+// Type: AnalyticEventKey
+// Supported analytic event types
+export type AnalyticEventKey = keyof DocumentEventMap;
+
+// Type: AnalyticSessionEvents
+// Indexed object storing how many times each analytics event has been triggered
+export type AnalyticSessionEvents = { [key in AnalyticEventKey]?: number };
 
 // Enum: HandPresenceState
 // HAND_FOUND - Sent when the first hand is found when no hand has been present for a moment
@@ -214,8 +235,6 @@ export class ConfigChangeRequest extends TouchFreeRequest {}
 // <ConfigStateResponse>. Stores a timestamp of its creation so the response has the ability to
 // timeout if not seen within a reasonable timeframe.
 export class ConfigStateCallback extends TouchFreeRequestCallback<ConfigState> {}
-
-
 
 // class: ResetInteractionConfigFile
 // Used internally to request that the Service resets the Interaction Config File to
@@ -468,8 +487,45 @@ export class SimpleRequest {
     }
 }
 
+// Interface BaseAnalyticsRequest
+// Represents the base information needed for an Analytics related request to the Service
+interface BaseAnalyticsRequest {
+    // Variable: requestID
+    requestID: string;
+    // Variable: sessionID
+    sessionID: string;
+}
+
+// Interface: AnalyticsSessionStateChangeRequest
+// Represents a request to the service to change the state of an analytics session.
+export interface AnalyticsSessionStateChangeRequest extends BaseAnalyticsRequest {
+    // Variable: state
+    requestType: AnalyticsSessionRequestType;
+}
+
+// Interface: UpdateAnalyticSessionEventsRequest
+// Represents a request to the service to update the event counts in the current analytics session.
+export interface UpdateAnalyticSessionEventsRequest extends BaseAnalyticsRequest {
+    // Variable: eventCounts
+    sessionEvents: AnalyticSessionEvents;
+}
+
 // Class: TrackingStateCallback
 // Used by <MessageReceiver> to wait for a <TrackingStateResponse> from the Service. Owns a callback with a
 // <TrackingStateResponse> as a parameter. Stores a timestamp of its creation so the response has the ability to
 // timeout if not seen within a reasonable timeframe.
-export class TrackingStateCallback extends TouchFreeRequestCallback<TrackingStateResponse> {}
+export class TrackingStateCallback {
+    // Variable: timestamp
+    timestamp: number;
+    // Variable: callback
+    callback: (detail: TrackingStateResponse) => void;
+
+    constructor(_timestamp: number, _callback: (detail: TrackingStateResponse) => void) {
+        this.timestamp = _timestamp;
+        this.callback = _callback;
+    }
+}
+
+// Type: CallbackList
+// Represents a list of callbacks keyed against id strings.
+export type CallbackList<T> = { [id: string]: TouchFreeRequestCallback<T> };
