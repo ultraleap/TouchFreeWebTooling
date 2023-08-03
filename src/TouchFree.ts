@@ -94,14 +94,17 @@ const IsConnected = (): boolean => ConnectionManager.IsConnected;
 
 let analyticsHeartbeat: number;
 
+type WebSocketCallback = (detail: WebSocketResponse) => void;
+
 // Function: ControlAnalyticsSession
 // Used to start or stop an analytics session.
 const ControlAnalyticsSession = (
     requestType: AnalyticsSessionRequestType,
     application: string,
-    callback?: (detail: WebSocketResponse) => void
+    callback?: WebSocketCallback
 ) => {
     const serviceConnection = ConnectionManager.serviceConnection();
+    if (!serviceConnection) return;
 
     if (requestType === 'START') {
         if (CurrentSessionId) {
@@ -110,11 +113,11 @@ const ControlAnalyticsSession = (
         }
         const newID = `${application}:${uuidgen()}`;
 
-        serviceConnection?.AnalyticsSessionRequest(requestType, newID, (detail) => {
+        serviceConnection.AnalyticsSessionRequest(requestType, newID, (detail) => {
             if (detail.status !== 'Failure') {
                 CurrentSessionId = newID;
                 analyticsHeartbeat = window.setInterval(
-                    () => serviceConnection?.UpdateAnalyticSessionEvents(newID),
+                    () => serviceConnection.UpdateAnalyticSessionEvents(newID),
                     2000
                 );
                 callback?.(detail);
@@ -131,13 +134,42 @@ const ControlAnalyticsSession = (
 
         const validSessionId = CurrentSessionId;
         clearInterval(analyticsHeartbeat);
-        serviceConnection?.UpdateAnalyticSessionEvents(validSessionId, () => {
+        serviceConnection.UpdateAnalyticSessionEvents(validSessionId, () => {
             // Clear session events
             sessionEvents = {};
-            serviceConnection?.AnalyticsSessionRequest(requestType, validSessionId, callback);
+            serviceConnection.AnalyticsSessionRequest(requestType, validSessionId, callback);
             CurrentSessionId = undefined;
         });
     }
+};
+
+interface StopAnalyticsSessionOptions {
+    callback?: WebSocketCallback;
+}
+
+// Function StopAnalyticsSession
+// Used to stop an analytics session with an optional callback
+const StopAnalyticsSession = (applicationName: string, options?: StopAnalyticsSessionOptions) => {
+    ControlAnalyticsSession('STOP', applicationName, options?.callback);
+};
+
+interface StartAnalyticsSessionOptions {
+    callback?: WebSocketCallback;
+    stopCurrentSession?: boolean;
+}
+
+// Function StartAnalyticsSession
+// Used to start an analytics session with an optional callback and flag to stop the currently running session
+const StartAnalyticsSession = (applicationName: string, options?: StartAnalyticsSessionOptions) => {
+    if (options?.stopCurrentSession && CurrentSessionId) {
+        ControlAnalyticsSession('STOP', applicationName, (detail) => {
+            ControlAnalyticsSession('START', applicationName, options.callback);
+            options.callback?.(detail);
+        });
+        return;
+    }
+
+    ControlAnalyticsSession('START', applicationName, options?.callback);
 };
 
 // Class: EventHandle
@@ -360,10 +392,11 @@ export default {
     GetInputController,
     IsConnected,
     RegisterEventCallback,
-    ControlAnalyticsSession,
     RegisterAnalyticEvents,
     UnregisterAnalyticEvents,
     IsAnalyticsActive,
     GetRegisteredAnalyticEventKeys,
     GetAnalyticSessionEvents,
+    StartAnalyticsSession,
+    StopAnalyticsSession,
 };
