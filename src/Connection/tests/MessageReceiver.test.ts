@@ -1,6 +1,6 @@
 import { HandDataManager } from '../../Plugins/HandDataManager';
 import TouchFree, { EventHandle } from '../../TouchFree';
-import { BitmaskFlags, ConvertInputAction, WebsocketInputAction } from '../../TouchFreeToolingTypes';
+import { _BitmaskFlags, ConvertInputAction, WebsocketInputAction } from '../../TouchFreeToolingTypes';
 import { intervalTest } from '../../tests/testUtils';
 import { ConnectionManager } from '../ConnectionManager';
 import { ServiceConnection } from '../ServiceConnection';
@@ -52,13 +52,13 @@ describe('MessageReceiver', () => {
         return testFn;
     };
 
-    const createInputAction = (flag?: BitmaskFlags, position?: { x: number; y: number }) => {
-        const newFlag = flag ?? BitmaskFlags.MOVE;
+    const createInputAction = (flag?: _BitmaskFlags, position?: { x: number; y: number }) => {
+        const newFlag = flag ?? _BitmaskFlags.MOVE;
         const newPos = position ?? { x: 0, y: 0 };
 
         return new WebsocketInputAction(
             Date.now(),
-            BitmaskFlags.LEFT + BitmaskFlags.PRIMARY + newFlag + BitmaskFlags.PUSH,
+            _BitmaskFlags.LEFT + _BitmaskFlags.PRIMARY + newFlag + _BitmaskFlags.PUSH,
             newPos,
             0,
             0
@@ -235,7 +235,7 @@ describe('MessageReceiver', () => {
 
         const action = new WebsocketInputAction(
             Date.now(),
-            BitmaskFlags.LEFT + BitmaskFlags.PRIMARY + BitmaskFlags.MOVE + BitmaskFlags.PUSH,
+            _BitmaskFlags.LEFT + _BitmaskFlags.PRIMARY + _BitmaskFlags.MOVE + _BitmaskFlags.PUSH,
             { x: 0, y: 0 },
             0,
             0
@@ -250,7 +250,7 @@ describe('MessageReceiver', () => {
         mockOpen();
 
         const moveAction = createInputAction();
-        const upAction = createInputAction(BitmaskFlags.UP, { x: 30, y: 30 });
+        const upAction = createInputAction(_BitmaskFlags.UP, { x: 30, y: 30 });
 
         const { CursorPosition } = ConvertInputAction(moveAction);
 
@@ -272,7 +272,7 @@ describe('MessageReceiver', () => {
         mockOpen();
 
         const moveAction = createInputAction();
-        const noneAction = createInputAction(BitmaskFlags.NONE_INPUT);
+        const noneAction = createInputAction(_BitmaskFlags.NONE_INPUT);
 
         for (let i = 0; i < 5; i++) {
             onMessage(ActionCode.INPUT_ACTION, { ...moveAction });
@@ -290,7 +290,7 @@ describe('MessageReceiver', () => {
         mockOpen();
 
         const moveAction = createInputAction();
-        const upAction = createInputAction(BitmaskFlags.UP);
+        const upAction = createInputAction(_BitmaskFlags.UP);
 
         for (let i = 0; i < 10; i++) {
             if (i === 5) {

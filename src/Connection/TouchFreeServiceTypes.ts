@@ -52,8 +52,12 @@ export enum ActionCode {
     CONFIGURATION_FILE_STATE = 'CONFIGURATION_FILE_STATE',
     /** Request changes to configuration *files* */
     SET_CONFIGURATION_FILE = 'SET_CONFIGURATION_FILE',
-    CONFIGURATION_FILE_CHANGE_RESPONSE = 'CONFIGURATION_FILE_CHANGE_RESPONSE',
     /** Response code for a {@link SET_CONFIGURATION_FILE} request */
+    CONFIGURATION_FILE_CHANGE_RESPONSE = 'CONFIGURATION_FILE_CHANGE_RESPONSE',
+    /**
+     * Response code for a {@link SET_CONFIGURATION_FILE} request
+     * @deprecated for {@link CONFIGURATION_FILE_CHANGE_RESPONSE}
+     */
     CONFIGURATION_FILE_RESPONSE = 'CONFIGURATION_FILE_RESPONSE',
 
     /** Represents a request for performing a quick setup of the Service */
@@ -108,21 +112,28 @@ export enum ActionCode {
     ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST = 'ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST',
 }
 
-// Type: RequestSessionStateChange
-// START - Sent to the service to start an analytics session
-// STOP - Sent to the service to stop an analytics session
+/**
+ * Type of analytics session request
+ * @internal
+ */
 export type AnalyticsSessionRequestType = 'START' | 'STOP';
 
-// Type: EventStatus
-// Represents whether the event has been processed by the service
+/**
+ * Represents whether the event has been processed by the service
+ * @internal
+ */
 export type EventStatus = 'PROCESSED' | 'UNPROCESSED';
 
-// Type: AnalyticEventKey
-// Supported analytic event types
+/**
+ * Supported analytic event types
+ * @internal
+ */
 export type AnalyticEventKey = keyof DocumentEventMap;
 
-// Type: AnalyticSessionEvents
-// Indexed object storing how many times each analytics event has been triggered
+/**
+ * Index object of {@link AnalyticEventKey} to number
+ * @internal
+ */
 export type AnalyticSessionEvents = { [key in AnalyticEventKey]?: number };
 
 /**
@@ -192,7 +203,8 @@ export class HandPresenceEvent {
 }
 
 /**
- * This data structure is used to receive interaction zone requests
+ * This data structure for {@link ActionCode.INTERACTION_ZONE_EVENT} messages
+ * @internal
  */
 export interface InteractionZoneEvent {
     state: InteractionZoneState;
@@ -219,7 +231,8 @@ export abstract class TouchFreeRequestCallback<T> {
 
 /**
  * Data structure used as a base for sending requests to the TouchFree Service
- * @internal
+ * @virtual
+ * @public
  */
 export abstract class TouchFreeRequest {
     requestID: string;
@@ -281,10 +294,10 @@ export class ConfigChangeRequest extends TouchFreeRequest {}
  */
 export class ConfigStateCallback extends TouchFreeRequestCallback<ConfigState> {}
 
-// class: ResetInteractionConfigFile
-// Used internally to request that the Service resets the Interaction Config File to
-// its default state. Provides the Default <InteractionConfigFull> returned by the Service
-// once the reset is complete.
+/**
+ * Request Service to reset the Interaction Config File to it's default state.
+ * @internal
+ */
 export class ResetInteractionConfigFileRequest extends TouchFreeRequest {}
 
 /**
@@ -313,13 +326,13 @@ export class ServiceStatus extends TouchFreeRequest {
     trackingServiceState: TrackingServiceState;
     /** See {@link ConfigurationState} */
     configurationState: ConfigurationState;
-    // Variable: serviceVersion
+    /** Service Version */
     serviceVersion: string;
-    // Variable: trackingVersion
+    /** Tracking Version */
     trackingVersion: string;
-    // Variable: cameraSerial
+    /** Camera Serial Number */
     cameraSerial: string;
-    // Variable: cameraFirmwareVersion
+    /** Camera Firmware Version */
     cameraFirmwareVersion: string;
 
     constructor(
@@ -413,7 +426,7 @@ export class ResponseCallback extends TouchFreeRequestCallback<WebSocketResponse
  * @internal
  */
 export class CommunicationWrapper<T> {
-    /** {@link ActionCode} */
+    /** See {@link ActionCode} */
     action: ActionCode;
     /** Wrapped content */
     content: T;
@@ -495,26 +508,32 @@ export class SimpleRequest {
     }
 }
 
-// Interface BaseAnalyticsRequest
-// Represents the base information needed for an Analytics related request to the Service
+/**
+ * Represents the base information needed for an Analytics related request to the Service
+ * @internal
+ */
 interface BaseAnalyticsRequest {
-    // Variable: requestID
+    /** Request ID */
     requestID: string;
-    // Variable: sessionID
+    /** Session ID */
     sessionID: string;
 }
 
-// Interface: AnalyticsSessionStateChangeRequest
-// Represents a request to the service to change the state of an analytics session.
+/**
+ * Represents a request to the service to change the state of an analytics session
+ * @internal
+ */
 export interface AnalyticsSessionStateChangeRequest extends BaseAnalyticsRequest {
-    // Variable: state
+    /** See {@link AnalyticsSessionRequestType} */
     requestType: AnalyticsSessionRequestType;
 }
 
-// Interface: UpdateAnalyticSessionEventsRequest
-// Represents a request to the service to update the event counts in the current analytics session.
+/**
+ * Represents a request to the service to update the event counts in the current analytics session
+ * @internal
+ */
 export interface UpdateAnalyticSessionEventsRequest extends BaseAnalyticsRequest {
-    // Variable: eventCounts
+    /** See {@link AnalyticSessionEvents} */
     sessionEvents: AnalyticSessionEvents;
 }
 
@@ -534,6 +553,8 @@ export class TrackingStateCallback {
     }
 }
 
-// Type: CallbackList
-// Represents a list of callbacks keyed against id strings.
+/**
+ * Represents a list of callbacks keyed against id strings
+ * @internal
+ */
 export type CallbackList<T> = { [id: string]: TouchFreeRequestCallback<T> };

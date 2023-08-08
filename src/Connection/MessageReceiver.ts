@@ -2,7 +2,7 @@ import { HandDataManager } from '../Plugins/HandDataManager';
 import { InputActionManager } from '../Plugins/InputActionManager';
 import TouchFree, { DispatchEvent } from '../TouchFree';
 import {
-    BitmaskFlags,
+    _BitmaskFlags,
     ConvertInputAction,
     InputType,
     TouchFreeInputAction,
@@ -333,7 +333,7 @@ export class MessageReceiver {
     /**
      * Checks {@link trackingStateQueue} for a single {@link TrackingStateResponse} and handles it.
      *
-     * @deprecated
+     * @deprecated in favour of {@link CheckQueue}
      */
     CheckForTrackingStateResponse(): void {
         const trackingStateResponse: TrackingStateResponse | undefined = this.trackingStateQueue.shift();
@@ -346,11 +346,10 @@ export class MessageReceiver {
     /**
      * Checks {@link trackingStateCallbacks} for a request id and handles invoking the callback.
      *
-     * @deprecated
+     * @deprecated in favour of {@link CheckQueue}
      */
     HandleTrackingStateResponse(trackingStateResponse: TrackingStateResponse): void {
         if (this.trackingStateCallbacks !== undefined) {
-            // TODO: use `HandleCallbackList`
             for (const key in this.trackingStateCallbacks) {
                 if (key === trackingStateResponse.requestID) {
                     this.trackingStateCallbacks[key].callback(trackingStateResponse);
@@ -376,8 +375,8 @@ export class MessageReceiver {
             if (this.actionQueue[0] !== undefined) {
                 // Stop shrinking the queue if we have a 'key' input event
                 if (
-                    this.actionQueue[0].InteractionFlags & BitmaskFlags.MOVE ||
-                    this.actionQueue[0].InteractionFlags & BitmaskFlags.NONE_INPUT
+                    this.actionQueue[0].InteractionFlags & _BitmaskFlags.MOVE ||
+                    this.actionQueue[0].InteractionFlags & _BitmaskFlags.NONE_INPUT
                 ) {
                     // We want to ignore non-move results
                     this.actionQueue.shift();

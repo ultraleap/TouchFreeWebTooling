@@ -1,4 +1,5 @@
 import { InteractionType } from '../TouchFreeToolingTypes';
+import { ConfigState } from 'Connection';
 
 /**
  * Container for all of the settings related to the interactions being processed by the TouchFree Service.
@@ -52,20 +53,30 @@ export interface InteractionConfig {
      */
     InteractionMaxDistanceCm: number;
 
-    /**
-     * This represents the type of interaction currently selected
-     */
+    /** This represents the type of interaction currently selected */
     InteractionType: InteractionType;
 
-    // Interaction-specific settings
+    /**
+     * Hover and Hold specific settings (partial)
+     * @see HoverAndHoldInteractionSettings
+     */
     HoverAndHold: Partial<HoverAndHoldInteractionSettings>;
+    /**
+     * TouchPlane specific settings (partial)
+     * @see TouchPlaneInteractionSettings
+     */
     TouchPlane: Partial<TouchPlaneInteractionSettings>;
+    /**
+     * VelocitySwipe specific settings (partial)
+     * @see VelocitySwipeSettings
+     * @internal
+     */
     VelocitySwipe: Partial<VelocitySwipeSettings>;
 }
 
 /**
- * This class is duplicate of `InteractionConfigPartial` without the Interactions data being optional
- * This form of `InteractionConfigPartial` is used in the `ConfigState` object returned when requesting
+ * This class is duplicate of {@link InteractionConfigPartial} without the Interactions data being optional
+ * This form of {@link InteractionConfigPartial} is used in the {@link ConfigState} object returned when requesting
  * the current state of the Service's config or its config files.
  * @public
  */

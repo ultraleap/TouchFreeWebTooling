@@ -57,7 +57,7 @@ export class ConfigurationManager {
      * WARNING! Any changes that have been made using {@link RequestConfigChange}
      * by *any* connected client will be lost when changing these files.
      * The change will be applied **to the current config files directly**,
-     * disregarding current active config state, and the config will be loaded from files.
+     * disregarding current active config state.
      * @param _interaction - Optional interaction config modifications to send
      * @param _physical - Optional physical config modifications to send
      * @param _callback - Optional callback confirming a response from the service
@@ -75,7 +75,17 @@ export class ConfigurationManager {
         );
     }
 
-    public static ResetInteractionConfigToDefault(_callback: (newState: ConfigState) => void): void {
+    /**
+     * Requests service to reset the interaction config file to it's default state
+     *
+     * @remarks
+     * WARNING! Any changes that have been made using {@link RequestConfigChange}
+     * by *any* connected client will be lost when changing these files.
+     * The change will be applied **to the current config files directly**,
+     * disregarding current active config state.
+     * @param _callback - callback containing the new {@link ConfigState}
+     */
+    public static ResetInteractionConfigFileToDefault(_callback: (newState: ConfigState) => void): void {
         ConnectionManager.serviceConnection()?.ResetInteractionConfigFile(_callback);
     }
 

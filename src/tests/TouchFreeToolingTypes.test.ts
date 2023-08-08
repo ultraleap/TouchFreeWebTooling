@@ -1,5 +1,5 @@
 import {
-    BitmaskFlags,
+    _BitmaskFlags,
     FlagUtilities,
     HandChirality,
     HandType,
@@ -20,48 +20,52 @@ const handTypes: HandType[] = [HandType.PRIMARY, HandType.SECONDARY];
 const handChiralities: HandChirality[] = [HandChirality.LEFT, HandChirality.RIGHT];
 const inputTypes: InputType[] = [InputType.CANCEL, InputType.DOWN, InputType.MOVE, InputType.NONE, InputType.UP];
 
-const allHandChiralityBitmask: BitmaskFlags = BitmaskFlags.LEFT | BitmaskFlags.RIGHT;
-const allHandTypeBitmask: BitmaskFlags = BitmaskFlags.PRIMARY | BitmaskFlags.SECONDARY;
-const allInputTypeBitmask: BitmaskFlags =
-    BitmaskFlags.NONE_INPUT | BitmaskFlags.CANCEL | BitmaskFlags.DOWN | BitmaskFlags.MOVE | BitmaskFlags.UP;
-const allInteractionTypeBitmask: BitmaskFlags =
-    BitmaskFlags.GRAB | BitmaskFlags.HOVER | BitmaskFlags.PUSH | BitmaskFlags.TOUCHPLANE | BitmaskFlags.VELOCITYSWIPE;
-const bitmaskFlagParams: BitmaskFlags[] = [
+const allHandChiralityBitmask: _BitmaskFlags = _BitmaskFlags.LEFT | _BitmaskFlags.RIGHT;
+const allHandTypeBitmask: _BitmaskFlags = _BitmaskFlags.PRIMARY | _BitmaskFlags.SECONDARY;
+const allInputTypeBitmask: _BitmaskFlags =
+    _BitmaskFlags.NONE_INPUT | _BitmaskFlags.CANCEL | _BitmaskFlags.DOWN | _BitmaskFlags.MOVE | _BitmaskFlags.UP;
+const allInteractionTypeBitmask: _BitmaskFlags =
+    _BitmaskFlags.GRAB |
+    _BitmaskFlags.HOVER |
+    _BitmaskFlags.PUSH |
+    _BitmaskFlags.TOUCHPLANE |
+    _BitmaskFlags.VELOCITYSWIPE;
+const bitmaskFlagParams: _BitmaskFlags[] = [
     // The parameters here are hand-written and non-exhaustive as the cost
     // of exhaustive combinations in maintenance and performance is excessive
 
     // All set
     allHandChiralityBitmask | allHandTypeBitmask | allInputTypeBitmask | allInteractionTypeBitmask,
     // Individual values
-    BitmaskFlags.LEFT,
-    BitmaskFlags.RIGHT,
+    _BitmaskFlags.LEFT,
+    _BitmaskFlags.RIGHT,
 
-    BitmaskFlags.PRIMARY,
-    BitmaskFlags.SECONDARY,
+    _BitmaskFlags.PRIMARY,
+    _BitmaskFlags.SECONDARY,
 
-    BitmaskFlags.NONE_INPUT,
-    BitmaskFlags.CANCEL,
-    BitmaskFlags.DOWN,
-    BitmaskFlags.MOVE,
-    BitmaskFlags.UP,
+    _BitmaskFlags.NONE_INPUT,
+    _BitmaskFlags.CANCEL,
+    _BitmaskFlags.DOWN,
+    _BitmaskFlags.MOVE,
+    _BitmaskFlags.UP,
 
-    BitmaskFlags.GRAB,
-    BitmaskFlags.HOVER,
-    BitmaskFlags.PUSH,
-    BitmaskFlags.TOUCHPLANE,
-    BitmaskFlags.VELOCITYSWIPE,
+    _BitmaskFlags.GRAB,
+    _BitmaskFlags.HOVER,
+    _BitmaskFlags.PUSH,
+    _BitmaskFlags.TOUCHPLANE,
+    _BitmaskFlags.VELOCITYSWIPE,
     // One of each enum
-    BitmaskFlags.LEFT | BitmaskFlags.PRIMARY | BitmaskFlags.DOWN | BitmaskFlags.GRAB,
-    BitmaskFlags.RIGHT | BitmaskFlags.SECONDARY | BitmaskFlags.NONE_INPUT | BitmaskFlags.TOUCHPLANE,
-    BitmaskFlags.LEFT | BitmaskFlags.SECONDARY | BitmaskFlags.UP | BitmaskFlags.VELOCITYSWIPE,
-    BitmaskFlags.RIGHT | BitmaskFlags.PRIMARY | BitmaskFlags.HOVER | BitmaskFlags.PUSH,
+    _BitmaskFlags.LEFT | _BitmaskFlags.PRIMARY | _BitmaskFlags.DOWN | _BitmaskFlags.GRAB,
+    _BitmaskFlags.RIGHT | _BitmaskFlags.SECONDARY | _BitmaskFlags.NONE_INPUT | _BitmaskFlags.TOUCHPLANE,
+    _BitmaskFlags.LEFT | _BitmaskFlags.SECONDARY | _BitmaskFlags.UP | _BitmaskFlags.VELOCITYSWIPE,
+    _BitmaskFlags.RIGHT | _BitmaskFlags.PRIMARY | _BitmaskFlags.HOVER | _BitmaskFlags.PUSH,
     // Multiple of same enum set
     allHandChiralityBitmask,
     allHandTypeBitmask,
     allInputTypeBitmask,
     allInteractionTypeBitmask,
     // Nothing set
-    BitmaskFlags.NONE,
+    _BitmaskFlags.NONE,
 ];
 
 describe('BitmaskFlag', () => {

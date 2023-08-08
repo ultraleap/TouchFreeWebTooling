@@ -8,8 +8,8 @@
 enum ActionCode {
     ANALYTICS_SESSION_REQUEST = "ANALYTICS_SESSION_REQUEST",
     ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST = "ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST",
-    // (undocumented)
     CONFIGURATION_FILE_CHANGE_RESPONSE = "CONFIGURATION_FILE_CHANGE_RESPONSE",
+    // @deprecated
     CONFIGURATION_FILE_RESPONSE = "CONFIGURATION_FILE_RESPONSE",
     CONFIGURATION_FILE_STATE = "CONFIGURATION_FILE_STATE",
     CONFIGURATION_RESPONSE = "CONFIGURATION_RESPONSE",
@@ -37,23 +37,26 @@ enum ActionCode {
     VERSION_HANDSHAKE_RESPONSE = "VERSION_HANDSHAKE_RESPONSE"
 }
 
-// @public (undocumented)
+// @internal
 type AnalyticEventKey = keyof DocumentEventMap;
 
-// @public (undocumented)
+// @internal
 type AnalyticSessionEvents = {
     [key in AnalyticEventKey]?: number;
 };
 
-// @public (undocumented)
+// @internal
 type AnalyticsSessionRequestType = 'START' | 'STOP';
 
-// Warning: (ae-forgotten-export) The symbol "BaseAnalyticsRequest" needs to be exported by the entry point index.d.ts
-//
-// @public (undocumented)
+// @internal
 interface AnalyticsSessionStateChangeRequest extends BaseAnalyticsRequest {
-    // (undocumented)
     requestType: AnalyticsSessionRequestType;
+}
+
+// @internal
+interface BaseAnalyticsRequest {
+    requestID: string;
+    sessionID: string;
 }
 
 // @public
@@ -63,43 +66,26 @@ abstract class BaseInputController {
     protected HandleInputAction(_inputData: TouchFreeInputAction): void;
 }
 
-// Warning: (ae-internal-missing-underscore) The name "BitmaskFlags" should be prefixed with an underscore because the declaration is marked as @internal
-//
 // @internal
-export enum BitmaskFlags {
-    // (undocumented)
+export enum _BitmaskFlags {
     CANCEL = 32,
-    // (undocumented)
     DOWN = 64,
-    // (undocumented)
     GRAB = 512,
-    // (undocumented)
     HOVER = 1024,
-    // (undocumented)
     LEFT = 1,
-    // (undocumented)
     MOVE = 128,
-    // (undocumented)
     NONE = 0,
-    // (undocumented)
     NONE_INPUT = 16,
-    // (undocumented)
     PRIMARY = 4,
-    // (undocumented)
     PUSH = 2048,
-    // (undocumented)
     RIGHT = 2,
-    // (undocumented)
     SECONDARY = 8,
-    // (undocumented)
     TOUCHPLANE = 4096,
-    // (undocumented)
     UP = 256,
-    // (undocumented)
     VELOCITYSWIPE = 8192
 }
 
-// @public (undocumented)
+// @internal
 type CallbackList<T> = {
     [id: string]: TouchFreeRequestCallback<T>;
 };
@@ -107,7 +93,6 @@ type CallbackList<T> = {
 // @internal
 class CommunicationWrapper<T> {
     constructor(_actionCode: ActionCode, _content: T);
-    // (undocumented)
     action: ActionCode;
     content: T;
 }
@@ -123,9 +108,6 @@ enum Compatibility {
 class ConfigChangeRequest extends TouchFreeRequest {
 }
 
-// Warning: (ae-incompatible-release-tags) The symbol "ConfigState" is marked as @public, but its signature references "TouchFreeRequest" which is marked as @internal
-// Warning: (ae-incompatible-release-tags) The symbol "ConfigState" is marked as @public, but its signature references "TouchFreeRequest" which is marked as @internal
-//
 // @public
 class ConfigState extends TouchFreeRequest {
     constructor(_id: string, _interaction: InteractionConfigFull, _physical: PhysicalConfig);
@@ -159,8 +141,7 @@ class ConfigurationManager {
     static RequestConfigFileChange(_interaction: Partial<InteractionConfig> | null, _physical: Partial<PhysicalConfig> | null, _callback: (detail: WebSocketResponse) => void | null): void;
     static RequestConfigFileState(_callback: (detail: ConfigState) => void): void;
     static RequestConfigState(_callback: (detail: ConfigState) => void): void;
-    // (undocumented)
-    static ResetInteractionConfigToDefault(_callback: (newState: ConfigState) => void): void;
+    static ResetInteractionConfigFileToDefault(_callback: (newState: ConfigState) => void): void;
 }
 
 // @public
@@ -205,6 +186,7 @@ declare namespace Connection {
         TrackingStateResponse,
         TrackingStateRequest,
         SimpleRequest,
+        BaseAnalyticsRequest,
         AnalyticsSessionStateChangeRequest,
         UpdateAnalyticSessionEventsRequest,
         TrackingStateCallback,
@@ -280,7 +262,7 @@ export interface EventHandle {
     UnregisterEventCallback(): void;
 }
 
-// @public (undocumented)
+// @internal
 type EventStatus = 'PROCESSED' | 'UNPROCESSED';
 
 // @internal
@@ -311,11 +293,11 @@ export enum FingerType {
 //
 // @internal
 export class FlagUtilities {
-    static GetChiralityFromFlags(_flags: BitmaskFlags): HandChirality;
-    static GetHandTypeFromFlags(_flags: BitmaskFlags): HandType;
-    static GetInputTypeFromFlags(_flags: BitmaskFlags): InputType;
-    static GetInteractionFlags(_interactionType: InteractionType, _handType: HandType, _chirality: HandChirality, _inputType: InputType): BitmaskFlags;
-    static GetInteractionTypeFromFlags(_flags: BitmaskFlags): InteractionType;
+    static GetChiralityFromFlags(_flags: _BitmaskFlags): HandChirality;
+    static GetHandTypeFromFlags(_flags: _BitmaskFlags): HandType;
+    static GetInputTypeFromFlags(_flags: _BitmaskFlags): InputType;
+    static GetInteractionFlags(_interactionType: InteractionType, _handType: HandType, _chirality: HandChirality, _inputType: InputType): _BitmaskFlags;
+    static GetInteractionTypeFromFlags(_flags: _BitmaskFlags): InteractionType;
 }
 
 // @public
@@ -457,7 +439,7 @@ export enum InteractionType {
     VELOCITYSWIPE = 4
 }
 
-// @public
+// @internal
 interface InteractionZoneEvent {
     // (undocumented)
     state: InteractionZoneState;
@@ -593,10 +575,7 @@ export class RawHand {
     WristWidth: number;
 }
 
-// Warning: (ae-incompatible-release-tags) The symbol "ResetInteractionConfigFileRequest" is marked as @public, but its signature references "TouchFreeRequest" which is marked as @internal
-// Warning: (ae-incompatible-release-tags) The symbol "ResetInteractionConfigFileRequest" is marked as @public, but its signature references "TouchFreeRequest" which is marked as @internal
-//
-// @public (undocumented)
+// @internal
 class ResetInteractionConfigFileRequest extends TouchFreeRequest {
 }
 
@@ -626,21 +605,14 @@ class ServiceConnection {
     webSocket: WebSocket;
 }
 
-// Warning: (ae-incompatible-release-tags) The symbol "ServiceStatus" is marked as @public, but its signature references "TouchFreeRequest" which is marked as @internal
-// Warning: (ae-incompatible-release-tags) The symbol "ServiceStatus" is marked as @public, but its signature references "TouchFreeRequest" which is marked as @internal
-//
 // @public
 class ServiceStatus extends TouchFreeRequest {
     constructor(_id: string, _trackingServiceState: TrackingServiceState, _configurationState: ConfigurationState, _serviceVersion: string, _trackingVersion: string, _cameraSerial: string, _cameraFirmwareVersion: string);
-    // (undocumented)
     cameraFirmwareVersion: string;
-    // (undocumented)
     cameraSerial: string;
     configurationState: ConfigurationState;
-    // (undocumented)
     serviceVersion: string;
     trackingServiceState: TrackingServiceState;
-    // (undocumented)
     trackingVersion: string;
 }
 
@@ -759,7 +731,7 @@ export class TouchFreeInputAction {
     Timestamp: number;
 }
 
-// @internal
+// @public @virtual
 abstract class TouchFreeRequest {
     constructor(_requestID: string);
     // (undocumented)
@@ -871,9 +843,8 @@ interface TrackingStateResponse {
     requestID: string;
 }
 
-// @public (undocumented)
+// @internal
 interface UpdateAnalyticSessionEventsRequest extends BaseAnalyticsRequest {
-    // (undocumented)
     sessionEvents: AnalyticSessionEvents;
 }
 
@@ -956,17 +927,14 @@ class WebInputController extends BaseInputController {
 //
 // @internal
 export class WebsocketInputAction {
-    constructor(_timestamp: number, _interactionFlags: BitmaskFlags, _cursorPosition: Vector2, _distanceFromScreen: number, _progressToClick: number);
+    constructor(_timestamp: number, _interactionFlags: _BitmaskFlags, _cursorPosition: Vector2, _distanceFromScreen: number, _progressToClick: number);
     CursorPosition: Vector2;
     DistanceFromScreen: number;
-    InteractionFlags: BitmaskFlags;
+    InteractionFlags: _BitmaskFlags;
     ProgressToClick: number;
     Timestamp: number;
 }
 
-// Warning: (ae-incompatible-release-tags) The symbol "WebSocketResponse" is marked as @public, but its signature references "TouchFreeRequest" which is marked as @internal
-// Warning: (ae-incompatible-release-tags) The symbol "WebSocketResponse" is marked as @public, but its signature references "TouchFreeRequest" which is marked as @internal
-//
 // @public
 class WebSocketResponse extends TouchFreeRequest {
     constructor(_id: string, _status: string, _msg: string, _request: string);
@@ -977,9 +945,10 @@ class WebSocketResponse extends TouchFreeRequest {
 
 // Warnings were encountered during analysis:
 //
-// src/Connection/TouchFreeServiceTypes.ts:539:33 - (ae-incompatible-release-tags) The symbol "__index" is marked as @public, but its signature references "TouchFreeRequestCallback" which is marked as @internal
-// src/Connection/TouchFreeServiceTypes.ts:539:33 - (ae-incompatible-release-tags) The symbol "__index" is marked as @public, but its signature references "TouchFreeRequestCallback" which is marked as @internal
+// src/TouchFree.ts:67:52 - (ae-incompatible-release-tags) The symbol "GetAnalyticSessionEvents" is marked as @public, but its signature references "AnalyticSessionEvents" which is marked as @internal
 // src/TouchFree.ts:72:59 - (ae-forgotten-export) The symbol "StartAnalyticsSessionOptions" needs to be exported by the entry point index.d.ts
+// src/TouchFree.ts:80:7 - (ae-incompatible-release-tags) The symbol "UnregisterAnalyticEvents" is marked as @public, but its signature references "AnalyticEventKey" which is marked as @internal
 // src/TouchFree.ts:183:8 - (ae-forgotten-export) The symbol "StopAnalyticsSessionOptions" needs to be exported by the entry point index.d.ts
+// src/TouchFree.ts:409:15 - (ae-incompatible-release-tags) The symbol "RegisterAnalyticEvents" is marked as @public, but its signature references "AnalyticEventKey" which is marked as @internal
 
 ```

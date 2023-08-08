@@ -395,6 +395,10 @@
         // "addToApiReportFile": false
       }
 
+      // "ae-unresolved-link": {
+      //   "logLevel": "none"
+      // }
+
       // "ae-extra-release-tag": {
       //   "logLevel": "warning",
       //   "addToApiReportFile": true
