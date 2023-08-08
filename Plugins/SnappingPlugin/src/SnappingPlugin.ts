@@ -1,5 +1,5 @@
-import { InputActionPlugin } from '../InputActionPlugin';
-import { TouchFreeInputAction } from '../../TouchFreeToolingTypes';
+import { InputActionPlugin } from '../../../src/Plugins/InputActionPlugin';
+import { TouchFreeInputAction } from '../../../src/TouchFreeToolingTypes';
 import { SnappableElement } from './SnappableElement';
 import { Vector2 } from './Vector2';
 

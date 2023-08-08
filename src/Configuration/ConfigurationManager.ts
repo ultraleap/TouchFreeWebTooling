@@ -1,4 +1,3 @@
-import { Connection, Configuration } from 'index';
 import {
     ActionCode,
     CommunicationWrapper,
@@ -7,6 +6,7 @@ import {
     WebSocketResponse,
 } from '../Connection/TouchFreeServiceTypes';
 import { InteractionConfig, PhysicalConfig } from './ConfigurationTypes';
+import { ConnectionManager } from 'Connection';
 import { v4 as uuidgen } from 'uuid';
 
 /**
@@ -16,7 +16,7 @@ import { v4 as uuidgen } from 'uuid';
 export class ConfigurationManager {
     /**
      * Send updated configuration to the TouchFree Service
-     * 
+     *
      * @remarks
      * WARNING! If a user changes ANY values via the TouchFree Service Settings UI,
      * all values set from the Tooling via this function will be discarded.
@@ -39,7 +39,7 @@ export class ConfigurationManager {
 
     /**
      * Request active configuration state of the TouchFree Service
-     * @param _callback - Callback with the requested {@link Connection.ConfigState}
+     * @param _callback - Callback with the requested {@link ConfigState}
      */
     public static RequestConfigState(_callback: (detail: ConfigState) => void): void {
         if (_callback === null) {
@@ -47,14 +47,14 @@ export class ConfigurationManager {
             return;
         }
 
-        Connection.ConnectionManager.serviceConnection()?.RequestConfigState(_callback);
+        ConnectionManager.serviceConnection()?.RequestConfigState(_callback);
     }
 
     /**
      * Requests a modification to the configuration **files** used by the TouchFree Service.
-     * 
+     *
      * @remarks
-     * WARNING! Any changes that have been made using {@link Configuration.ConfigurationManager.RequestConfigChange}
+     * WARNING! Any changes that have been made using {@link RequestConfigChange}
      * by *any* connected client will be lost when changing these files.
      * The change will be applied **to the current config files directly**,
      * disregarding current active config state, and the config will be loaded from files.
@@ -97,7 +97,7 @@ export class ConfigurationManager {
 
     /**
      * Request configuration state of the services config files.
-     * @param _callback - Callback with the requested {@link Connection.ConfigState}
+     * @param _callback - Callback with the requested {@link ConfigState}
      */
     public static RequestConfigFileState(_callback: (detail: ConfigState) => void): void {
         if (_callback === null) {

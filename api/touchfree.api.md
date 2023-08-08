@@ -6,6 +6,10 @@
 
 // @internal
 enum ActionCode {
+    ANALYTICS_SESSION_REQUEST = "ANALYTICS_SESSION_REQUEST",
+    ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST = "ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST",
+    // (undocumented)
+    CONFIGURATION_FILE_CHANGE_RESPONSE = "CONFIGURATION_FILE_CHANGE_RESPONSE",
     CONFIGURATION_FILE_RESPONSE = "CONFIGURATION_FILE_RESPONSE",
     CONFIGURATION_FILE_STATE = "CONFIGURATION_FILE_STATE",
     CONFIGURATION_RESPONSE = "CONFIGURATION_RESPONSE",
@@ -14,12 +18,14 @@ enum ActionCode {
     HAND_DATA = "HAND_DATA",
     HAND_PRESENCE_EVENT = "HAND_PRESENCE_EVENT",
     INPUT_ACTION = "INPUT_ACTION",
+    INTERACTION_ZONE_EVENT = "INTERACTION_ZONE_EVENT",
     QUICK_SETUP = "QUICK_SETUP",
     QUICK_SETUP_CONFIG = "QUICK_SETUP_CONFIG",
     QUICK_SETUP_RESPONSE = "QUICK_SETUP_RESPONSE",
     REQUEST_CONFIGURATION_FILE = "REQUEST_CONFIGURATION_FILE",
     REQUEST_CONFIGURATION_STATE = "REQUEST_CONFIGURATION_STATE",
     REQUEST_SERVICE_STATUS = "REQUEST_SERVICE_STATUS",
+    RESET_INTERACTION_CONFIG_FILE = "RESET_INTERACTION_CONFIG_FILE",
     SERVICE_STATUS = "SERVICE_STATUS",
     SERVICE_STATUS_RESPONSE = "SERVICE_STATUS_RESPONSE",
     SET_CONFIGURATION_FILE = "SET_CONFIGURATION_FILE",
@@ -29,6 +35,25 @@ enum ActionCode {
     TRACKING_STATE = "TRACKING_STATE",
     VERSION_HANDSHAKE = "VERSION_HANDSHAKE",
     VERSION_HANDSHAKE_RESPONSE = "VERSION_HANDSHAKE_RESPONSE"
+}
+
+// @public (undocumented)
+type AnalyticEventKey = keyof DocumentEventMap;
+
+// @public (undocumented)
+type AnalyticSessionEvents = {
+    [key in AnalyticEventKey]?: number;
+};
+
+// @public (undocumented)
+type AnalyticsSessionRequestType = 'START' | 'STOP';
+
+// Warning: (ae-forgotten-export) The symbol "BaseAnalyticsRequest" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+interface AnalyticsSessionStateChangeRequest extends BaseAnalyticsRequest {
+    // (undocumented)
+    requestType: AnalyticsSessionRequestType;
 }
 
 // @public
@@ -74,6 +99,11 @@ export enum BitmaskFlags {
     VELOCITYSWIPE = 8192
 }
 
+// @public (undocumented)
+type CallbackList<T> = {
+    [id: string]: TouchFreeRequestCallback<T>;
+};
+
 // @internal
 class CommunicationWrapper<T> {
     constructor(_actionCode: ActionCode, _content: T);
@@ -114,6 +144,7 @@ declare namespace Configuration {
         InteractionConfigFull,
         HoverAndHoldInteractionSettings,
         TouchPlaneInteractionSettings,
+        VelocitySwipeSettings,
         PhysicalConfig,
         Vector,
         Vector2,
@@ -128,6 +159,8 @@ class ConfigurationManager {
     static RequestConfigFileChange(_interaction: Partial<InteractionConfig> | null, _physical: Partial<PhysicalConfig> | null, _callback: (detail: WebSocketResponse) => void | null): void;
     static RequestConfigFileState(_callback: (detail: ConfigState) => void): void;
     static RequestConfigState(_callback: (detail: ConfigState) => void): void;
+    // (undocumented)
+    static ResetInteractionConfigToDefault(_callback: (newState: ConfigState) => void): void;
 }
 
 // @public
@@ -143,16 +176,24 @@ declare namespace Connection {
         MessageReceiver,
         ServiceConnection,
         ActionCode,
+        AnalyticsSessionRequestType,
+        EventStatus,
+        AnalyticEventKey,
+        AnalyticSessionEvents,
         HandPresenceState,
+        InteractionZoneState,
+        EventUpdate,
         Compatibility,
         HandPresenceEvent,
+        InteractionZoneEvent,
         TouchFreeRequestCallback,
         TouchFreeRequest,
         PartialConfigState,
         ConfigState,
         ConfigChangeRequest,
-        HandRenderDataStateRequest,
         ConfigStateCallback,
+        ResetInteractionConfigFileRequest,
+        HandRenderDataStateRequest,
         ServiceStatus,
         ServiceStatusRequest,
         ServiceStatusCallback,
@@ -164,7 +205,10 @@ declare namespace Connection {
         TrackingStateResponse,
         TrackingStateRequest,
         SimpleRequest,
-        TrackingStateCallback
+        AnalyticsSessionStateChangeRequest,
+        UpdateAnalyticSessionEventsRequest,
+        TrackingStateCallback,
+        CallbackList
     }
 }
 export { Connection }
@@ -178,8 +222,11 @@ class ConnectionManager extends EventTarget {
     static Connect(): void;
     static Disconnect(): void;
     static GetCurrentHandPresence(): HandPresenceState;
+    static GetCurrentInteractionZoneState(): InteractionZoneState;
     static HandleHandPresenceEvent(_state: HandPresenceState): void;
-    static init(): void;
+    static HandleInteractionZoneEvent(_state: InteractionZoneState): void;
+    // Warning: (ae-forgotten-export) The symbol "InitParams" needs to be exported by the entry point index.d.ts
+    static init(initParams?: InitParams): void;
     static instance: ConnectionManager;
     static iPAddress: string;
     static get IsConnected(): boolean;
@@ -189,6 +236,8 @@ class ConnectionManager extends EventTarget {
     static RequestServiceStatus(_callback: (detail: ServiceStatus) => void): void;
     // @internal
     static serviceConnection(): ServiceConnection | null;
+    // Warning: (ae-forgotten-export) The symbol "Address" needs to be exported by the entry point index.d.ts
+    static SetAddress(address: Address): void;
 }
 
 // Warning: (ae-internal-missing-underscore) The name "ConvertInputAction" should be prefixed with an underscore because the declaration is marked as @internal
@@ -210,25 +259,34 @@ export const DispatchEvent: <TEvent extends TouchFreeEvent>(eventType: TEvent, .
 
 // @public
 class DotCursor extends TouchlessCursor {
-    constructor(_cursor: HTMLElement, _cursorRing: HTMLElement, _animationDuration?: number, _ringSizeMultiplier?: number);
+    constructor(cursor: HTMLElement, cursorRing: HTMLElement, animationDuration?: number, ringSizeMultiplier?: number);
     readonly animationUpdateDuration: number;
     cursorRing: HTMLElement;
     // @internal
     GrowCursor(): void;
     // @internal
-    HandleInputAction(_inputData: TouchFreeInputAction): void;
+    protected HandleInputAction(inputData: TouchFreeInputAction): void;
     HideCursor(): void;
     ringSizeMultiplier: number;
     ShowCursor(): void;
     // @internal
     ShrinkCursor(): void;
     // @internal
-    UpdateCursor(_inputAction: TouchFreeInputAction): void;
+    protected UpdateCursor(inputAction: TouchFreeInputAction): void;
 }
 
 // @public
 export interface EventHandle {
     UnregisterEventCallback(): void;
+}
+
+// @public (undocumented)
+type EventStatus = 'PROCESSED' | 'UNPROCESSED';
+
+// @internal
+interface EventUpdate<T> {
+    state: T;
+    status: EventStatus;
 }
 
 // Warning: (ae-internal-missing-underscore) The name "FingerType" should be prefixed with an underscore because the declaration is marked as @internal
@@ -359,6 +417,11 @@ interface InteractionConfig {
     TouchPlane: Partial<TouchPlaneInteractionSettings>;
     UseScrollingOrDragging: boolean;
     UseSwipeInteraction: boolean;
+    // Warning: (ae-incompatible-release-tags) The symbol "VelocitySwipe" is marked as @public, but its signature references "VelocitySwipeSettings" which is marked as @internal
+    // Warning: (ae-incompatible-release-tags) The symbol "VelocitySwipe" is marked as @public, but its signature references "VelocitySwipeSettings" which is marked as @internal
+    //
+    // (undocumented)
+    VelocitySwipe: Partial<VelocitySwipeSettings>;
 }
 
 // @public
@@ -395,6 +458,18 @@ export enum InteractionType {
 }
 
 // @public
+interface InteractionZoneEvent {
+    // (undocumented)
+    state: InteractionZoneState;
+}
+
+// @public
+enum InteractionZoneState {
+    HAND_ENTERED = 0,
+    HAND_EXITED = 1
+}
+
+// @public
 function MapRangeToRange(_value: number, _oldMin: number, _oldMax: number, _newMin: number, _newMax: number): number;
 
 // @public
@@ -414,19 +489,32 @@ class MessageReceiver {
     constructor();
     actionCullToCount: number;
     actionQueue: Array<WebsocketInputAction>;
+    // (undocumented)
+    analyticsRequestCallbacks: CallbackList<WebSocketResponse>;
+    // (undocumented)
+    analyticsRequestQueue: WebSocketResponse[];
     callbackClearTimer: number;
     CheckForAction(): void;
     CheckForConfigState(): void;
     CheckForHandData(): void;
+    CheckForHandshakeResponse(): void;
+    // (undocumented)
     CheckForResponse(): void;
     CheckForServiceStatus(): void;
+    // @deprecated
     CheckForTrackingStateResponse(): void;
     ClearUnresponsivePromises(): void;
     configStateCallbacks: {
         [id: string]: ConfigStateCallback;
     };
     configStateQueue: Array<ConfigState>;
+    // @deprecated
     HandleTrackingStateResponse(trackingStateResponse: TrackingStateResponse): void;
+    handshakeCallbacks: {
+        [id: string]: ResponseCallback;
+    };
+    handshakeQueue: Array<WebSocketResponse>;
+    lastInteractionZoneUpdate: EventUpdate<InteractionZoneState>;
     lastKnownCursorPosition: Array<number>;
     lastStateUpdate: HandPresenceState;
     latestHandDataItem?: ArrayBuffer;
@@ -505,6 +593,13 @@ export class RawHand {
     WristWidth: number;
 }
 
+// Warning: (ae-incompatible-release-tags) The symbol "ResetInteractionConfigFileRequest" is marked as @public, but its signature references "TouchFreeRequest" which is marked as @internal
+// Warning: (ae-incompatible-release-tags) The symbol "ResetInteractionConfigFileRequest" is marked as @public, but its signature references "TouchFreeRequest" which is marked as @internal
+//
+// @public (undocumented)
+class ResetInteractionConfigFileRequest extends TouchFreeRequest {
+}
+
 // @internal
 class ResponseCallback extends TouchFreeRequestCallback<WebSocketResponse> {
 }
@@ -512,6 +607,8 @@ class ResponseCallback extends TouchFreeRequestCallback<WebSocketResponse> {
 // @internal
 class ServiceConnection {
     constructor(_ip?: string, _port?: string);
+    // (undocumented)
+    AnalyticsSessionRequest: (requestType: AnalyticsSessionRequestType, sessionID: string, callback?: ((detail: WebSocketResponse) => void) | undefined) => void;
     Disconnect: () => void;
     get handshakeComplete(): boolean;
     OnMessage: (_message: MessageEvent) => void;
@@ -521,8 +618,11 @@ class ServiceConnection {
     RequestServiceStatus: (_callback: (detail: ServiceStatus) => void) => void;
     RequestTrackingChange: (_state: Partial<TrackingState>, _callback: ((detail: TrackingStateResponse) => void) | null) => void;
     RequestTrackingState: (_callback: (detail: TrackingStateResponse) => void) => void;
+    ResetInteractionConfigFile: (_callback: (defaultConfig: ConfigState) => void) => void;
     SendMessage: <T extends WebSocketResponse>(_message: string, _requestID: string, _callback: ((detail: WebSocketResponse | T) => void) | null) => void;
     get touchFreeVersion(): string;
+    // (undocumented)
+    UpdateAnalyticSessionEvents: (sessionID: string, callback?: ((detail: WebSocketResponse) => void) | undefined) => void;
     webSocket: WebSocket;
 }
 
@@ -531,9 +631,17 @@ class ServiceConnection {
 //
 // @public
 class ServiceStatus extends TouchFreeRequest {
-    constructor(_id: string, _trackingServiceState: TrackingServiceState | null, _configurationState: ConfigurationState | null);
-    configurationState: ConfigurationState | null;
-    trackingServiceState: TrackingServiceState | null;
+    constructor(_id: string, _trackingServiceState: TrackingServiceState, _configurationState: ConfigurationState, _serviceVersion: string, _trackingVersion: string, _cameraSerial: string, _cameraFirmwareVersion: string);
+    // (undocumented)
+    cameraFirmwareVersion: string;
+    // (undocumented)
+    cameraSerial: string;
+    configurationState: ConfigurationState;
+    // (undocumented)
+    serviceVersion: string;
+    trackingServiceState: TrackingServiceState;
+    // (undocumented)
+    trackingVersion: string;
 }
 
 // @internal
@@ -559,17 +667,31 @@ interface SuccessWrapper<T> {
 
 // @public
 class SVGCursor extends TouchlessCursor {
-    constructor(_ringSizeMultiplier?: number, _darkCursor?: boolean);
+    constructor(ringSizeMultiplier?: number, darkCursor?: boolean);
     // @internal
-    HandleInputAction(_inputData: TouchFreeInputAction): void;
+    protected HandleInputAction(inputData: TouchFreeInputAction): void;
     HideCursor(): void;
+    ResetToDefaultColors(): void;
+    // (undocumented)
+    ResetToDefaultScale(): void;
+    // Warning: (ae-forgotten-export) The symbol "CursorPart" needs to be exported by the entry point index.d.ts
+    SetColor(cursorPart: CursorPart, color: string): void;
+    SetCursorOpacity(opacity: number): void;
+    // (undocumented)
+    SetCursorOptimise(optimise: boolean): void;
+    // (undocumented)
+    SetCursorScale(scale: number): void;
+    // (undocumented)
+    SetRingThicknessScale(scale: number): void;
     ShowCursor(): void;
     // @internal
-    UpdateCursor(_inputAction: TouchFreeInputAction): void;
+    protected UpdateCursor(inputAction: TouchFreeInputAction): void;
 }
 
 // @public
 export interface TfInitParams {
+    // (undocumented)
+    address?: Address;
     // (undocumented)
     initialiseCursor?: boolean;
 }
@@ -577,10 +699,21 @@ export interface TfInitParams {
 // @public
 const TouchFree: {
     CurrentCursor: TouchlessCursor | undefined;
+    GetCurrentCursor: () => TouchlessCursor | undefined;
+    SetCurrentCursor: (cursor: TouchlessCursor | undefined) => TouchlessCursor | undefined;
+    DispatchEvent: <TEvent extends TouchFreeEvent>(eventType: TEvent, ...args: Parameters<TouchFreeEventSignatures[TEvent]>) => void;
+    Init: (tfInitParams?: TfInitParams) => void;
     InputController: WebInputController | undefined;
-    Init: (_tfInitParams?: TfInitParams) => void;
+    GetInputController: () => WebInputController | undefined;
     IsConnected: () => boolean;
-    RegisterEventCallback: <TEvent extends TouchFreeEvent>(event: TEvent, callback: TouchFreeEventSignatures[TEvent]) => EventHandle;
+    RegisterEventCallback: <TEvent_1 extends TouchFreeEvent>(event: TEvent_1, callback: TouchFreeEventSignatures[TEvent_1]) => EventHandle;
+    RegisterAnalyticEvents: (eventsIn?: AnalyticEventKey[]) => void;
+    UnregisterAnalyticEvents: (eventsIn?: AnalyticEventKey[]) => void;
+    IsAnalyticsActive: () => boolean;
+    GetRegisteredAnalyticEventKeys: () => string[];
+    GetAnalyticSessionEvents: () => AnalyticSessionEvents;
+    StartAnalyticsSession: (applicationName: string, options?: StartAnalyticsSessionOptions) => void;
+    StopAnalyticsSession: (applicationName: string, options?: StopAnalyticsSessionOptions) => void;
 };
 export { TouchFree }
 export default TouchFree;
@@ -590,10 +723,13 @@ export type TouchFreeEvent = Extract<keyof TouchFreeEventSignatures, string>;
 
 // @public
 export interface TouchFreeEventSignatures {
+    HandEntered: () => void;
+    HandExited: () => void;
     HandFound: () => void;
     HandsLost: () => void;
     InputAction: (inputAction: TouchFreeInputAction) => void;
     OnConnected: () => void;
+    OnServiceStatusChange: (state: ServiceStatus) => void;
     OnTrackingServiceStateChange: (state: TrackingServiceState) => void;
     // @internal
     TransmitHandData: (data: HandFrame) => void;
@@ -644,11 +780,15 @@ abstract class TouchlessCursor {
     DisableCursor(): void;
     EnableCursor(): void;
     enabled: boolean;
-    HandleInputAction(_inputAction: TouchFreeInputAction): void;
+    // (undocumented)
+    protected GetDimensions(cursor: HTMLElement): [number, number];
+    protected HandleInputAction(_inputAction: TouchFreeInputAction): void;
     HideCursor(): void;
+    protected opacityOnHandsLost: number;
+    SetCursorOpacity(opacity: number): void;
     shouldShow: boolean;
     ShowCursor(): void;
-    UpdateCursor(_inputAction: TouchFreeInputAction): void;
+    protected UpdateCursor(_inputAction: TouchFreeInputAction): void;
 }
 
 // @public
@@ -731,6 +871,12 @@ interface TrackingStateResponse {
     requestID: string;
 }
 
+// @public (undocumented)
+interface UpdateAnalyticSessionEventsRequest extends BaseAnalyticsRequest {
+    // (undocumented)
+    sessionEvents: AnalyticSessionEvents;
+}
+
 declare namespace Utilities {
     export {
         MapRangeToRange
@@ -749,6 +895,36 @@ interface Vector {
 interface Vector2 {
     x: number;
     y: number;
+}
+
+// @internal
+interface VelocitySwipeSettings {
+    // (undocumented)
+    AllowBidirectionalScroll: boolean;
+    // (undocumented)
+    AllowHorizontalScroll: boolean;
+    // (undocumented)
+    AllowVerticalScroll: boolean;
+    // (undocumented)
+    DownwardsMinVelocityIncrease_mmps: number;
+    // (undocumented)
+    MaxLateralVelocity_mmps: number;
+    // (undocumented)
+    MaxOpposingVelocity_mmps: number;
+    // (undocumented)
+    MaxReleaseVelocity_mmps: number;
+    // (undocumented)
+    MaxSwipeWidth: number;
+    // (undocumented)
+    MinScrollVelocity_mmps: number;
+    // (undocumented)
+    MinSwipeLength: number;
+    // (undocumented)
+    ScrollDelayMs: number;
+    // (undocumented)
+    SwipeWidthScaling: number;
+    // (undocumented)
+    UpwardsMinVelocityDecrease_mmps: number;
 }
 
 // @public
@@ -798,5 +974,12 @@ class WebSocketResponse extends TouchFreeRequest {
     originalRequest: string;
     status: string;
 }
+
+// Warnings were encountered during analysis:
+//
+// src/Connection/TouchFreeServiceTypes.ts:539:33 - (ae-incompatible-release-tags) The symbol "__index" is marked as @public, but its signature references "TouchFreeRequestCallback" which is marked as @internal
+// src/Connection/TouchFreeServiceTypes.ts:539:33 - (ae-incompatible-release-tags) The symbol "__index" is marked as @public, but its signature references "TouchFreeRequestCallback" which is marked as @internal
+// src/TouchFree.ts:72:59 - (ae-forgotten-export) The symbol "StartAnalyticsSessionOptions" needs to be exported by the entry point index.d.ts
+// src/TouchFree.ts:183:8 - (ae-forgotten-export) The symbol "StopAnalyticsSessionOptions" needs to be exported by the entry point index.d.ts
 
 ```

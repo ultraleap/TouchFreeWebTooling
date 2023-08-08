@@ -54,3 +54,4 @@ tsconfig.tsbuildinfo
 
 *.xml
 coverage/
+temp/

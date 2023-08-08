@@ -7,7 +7,6 @@ import { TrackingState } from './TrackingTypes';
  * @public
  */
 export class TrackingManager {
-    
     /**
      * Request a {@link TrackingStateResponse} representing the current state of the tracking software
      * @remarks
@@ -36,7 +35,7 @@ export class TrackingManager {
     }
 
     /**
-     * Converts a {@link TrackingStateResponse} to a `Partial<TrackingState>` to make the response easier to consume.
+     * Converts a {@link TrackingStateResponse} to a partial {@link TrackingState} to make the response easier to consume.
      * @param _response - Response to convert
      * @returns Converted Partial {@link TrackingState}
      */
