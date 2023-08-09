@@ -1,99 +1,101 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true,
-        "node": true
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
     },
-    "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
-    },
-    "settings": {
-        "react": {
-            "version": "detect"
+    "import/resolver": {
+      "node": {
+        "extensions": [".ts"],
+        "moduleDirectory": ["node_modules", "src/"]
+      }
+    }
+  },
+  "plugins": ["@typescript-eslint", "spellcheck", "eslint-plugin-tsdoc"],
+  "ignorePatterns": ["/dist*", "/release", "build/*", "*_Example.html", "coverage/", "docs/*"],
+  "rules": {
+    "indent": "off",
+    "linebreak-style": "off",
+    "quotes": ["error", "single", "avoid-escape"],
+    "semi": ["error", "always"],
+    "max-len": ["error", { "code": 120 }],
+    "spellcheck/spell-checker": [
+      1,
+      {
+        "lang": "en_GB",
+        "skipWords": [
+          "touchfree",
+          "touchfreecursor",
+          "chiralities",
+          "bitmask",
+          "umd",
+          "tsx",
+          "chirality",
+          "Ultraleap",
+          "enum",
+          "evt",
+          "plugin",
+          "plugins",
+          "pos",
+          "unregister",
+          "eod",
+          "dist",
+          "errored",
+          "svg",
+          "msg",
+          "guid",
+          "uuidgen",
+          "timeframe",
+          "func",
+          "deadzone",
+          "lerp",
+          "rect",
+          "center",
+          "snapforce",
+          "etc",
+          "Impl",
+          "Impls",
+          "ts",
+          "jsDom",
+          "color",
+          "colors",
+          "colored",
+          "mmps",
+          "nulled",
+          "vars",
+          "castedKey",
+          "touchstart",
+          "touchmove",
+          "touchend",
+          "cobertura"
+        ],
+        "skipWordIfMatch": ["^pointer.*$", "(\\S+(32|64)+)"],
+        "minLength": 3
+      }
+    ],
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "types": {
+          "{}": false
         },
-        "import/resolver": {
-            "node": {
-                "extensions": [".ts"],
-                "moduleDirectory": ["node_modules", "src/"]
-            }
-        }
-    },
-    "plugins": ["@typescript-eslint", "spellcheck", "eslint-plugin-tsdoc"],
-    "ignorePatterns": ["/dist*", "/release", "build/*", "*_Example.html", "coverage/"],
-    "rules": {
-        "indent": "off",
-        "linebreak-style": "off",
-        "quotes": ["error", "single", "avoid-escape"],
-        "semi": ["error", "always"],
-        "max-len": ["error", { "code": 120 }],
-        "spellcheck/spell-checker": [
-            1,
-            {
-                "lang": "en_GB",
-                "skipWords": [
-                    "touchfree",
-                    "touchfreecursor",
-                    "chiralities",
-                    "bitmask",
-                    "umd",
-                    "tsx",
-                    "chirality",
-                    "Ultraleap",
-                    "enum",
-                    "evt",
-                    "plugin",
-                    "plugins",
-                    "pos",
-                    "unregister",
-                    "eod",
-                    "dist",
-                    "errored",
-                    "svg",
-                    "msg",
-                    "guid",
-                    "uuidgen",
-                    "timeframe",
-                    "func",
-                    "deadzone",
-                    "lerp",
-                    "rect",
-                    "center",
-                    "snapforce",
-                    "etc",
-                    "Impl",
-                    "Impls",
-                    "ts",
-                    "jsDom",
-                    "color",
-                    "colors",
-                    "colored",
-                    "mmps",
-                    "nulled",
-                    "castedKey",
-                    "touchstart",
-                    "touchmove",
-                    "touchend"
-                ],
-                "skipWordIfMatch": ["^pointer.*$", "(\\S+(32|64)+)"],
-                "minLength": 3
-            }
-        ],
-        "@typescript-eslint/ban-types": [
-            "error",
-            {
-                "types": {
-                    "{}": false
-                },
-                "extendDefaults": true
-            }
-        ],
-        "@typescript-eslint/no-empty-interface": "warn",
-        "@typescript-eslint/no-unused-vars": ["warn", { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_" }],
-        "@typescript-eslint/no-empty-function": "off",
-        "tsdoc/syntax": "warn"
-    },
-    "globals": { "TouchFree": "readonly", "SnappingPlugin": "readonly" }
+        "extendDefaults": true
+      }
+    ],
+    "@typescript-eslint/no-empty-interface": "warn",
+    "@typescript-eslint/no-unused-vars": ["warn", { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-empty-function": "off",
+    "tsdoc/syntax": "warn"
+  },
+  "globals": { "TouchFree": "readonly", "SnappingPlugin": "readonly" }
 }

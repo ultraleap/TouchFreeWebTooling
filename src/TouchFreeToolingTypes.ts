@@ -86,7 +86,9 @@ export function ConvertInputAction(_wsInput: WebsocketInputAction): TouchFreeInp
  * @public
  */
 export enum HandChirality {
+    /** Left hand */
     LEFT,
+    /** Right hand */
     RIGHT,
 }
 
@@ -123,13 +125,21 @@ export enum InputType {
  * @public
  */
 export enum InteractionType {
-    /** The user must perform a GRAB gesture to 'Touch' by bringing their fingers and thumb together */
+    /**
+     * The user must perform a GRAB gesture to 'Touch' by bringing their fingers and thumb together
+     * @internal
+     */
     GRAB,
     /** The user must perform a HOVER gesture to 'Touch' by holding their hand still for a fixed time */
     HOVER,
     /** The user must perform a PUSH gesture to 'Touch' by pushing their hand toward the screen */
     PUSH,
+    /** The user must perform a move past a plane in space to 'Touch' */
     TOUCHPLANE,
+    /**
+     * The user must perform a SWIPE gesture to 'Touch' by moving their hand quickly up, down, left or right
+     * @internal
+     */
     VELOCITYSWIPE,
 }
 
@@ -164,7 +174,7 @@ export enum ConfigurationState {
  * {@link InputType}, and {@link InteractionType} flags from the Service at once.
  * @internal
  */
-export enum _BitmaskFlags {
+export enum BitmaskFlags {
     /** No flags */
     NONE = 0,
 
@@ -287,7 +297,7 @@ export class WebsocketInputAction {
     /** Timestamp */
     Timestamp: number;
     /** InteractionFlags */
-    InteractionFlags: _BitmaskFlags;
+    InteractionFlags: BitmaskFlags;
     /** CursorPosition */
     CursorPosition: Vector2;
     /** DistanceFromScreen */
@@ -297,7 +307,7 @@ export class WebsocketInputAction {
 
     constructor(
         _timestamp: number,
-        _interactionFlags: _BitmaskFlags,
+        _interactionFlags: BitmaskFlags,
         _cursorPosition: Vector2,
         _distanceFromScreen: number,
         _progressToClick: number
@@ -315,6 +325,7 @@ export class WebsocketInputAction {
  * @internal
  */
 export class HandFrame {
+    /** Array of {@link RawHand | hand data} */
     Hands: RawHand[] = [];
 }
 
@@ -334,7 +345,9 @@ export class RawHand {
  * @internal
  */
 export class RawFinger {
+    /** Array of {@link RawBone | Bones}  */
     Bones: RawBone[] = [];
+    /** Type of finger. See {@link FingerType} */
     Type: FingerType = FingerType.TYPE_UNKNOWN;
 }
 
@@ -343,11 +356,17 @@ export class RawFinger {
  * @internal
  */
 export enum FingerType {
+    /** Thumb */
     TYPE_THUMB = 0,
+    /** Index Finger */
     TYPE_INDEX = 1,
+    /** Middle Finger */
     TYPE_MIDDLE = 2,
+    /** Ring Finger */
     TYPE_RING = 3,
+    /** Pinky Finger */
     TYPE_PINKY = 4,
+    /** Unknown Finger */
     TYPE_UNKNOWN = -1,
 }
 
@@ -373,70 +392,70 @@ export class FlagUtilities {
         _handType: HandType,
         _chirality: HandChirality,
         _inputType: InputType
-    ): _BitmaskFlags {
-        let returnVal: _BitmaskFlags = _BitmaskFlags.NONE;
+    ): BitmaskFlags {
+        let returnVal: BitmaskFlags = BitmaskFlags.NONE;
 
         switch (_handType) {
             case HandType.PRIMARY:
-                returnVal ^= _BitmaskFlags.PRIMARY;
+                returnVal ^= BitmaskFlags.PRIMARY;
                 break;
 
             case HandType.SECONDARY:
-                returnVal ^= _BitmaskFlags.SECONDARY;
+                returnVal ^= BitmaskFlags.SECONDARY;
                 break;
         }
 
         switch (_chirality) {
             case HandChirality.LEFT:
-                returnVal ^= _BitmaskFlags.LEFT;
+                returnVal ^= BitmaskFlags.LEFT;
                 break;
 
             case HandChirality.RIGHT:
-                returnVal ^= _BitmaskFlags.RIGHT;
+                returnVal ^= BitmaskFlags.RIGHT;
                 break;
         }
 
         switch (_inputType) {
             case InputType.NONE:
-                returnVal ^= _BitmaskFlags.NONE_INPUT;
+                returnVal ^= BitmaskFlags.NONE_INPUT;
                 break;
 
             case InputType.CANCEL:
-                returnVal ^= _BitmaskFlags.CANCEL;
+                returnVal ^= BitmaskFlags.CANCEL;
                 break;
 
             case InputType.MOVE:
-                returnVal ^= _BitmaskFlags.MOVE;
+                returnVal ^= BitmaskFlags.MOVE;
                 break;
 
             case InputType.UP:
-                returnVal ^= _BitmaskFlags.UP;
+                returnVal ^= BitmaskFlags.UP;
                 break;
 
             case InputType.DOWN:
-                returnVal ^= _BitmaskFlags.DOWN;
+                returnVal ^= BitmaskFlags.DOWN;
                 break;
         }
 
         switch (_interactionType) {
             case InteractionType.PUSH:
-                returnVal ^= _BitmaskFlags.PUSH;
+                returnVal ^= BitmaskFlags.PUSH;
                 break;
 
             case InteractionType.HOVER:
-                returnVal ^= _BitmaskFlags.HOVER;
+                returnVal ^= BitmaskFlags.HOVER;
                 break;
 
             case InteractionType.GRAB:
-                returnVal ^= _BitmaskFlags.GRAB;
+                returnVal ^= BitmaskFlags.GRAB;
                 break;
 
             case InteractionType.TOUCHPLANE:
-                returnVal ^= _BitmaskFlags.TOUCHPLANE;
+                returnVal ^= BitmaskFlags.TOUCHPLANE;
                 break;
 
             case InteractionType.VELOCITYSWIPE:
-                returnVal ^= _BitmaskFlags.VELOCITYSWIPE;
+                returnVal ^= BitmaskFlags.VELOCITYSWIPE;
                 break;
         }
 
@@ -449,12 +468,12 @@ export class FlagUtilities {
      * @param _flags - BitmaskFlags to extract from
      * @returns Extracted chirality
      */
-    static GetChiralityFromFlags(_flags: _BitmaskFlags): HandChirality {
+    static GetChiralityFromFlags(_flags: BitmaskFlags): HandChirality {
         let chirality: HandChirality = HandChirality.RIGHT;
 
-        if (_flags & _BitmaskFlags.RIGHT) {
+        if (_flags & BitmaskFlags.RIGHT) {
             chirality = HandChirality.RIGHT;
-        } else if (_flags & _BitmaskFlags.LEFT) {
+        } else if (_flags & BitmaskFlags.LEFT) {
             chirality = HandChirality.LEFT;
         } else {
             console.error("InputActionData missing: No Chirality found. Defaulting to 'RIGHT'");
@@ -469,12 +488,12 @@ export class FlagUtilities {
      * @param _flags - BitmaskFlags to extract from
      * @returns Extracted hand type
      */
-    static GetHandTypeFromFlags(_flags: _BitmaskFlags): HandType {
+    static GetHandTypeFromFlags(_flags: BitmaskFlags): HandType {
         let handType: HandType = HandType.PRIMARY;
 
-        if (_flags & _BitmaskFlags.PRIMARY) {
+        if (_flags & BitmaskFlags.PRIMARY) {
             handType = HandType.PRIMARY;
-        } else if (_flags & _BitmaskFlags.SECONDARY) {
+        } else if (_flags & BitmaskFlags.SECONDARY) {
             handType = HandType.SECONDARY;
         } else {
             console.error("InputActionData missing: No HandData found. Defaulting to 'PRIMARY'");
@@ -489,18 +508,18 @@ export class FlagUtilities {
      * @param _flags - BitmaskFlags to extract from
      * @returns Extracted input type
      */
-    static GetInputTypeFromFlags(_flags: _BitmaskFlags): InputType {
+    static GetInputTypeFromFlags(_flags: BitmaskFlags): InputType {
         let inputType: InputType = InputType.NONE;
 
-        if (_flags & _BitmaskFlags.NONE_INPUT) {
+        if (_flags & BitmaskFlags.NONE_INPUT) {
             inputType = InputType.NONE;
-        } else if (_flags & _BitmaskFlags.CANCEL) {
+        } else if (_flags & BitmaskFlags.CANCEL) {
             inputType = InputType.CANCEL;
-        } else if (_flags & _BitmaskFlags.UP) {
+        } else if (_flags & BitmaskFlags.UP) {
             inputType = InputType.UP;
-        } else if (_flags & _BitmaskFlags.DOWN) {
+        } else if (_flags & BitmaskFlags.DOWN) {
             inputType = InputType.DOWN;
-        } else if (_flags & _BitmaskFlags.MOVE) {
+        } else if (_flags & BitmaskFlags.MOVE) {
             inputType = InputType.MOVE;
         } else {
             console.error("InputActionData missing: No InputType found. Defaulting to 'NONE'");
@@ -515,18 +534,18 @@ export class FlagUtilities {
      * @param _flags - BitmaskFlags to extract from
      * @returns Extracted interaction type
      */
-    static GetInteractionTypeFromFlags(_flags: _BitmaskFlags): InteractionType {
+    static GetInteractionTypeFromFlags(_flags: BitmaskFlags): InteractionType {
         let interactionType: InteractionType = InteractionType.PUSH;
 
-        if (_flags & _BitmaskFlags.PUSH) {
+        if (_flags & BitmaskFlags.PUSH) {
             interactionType = InteractionType.PUSH;
-        } else if (_flags & _BitmaskFlags.HOVER) {
+        } else if (_flags & BitmaskFlags.HOVER) {
             interactionType = InteractionType.HOVER;
-        } else if (_flags & _BitmaskFlags.GRAB) {
+        } else if (_flags & BitmaskFlags.GRAB) {
             interactionType = InteractionType.GRAB;
-        } else if (_flags & _BitmaskFlags.TOUCHPLANE) {
+        } else if (_flags & BitmaskFlags.TOUCHPLANE) {
             interactionType = InteractionType.TOUCHPLANE;
-        } else if (_flags & _BitmaskFlags.VELOCITYSWIPE) {
+        } else if (_flags & BitmaskFlags.VELOCITYSWIPE) {
             interactionType = InteractionType.VELOCITYSWIPE;
         } else {
             console.error("InputActionData missing: No InteractionType found. Defaulting to 'PUSH'");

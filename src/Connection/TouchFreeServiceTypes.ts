@@ -1,6 +1,8 @@
 import { InteractionConfigFull, InteractionConfig, PhysicalConfig } from '../Configuration/ConfigurationTypes';
 import { ConfigurationState, TrackingServiceState } from '../TouchFreeToolingTypes';
 import { Mask } from '../Tracking/TrackingTypes';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { MessageReceiver } from './MessageReceiver';
 
 /**
  * Action codes for requests between TouchFree Service and this client
@@ -148,7 +150,7 @@ export enum HandPresenceState {
     /**
      * Used to indicate that no change in state is awaiting processing.
      *
-     * See usage in `MessageReceiver` for more details.
+     * See usage in {@link MessageReceiver} for more details.
      * @internal
      */
     PROCESSED,
@@ -195,6 +197,7 @@ export enum Compatibility {
  * @internal
  */
 export class HandPresenceEvent {
+    /** Type of the current event. See {@link HandPresenceState} */
     state: HandPresenceState;
 
     constructor(_state: HandPresenceState) {
@@ -207,6 +210,7 @@ export class HandPresenceEvent {
  * @internal
  */
 export interface InteractionZoneEvent {
+    /** Type of the current event. See {@link InteractionZoneState} */
     state: InteractionZoneState;
 }
 
@@ -361,7 +365,8 @@ export class ServiceStatus extends TouchFreeRequest {
 export class ServiceStatusRequest extends TouchFreeRequest {}
 
 /**
- * Request callback type for receiving {@link ServiceStatus} from the service via {@link ActionCode.SERVICE_STATUS_RESPONSE}
+ * Request callback type for receiving {@link ServiceStatus} from the service
+ * via {@link ActionCode.SERVICE_STATUS_RESPONSE}
  * @internal
  */
 export class ServiceStatusCallback extends TouchFreeRequestCallback<ServiceStatus> {}
@@ -393,9 +398,9 @@ export class WebSocketResponse extends TouchFreeRequest {
  * @public
  */
 export class VersionHandshakeResponse extends WebSocketResponse {
-    /** TouchFree Service SemVer */
+    /** TouchFree Service Semantic Versioning */
     touchFreeVersion: string;
-    /** Client-Service communication API SemVer */
+    /** Client-Service communication API Semantic Versioning */
     apiVersion: string;
 
     constructor(
@@ -438,7 +443,8 @@ export class CommunicationWrapper<T> {
 }
 
 /**
- * Outer container for {@link TrackingStateResponse} properties, including success state and a message with property content
+ * Outer container for {@link TrackingStateResponse} properties, including success state and a
+ * message with property content
  * @internal
  */
 export interface SuccessWrapper<T> {

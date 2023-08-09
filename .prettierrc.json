@@ -7,7 +7,7 @@
   "importOrderSeparation": true,
   "overrides": [
     {
-      "files": ["*.md", "*.json", "*.jsonc"],
+      "files": ["*.md", "*.json", "*.jsonc", "*.yml"],
       "options": {
         "tabWidth": 2
       }

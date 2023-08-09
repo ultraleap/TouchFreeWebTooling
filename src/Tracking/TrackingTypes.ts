@@ -3,9 +3,13 @@
  * @public
  */
 export interface Mask {
+    /** Amount of masking to apply to the left edge */
     left: number;
+    /** Amount of masking to apply to the right edge */
     right: number;
+    /** Amount of masking to apply to the top edge */
     upper: number;
+    /** Amount of masking to apply to the bottom edge */
     lower: number;
 }
 

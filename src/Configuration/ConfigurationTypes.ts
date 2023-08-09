@@ -1,5 +1,8 @@
 import { InteractionType } from '../TouchFreeToolingTypes';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ConfigState } from 'Connection';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ConfigurationManager } from './ConfigurationManager';
 
 /**
  * Container for all of the settings related to the interactions being processed by the TouchFree Service.
@@ -38,36 +41,30 @@ export interface InteractionConfig {
      */
     DeadzoneRadius: number;
 
-    /**
-     * Changes whether the Interaction Zone values will be used
-     */
+    /** Changes whether the Interaction Zone values will be used */
     InteractionZoneEnabled: boolean;
 
-    /**
-     * The minimum distance from the screen that users can interact within
-     */
+    /** The minimum distance from the screen that users can interact within */
     InteractionMinDistanceCm: number;
 
-    /**
-     * The maximum distance from the screen that users can interact within
-     */
+    /** The maximum distance from the screen that users can interact within */
     InteractionMaxDistanceCm: number;
 
     /** This represents the type of interaction currently selected */
     InteractionType: InteractionType;
 
     /**
-     * Hover and Hold specific settings (partial)
+     * Partial Hover and Hold specific settings
      * @see HoverAndHoldInteractionSettings
      */
     HoverAndHold: Partial<HoverAndHoldInteractionSettings>;
     /**
-     * TouchPlane specific settings (partial)
+     * Partial TouchPlane specific settings
      * @see TouchPlaneInteractionSettings
      */
     TouchPlane: Partial<TouchPlaneInteractionSettings>;
     /**
-     * VelocitySwipe specific settings (partial)
+     * Partial VelocitySwipe specific settings
      * @see VelocitySwipeSettings
      * @internal
      */
@@ -75,28 +72,28 @@ export interface InteractionConfig {
 }
 
 /**
- * This class is duplicate of {@link InteractionConfigPartial} without the Interactions data being optional
- * This form of {@link InteractionConfigPartial} is used in the {@link ConfigState} object returned when requesting
+ * This class is duplicate of {@link InteractionConfig} without the Interactions data being optional
+ * This form of {@link InteractionConfig} is used in the {@link ConfigState} object returned when requesting
  * the current state of the Service's config or its config files.
  * @public
  */
-export interface InteractionConfigFull {
-    UseScrollingOrDragging: boolean;
-
-    UseSwipeInteraction: boolean;
-
-    DeadzoneRadius: number;
-
-    InteractionZoneEnabled: boolean;
-
-    InteractionMinDistanceCm: number;
-
-    InteractionMaxDistanceCm: number;
-
-    InteractionType: InteractionType;
-
+export interface InteractionConfigFull extends InteractionConfig {
+    /**
+     * Hover and Hold specific settings
+     * @see HoverAndHoldInteractionSettings
+     */
     HoverAndHold: HoverAndHoldInteractionSettings;
+    /**
+     * TouchPlane specific settings
+     * @see TouchPlaneInteractionSettings
+     */
     TouchPlane: TouchPlaneInteractionSettings;
+    /**
+     * VelocitySwipe specific settings
+     * @see VelocitySwipeSettings
+     * @internal
+     */
+    VelocitySwipe: VelocitySwipeSettings;
 }
 
 /**
@@ -132,9 +129,9 @@ export interface HoverAndHoldInteractionSettings {
  * Container for settings that only apply to the TouchPlane interaction.
  *
  * @remarks
- * In order to modify these settings of the TouchFree Service, create an `InteractionConfig`,
+ * In order to modify these settings of the TouchFree Service, create an {@link InteractionConfig},
  * which contains an instance of this class, modify it as required, and then pass to the service
- * using the `ConfigurationManager`.
+ * using the {@link ConfigurationManager}.
  *
  * Like all of the Settings classes found in this file, all members are optional. If you do
  * not modify a member of this class, its value will not change when sent to the TouchFree Service.
@@ -242,19 +239,11 @@ export interface PhysicalConfig {
  * @public
  */
 export interface Vector {
-    /**
-     * The X co-ordinate of the vector
-     */
+    /** The X co-ordinate of the vector */
     X: number;
-
-    /**
-     * The Y co-ordinate of the vector
-     */
+    /** The Y co-ordinate of the vector */
     Y: number;
-
-    /**
-     * The Z co-ordinate of the vector
-     */
+    /** The Z co-ordinate of the vector */
     Z: number;
 }
 
@@ -263,14 +252,9 @@ export interface Vector {
  * @public
  */
 export interface Vector2 {
-    /**
-     * The X co-ordinate of the vector
-     */
+    /** The X co-ordinate of the vector */
     x: number;
-
-    /**
-     * The Y co-ordinate of the vector
-     */
+    /** The Y co-ordinate of the vector */
     y: number;
 }
 

@@ -48,15 +48,11 @@ type AnalyticSessionEvents = {
 // @internal
 type AnalyticsSessionRequestType = 'START' | 'STOP';
 
+// Warning: (ae-forgotten-export) The symbol "BaseAnalyticsRequest" needs to be exported by the entry point index.d.ts
+//
 // @internal
 interface AnalyticsSessionStateChangeRequest extends BaseAnalyticsRequest {
     requestType: AnalyticsSessionRequestType;
-}
-
-// @internal
-interface BaseAnalyticsRequest {
-    requestID: string;
-    sessionID: string;
 }
 
 // @public
@@ -66,8 +62,10 @@ abstract class BaseInputController {
     protected HandleInputAction(_inputData: TouchFreeInputAction): void;
 }
 
+// Warning: (ae-internal-missing-underscore) The name "BitmaskFlags" should be prefixed with an underscore because the declaration is marked as @internal
+//
 // @internal
-export enum _BitmaskFlags {
+export enum BitmaskFlags {
     CANCEL = 32,
     DOWN = 64,
     GRAB = 512,
@@ -186,7 +184,6 @@ declare namespace Connection {
         TrackingStateResponse,
         TrackingStateRequest,
         SimpleRequest,
-        BaseAnalyticsRequest,
         AnalyticsSessionStateChangeRequest,
         UpdateAnalyticSessionEventsRequest,
         TrackingStateCallback,
@@ -293,11 +290,11 @@ export enum FingerType {
 //
 // @internal
 export class FlagUtilities {
-    static GetChiralityFromFlags(_flags: _BitmaskFlags): HandChirality;
-    static GetHandTypeFromFlags(_flags: _BitmaskFlags): HandType;
-    static GetInputTypeFromFlags(_flags: _BitmaskFlags): InputType;
-    static GetInteractionFlags(_interactionType: InteractionType, _handType: HandType, _chirality: HandChirality, _inputType: InputType): _BitmaskFlags;
-    static GetInteractionTypeFromFlags(_flags: _BitmaskFlags): InteractionType;
+    static GetChiralityFromFlags(_flags: BitmaskFlags): HandChirality;
+    static GetHandTypeFromFlags(_flags: BitmaskFlags): HandType;
+    static GetInputTypeFromFlags(_flags: BitmaskFlags): InputType;
+    static GetInteractionFlags(_interactionType: InteractionType, _handType: HandType, _chirality: HandChirality, _inputType: InputType): BitmaskFlags;
+    static GetInteractionTypeFromFlags(_flags: BitmaskFlags): InteractionType;
 }
 
 // @public
@@ -389,43 +386,24 @@ export enum InputType {
 // @public
 interface InteractionConfig {
     DeadzoneRadius: number;
-    // (undocumented)
     HoverAndHold: Partial<HoverAndHoldInteractionSettings>;
     InteractionMaxDistanceCm: number;
     InteractionMinDistanceCm: number;
     InteractionType: InteractionType;
     InteractionZoneEnabled: boolean;
-    // (undocumented)
     TouchPlane: Partial<TouchPlaneInteractionSettings>;
     UseScrollingOrDragging: boolean;
     UseSwipeInteraction: boolean;
-    // Warning: (ae-incompatible-release-tags) The symbol "VelocitySwipe" is marked as @public, but its signature references "VelocitySwipeSettings" which is marked as @internal
-    // Warning: (ae-incompatible-release-tags) The symbol "VelocitySwipe" is marked as @public, but its signature references "VelocitySwipeSettings" which is marked as @internal
-    //
-    // (undocumented)
+    // @internal
     VelocitySwipe: Partial<VelocitySwipeSettings>;
 }
 
 // @public
-interface InteractionConfigFull {
-    // (undocumented)
-    DeadzoneRadius: number;
-    // (undocumented)
+interface InteractionConfigFull extends InteractionConfig {
     HoverAndHold: HoverAndHoldInteractionSettings;
-    // (undocumented)
-    InteractionMaxDistanceCm: number;
-    // (undocumented)
-    InteractionMinDistanceCm: number;
-    // (undocumented)
-    InteractionType: InteractionType;
-    // (undocumented)
-    InteractionZoneEnabled: boolean;
-    // (undocumented)
     TouchPlane: TouchPlaneInteractionSettings;
-    // (undocumented)
-    UseScrollingOrDragging: boolean;
-    // (undocumented)
-    UseSwipeInteraction: boolean;
+    // @internal
+    VelocitySwipe: VelocitySwipeSettings;
 }
 
 // @public
@@ -927,10 +905,10 @@ class WebInputController extends BaseInputController {
 //
 // @internal
 export class WebsocketInputAction {
-    constructor(_timestamp: number, _interactionFlags: _BitmaskFlags, _cursorPosition: Vector2, _distanceFromScreen: number, _progressToClick: number);
+    constructor(_timestamp: number, _interactionFlags: BitmaskFlags, _cursorPosition: Vector2, _distanceFromScreen: number, _progressToClick: number);
     CursorPosition: Vector2;
     DistanceFromScreen: number;
-    InteractionFlags: _BitmaskFlags;
+    InteractionFlags: BitmaskFlags;
     ProgressToClick: number;
     Timestamp: number;
 }

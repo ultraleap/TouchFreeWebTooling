@@ -203,7 +203,7 @@ export interface EventHandle {
 }
 
 /**
- * Turns a callback with an argument into a {@link CustomEvent<T>} Event Listener
+ * Turns a callback with an argument into a {@link CustomEvent} Event Listener
  *
  * @param callback - The callback to wrap
  * @returns EventListener with the wrapper callback
@@ -357,48 +357,9 @@ const EventImplementations: () => EventImpls = () =>
 /**
  * Registers a callback function to be called when a specific event occurs
  *
- * @remarks
- * Events and expected callback signatures:
- *
- * OnConnected: () => void;
- * Event dispatched when connecting to the TouchFree service
- *
- * WhenConnected: () => void;
- * Same as OnConnected but calls callback when already connected.
- * Note this event piggybacks as an "OnConnected" event on event targets.
- *
- * OnServiceStatusChanged: (state: ServiceStatus) => void;
- * Event dispatched when TouchFree Service status changes.
- *
- * OnTrackingServiceStateChange: (state: TrackingServiceState) => void;
- * Event dispatched when the connection between TouchFreeService and Ultraleap Tracking Service changes
- *
- * HandFound: () => void;
- * Event dispatched when the first hand has started tracking
- *
- * HandsLost: () => void;
- * Event dispatched when the last hand has stopped tracking
- *
- * TransmitHandData: (data: HandFrame) => void;
- * Event dispatched when new hand data is available
- *
- * InputAction: (inputAction: TouchFreeInputAction) => void;
- * Event dispatched when any input action is received from the TouchFree service
- *
- * TransmitInputActionRaw: (inputAction: TouchFreeInputAction) => void;
- * Event dispatched directly from the <InputActionManager> without any proxying
- *
- * TransmitInputAction: (inputAction: TouchFreeInputAction) => void;
- * Event dispatched from the <InputActionManager> to each registered Plugin
- *
- * HandEntered: () => void;
- *  Event dispatched when the active hand enters the interaction zone
- *
- * HandExited: () => void;
- * Event dispatched when the the active hand exits the interaction zone
- *
  * @param event - The event to register a callback to. See {@link TouchFreeEvent}
- * @param callback - The callback to register. Callback signature depends on event being registered. See {@link TouchFreeEventSignatures}
+ * @param callback - The callback to register. Callback signature depends on event being registered.
+ * See {@link TouchFreeEventSignatures}
  * @returns An {@link EventHandle} that can be used to unregister the callback
  *
  * @public

@@ -492,6 +492,13 @@ export class ServiceConnection {
 
     // Function: AnalyticsSessionRequest
     // Used to either start a new analytics session, or stop the current session.
+    /**
+     * Used to either start a new analytics session, or stop the current session.
+     *
+     * @param requestType - Type of Analytics Session request. See {@link AnalyticsSessionRequestType}
+     * @param sessionID - Session ID
+     * @param callback - Optional callback to handle the response from the service
+     */
     AnalyticsSessionRequest = (
         requestType: AnalyticsSessionRequestType,
         sessionID: string,

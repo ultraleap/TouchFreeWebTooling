@@ -2,7 +2,7 @@ import { HandDataManager } from '../Plugins/HandDataManager';
 import { InputActionManager } from '../Plugins/InputActionManager';
 import TouchFree, { DispatchEvent } from '../TouchFree';
 import {
-    _BitmaskFlags,
+    BitmaskFlags,
     ConvertInputAction,
     InputType,
     TouchFreeInputAction,
@@ -134,13 +134,13 @@ export class MessageReceiver {
      */
     trackingStateCallbacks: { [id: string]: TrackingStateCallback } = {};
 
-    // Variable: analyticsRequestQueue
-    // A queue of responses from service analytic calls.
+    /** A queue of responses from service analytic calls */
     analyticsRequestQueue: WebSocketResponse[] = [];
 
-    // Variable: analyticsRequestCallbacks
-    // A dictionary of unique request IDs and <ResponseCallback> that represent requests
-    // that are awaiting response from the Service.
+    /**
+     * A dictionary of unique request IDs and {@link WebSocketResponse} that represent requests
+     * that are awaiting response from the Service.
+     */
     analyticsRequestCallbacks: CallbackList<WebSocketResponse> = {};
 
     /**
@@ -217,9 +217,10 @@ export class MessageReceiver {
         );
     }
 
-    // Function: CheckForResponse
-    // Used to check the <responseQueue> for a <WebSocketResponse>. Sends it to Sends it to <HandleCallbackList> with
-    // the <responseCallbacks> dictionary if there is one.
+    /**
+     * Used to check the {@link responseQueue} for a {@link WebSocketResponse}.
+     * Sends it to {@link HandleCallbackList} with the {@link responseCallbacks} dictionary if there is one.
+     */
     CheckForResponse(): void {
         const response: WebSocketResponse | undefined = this.responseQueue.shift();
 
@@ -375,8 +376,8 @@ export class MessageReceiver {
             if (this.actionQueue[0] !== undefined) {
                 // Stop shrinking the queue if we have a 'key' input event
                 if (
-                    this.actionQueue[0].InteractionFlags & _BitmaskFlags.MOVE ||
-                    this.actionQueue[0].InteractionFlags & _BitmaskFlags.NONE_INPUT
+                    this.actionQueue[0].InteractionFlags & BitmaskFlags.MOVE ||
+                    this.actionQueue[0].InteractionFlags & BitmaskFlags.NONE_INPUT
                 ) {
                     // We want to ignore non-move results
                     this.actionQueue.shift();
