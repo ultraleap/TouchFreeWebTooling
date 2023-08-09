@@ -193,23 +193,26 @@ export interface TouchPlaneInteractionSettings {
 export interface VelocitySwipeSettings {
     /** Minimum horizontal scroll velocity (mmps) to trigger a swipe */
     MinScrollVelocity_mmps: number;
-    /**  */
+    /** The amount the minimum velocity is decreased when moving in an upwards direction */
     UpwardsMinVelocityDecrease_mmps: number;
-    /**  */
+    /** The amount the minimum velocity is increased when moving in a downwards direction */
     DownwardsMinVelocityIncrease_mmps: number;
-    /**  */
+    /** The maximum velocity for releasing a swipe */
     MaxReleaseVelocity_mmps: number;
-    /**  */
+    /** The maximum allowed velocity perpendicular to the swipe direction during swipe triggering */
     MaxLateralVelocity_mmps: number;
-    /**  */
+    /**
+     * If a user is over this velocity in the direction opposite to the previous swipe when the scroll delay
+     * expires then they are required to go below this velocity before they are able to swipe again
+     */
     MaxOpposingVelocity_mmps: number;
-    /**  */
+    /** The minimum amount of time before the user can swipe again */
     ScrollDelayMs: number;
     /** Minimum distance to trigger a swipe */
     MinSwipeLength: number;
-    /** Max distance to trigger a swipe. Travelling further than this will cancel the swipe */
+    /** Travelling perpendicular to the swipe further than this will cancel the swipe. See {@link SwipeWidthScaling} */
     MaxSwipeWidth: number;
-    /**  */
+    /** Increases the MaxSwipeWidth by `distance travelled * this value` to allow greater tolerance */
     SwipeWidthScaling: number;
     /** Toggle to allow scrolling forwards and backwards */
     AllowBidirectionalScroll: boolean;

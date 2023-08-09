@@ -385,7 +385,7 @@ const RegisterEventCallback = <TEvent extends TouchFreeEvent>(
  * Dispatches an event of the specific type with arguments if the event requires any.
  *
  * @remarks
- * For details of events and their expected arguments see comment above {@link RegisterEventCallback}
+ * For details of events and their expected arguments see {@link RegisterEventCallback}
  *
  * @param eventType - The event to register a callback to. See {@link TouchFreeEvent}
  * @param args - Arguments for the event. Depends on the event being dispatched. See {@link TouchFreeEventSignatures}
@@ -415,6 +415,7 @@ export const DispatchEvent = <TEvent extends TouchFreeEvent>(
  * @public
  */
 export const TouchFree = {
+    /** @deprecated for {@link GetCurrentCursor} and {@link SetCurrentCursor} */
     CurrentCursor,
     GetCurrentCursor,
     SetCurrentCursor,

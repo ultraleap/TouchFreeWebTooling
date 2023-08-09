@@ -13,7 +13,7 @@
     "sourceMap": true /* Generates corresponding '.map' file. */,
     // "outFile": "TouchFree_Tooling_Web",                       /* Concatenate and emit output to single file. */
     "outDir": "build" /* Redirect output structure to the directory. */,
-    "rootDir": "./src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
+    "rootDir": "" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
     "composite": true /* Enable project compilation */,
     // "tsBuildInfoFile": "./",               /* Specify file to store incremental compilation information */
     "removeComments": false /* Do not emit comments to output. */,
@@ -64,6 +64,5 @@
     /* Advanced Options */
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
   },
-  // "include": ["src", "Plugins/SnappingPlugin/src"]
-  "include": ["src"]
+  "include": ["src", "Plugins/SnappingPlugin/src"]
 }
