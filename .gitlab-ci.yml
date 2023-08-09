@@ -38,8 +38,8 @@ TF_Tooling::Web::build:
     # Clean last build
     - cd ${CI_PROJECT_DIR}
     - if (Test-Path -Path "./Tooling_Release") {
-        Remove-Item -LiteralPath ./Tooling_Release -Force -Recurse
-        Remove-Item -LiteralPath ./Tooling_Release -Force -Recurse
+      Remove-Item -LiteralPath ./Tooling_Release -Force -Recurse
+      Remove-Item -LiteralPath ./Tooling_Release -Force -Recurse
       }
     # Package Tooling
     - mkdir ./Tooling_Release
@@ -48,9 +48,28 @@ TF_Tooling::Web::build:
     - cp -R ${CI_PROJECT_DIR}/Plugins ./Tooling_Release
     - cp -R ${CI_PROJECT_DIR}/quick-start ./Tooling_Release
   artifacts:
-    name: "Tooling_for_Web_Build_${CI_COMMIT_SHORT_SHA}"
+    name: 'Tooling_for_Web_Build_${CI_COMMIT_SHORT_SHA}'
     paths:
       - ./Tooling_Release/*
+    expire_in: 2 weeks
+    when: always
+
+TF_Tooling::Docs::build:
+  extends: .Always_Build
+  dependencies:
+    - TF_Tooling::Web::build
+  tags:
+    - docker-windows
+  image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
+  script:
+    # Run unit tests
+    - cd ${CI_PROJECT_DIR}
+    - npm i
+    - npm run build:docs
+  artifacts:
+    name: 'TouchFree_Tooling_Documentation'
+    paths:
+      - ./docs/markdown
     expire_in: 2 weeks
     when: always
 
@@ -69,10 +88,10 @@ TF_Tooling::Web::test:
     - npm run test:coverage
   artifacts:
     when: always
-    name: "TestResults"
+    name: 'TestResults'
     paths:
-    - ${CI_PROJECT_DIR}/junit.xml
-    - ${CI_PROJECT_DIR}/coverage/
+      - ${CI_PROJECT_DIR}/junit.xml
+      - ${CI_PROJECT_DIR}/coverage/
     reports:
       junit: ${CI_PROJECT_DIR}/junit.xml
       coverage_report:
@@ -100,16 +119,13 @@ TF_Tooling::Web::package:
   dependencies:
     - TF_Tooling::Web::build
     - TF_Tooling::Docs::build
-  needs: [
-    "TF_Tooling::Web::build",
-    "TF_Tooling::Docs::build"
-  ]
+  needs: ['TF_Tooling::Web::build', 'TF_Tooling::Docs::build']
   script:
     - mkdir ./Tooling_Package/
     - cp -R ./Tooling_Release/* ./Tooling_Package/
     - cp -R "./Documentation/Tooling for Web/" ./Tooling_Package/Documentation/
   artifacts:
-    name: "TouchFree_Tooling_for_Web_${TF_TFW_VERSION}_${CI_COMMIT_SHORT_SHA}"
+    name: 'TouchFree_Tooling_for_Web_${TF_TFW_VERSION}_${CI_COMMIT_SHORT_SHA}'
     paths:
       - ./Tooling_Package/*
     expire_in: 2 weeks
