@@ -77,7 +77,38 @@ export interface InteractionConfig {
  * the current state of the Service's config or its config files.
  * @public
  */
-export interface InteractionConfigFull extends InteractionConfig {
+export interface InteractionConfigFull {
+    /**
+     * If true, allows interactions to send up/down events separately, enabling dragging or
+     * touchscreen-like scrolling behaviours. If false, up/down events will be sent together,
+     * and every down will function like a click of its own.
+     */
+    UseScrollingOrDragging: boolean;
+
+    /**
+     * If true, enables the swipe interaction alongside AirPush, Hover and Hold or TouchPlane
+     * if one of those interactions is configured
+     */
+    UseSwipeInteraction: boolean;
+
+    /**
+     * All interactions use a small deadzone to stabilise the position of the cursor, to prevent
+     * small user movements from making the cursor shake in place. This setting controls the
+     * radius of that deadzone.
+     */
+    DeadzoneRadius: number;
+
+    /** Changes whether the Interaction Zone values will be used */
+    InteractionZoneEnabled: boolean;
+
+    /** The minimum distance from the screen that users can interact within */
+    InteractionMinDistanceCm: number;
+
+    /** The maximum distance from the screen that users can interact within */
+    InteractionMaxDistanceCm: number;
+
+    /** This represents the type of interaction currently selected */
+    InteractionType: InteractionType;
     /**
      * Hover and Hold specific settings
      * @see HoverAndHoldInteractionSettings
@@ -88,12 +119,6 @@ export interface InteractionConfigFull extends InteractionConfig {
      * @see TouchPlaneInteractionSettings
      */
     TouchPlane: TouchPlaneInteractionSettings;
-    /**
-     * VelocitySwipe specific settings
-     * @see VelocitySwipeSettings
-     * @internal
-     */
-    VelocitySwipe: VelocitySwipeSettings;
 }
 
 /**
