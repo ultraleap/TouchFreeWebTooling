@@ -55,3 +55,4 @@ tsconfig.tsbuildinfo
 *.xml
 coverage/
 temp/
+api/
