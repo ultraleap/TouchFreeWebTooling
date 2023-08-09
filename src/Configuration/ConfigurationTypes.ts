@@ -1,8 +1,8 @@
 import { InteractionType } from '../TouchFreeToolingTypes';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ConfigState } from 'Connection';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ConfigurationManager } from './ConfigurationManager';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ConfigState } from 'Connection';
 
 /**
  * Container for all of the settings related to the interactions being processed by the TouchFree Service.
@@ -166,18 +166,31 @@ export interface TouchPlaneInteractionSettings {
  * @internal
  */
 export interface VelocitySwipeSettings {
+    /** Minimum horizontal scroll velocity (mmps) to trigger a swipe */
     MinScrollVelocity_mmps: number;
+    /**  */
     UpwardsMinVelocityDecrease_mmps: number;
+    /**  */
     DownwardsMinVelocityIncrease_mmps: number;
+    /**  */
     MaxReleaseVelocity_mmps: number;
+    /**  */
     MaxLateralVelocity_mmps: number;
+    /**  */
     MaxOpposingVelocity_mmps: number;
+    /**  */
     ScrollDelayMs: number;
+    /** Minimum distance to trigger a swipe */
     MinSwipeLength: number;
+    /** Max distance to trigger a swipe. Travelling further than this will cancel the swipe */
     MaxSwipeWidth: number;
+    /**  */
     SwipeWidthScaling: number;
+    /** Toggle to allow scrolling forwards and backwards */
     AllowBidirectionalScroll: boolean;
+    /** Toggle to allow scrolling left / right */
     AllowHorizontalScroll: boolean;
+    /** Toggle to allow scrolling up / down */
     AllowVerticalScroll: boolean;
 }
 

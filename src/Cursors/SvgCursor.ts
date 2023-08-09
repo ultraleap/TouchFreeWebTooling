@@ -172,8 +172,10 @@ export class SVGCursor extends TouchlessCursor {
         cursorToChange?.setAttribute('r', Math.round(newWidth).toString());
     }
 
-    // Function: SetCursorScale
-    // Used to set the scale of the cursor
+    /**
+     * Used to set the scale of the cursor
+     * @param scale - Multiplier value
+     */
     SetCursorScale(scale: number) {
         const cursor = this.cursor as SVGElement;
         this.SetCursorSize(this.baseRadius * scale, cursor);
@@ -181,8 +183,10 @@ export class SVGCursor extends TouchlessCursor {
         cursor.setAttribute('stroke-width', Math.round(this.baseDotBorderThickness * scale).toString());
     }
 
-    // Function: SetRingThicknessScale
-    // Used to set the scale of the cursor's ring thickness
+    /**
+     * Used to set the scale of the cursor's ring thickness
+     * @param scale - Multiplier value
+     */
     SetRingThicknessScale(scale: number) {
         this.cursorRing.setAttribute('stroke-width', Math.round(this.baseRingThickness * scale).toString());
     }
@@ -221,21 +225,25 @@ export class SVGCursor extends TouchlessCursor {
         this.cursorCanvas.style.opacity = opacity.toString();
     }
 
-    // Function: SetCursorOptimise
-    // Used to set the rendering mode of the SVGCursor to be optimised for speed or rendered in the default manner
+    /**
+     * Used to set the rendering mode of the SVGCursor
+     * @param optimise - set true to optimise for speed (will appear more aliased)
+     */
     SetCursorOptimise(optimise: boolean) {
         this.cursorCanvas.setAttribute('shape-rendering', optimise ? 'optimizeSpeed' : 'auto');
     }
 
-    // Function: GetCurrentCursorRadius
-    // Used to set the radius of the cursor
+    /**
+     * Used to set the radius of the cursor
+     */
     private GetCurrentCursorRadius(): number {
         const radius = this.cursor?.getAttribute('r');
         return !radius ? 0 : parseFloat(radius);
     }
 
-    // Function: GetCurrentCursorRingWidth
-    // Used to set the width of the cursor ring
+    /**
+     * Used to set the width of the cursor ring
+     */
     private GetCurrentCursorRingWidth(): number {
         const width = this.cursorRing.getAttribute('stroke-width');
         return !width ? 0 : parseFloat(width);
@@ -250,8 +258,9 @@ export class SVGCursor extends TouchlessCursor {
         this.cursorRing.setAttribute('stroke', this.isDarkCursor ? 'black' : 'white');
     }
 
-    // Function: ResetToDefaultScale
-    // Used to reset the SVGCursor to it's default scale
+    /**
+     * Used to reset the SVGCursor to it's default scale
+     */
     ResetToDefaultScale() {
         const cursor = this.cursor as SVGElement;
         this.SetCursorSize(this.baseRadius, cursor);

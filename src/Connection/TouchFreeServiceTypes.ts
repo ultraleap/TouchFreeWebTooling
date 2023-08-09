@@ -239,6 +239,7 @@ export abstract class TouchFreeRequestCallback<T> {
  * @public
  */
 export abstract class TouchFreeRequest {
+    /** Request ID */
     requestID: string;
     constructor(_requestID: string) {
         this.requestID = _requestID;
@@ -445,7 +446,7 @@ export class CommunicationWrapper<T> {
 /**
  * Outer container for {@link TrackingStateResponse} properties, including success state and a
  * message with property content
- * @internal
+ * @public
  */
 export interface SuccessWrapper<T> {
     /** Success state */

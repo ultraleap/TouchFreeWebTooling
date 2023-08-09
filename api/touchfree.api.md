@@ -272,17 +272,11 @@ interface EventUpdate<T> {
 //
 // @internal
 export enum FingerType {
-    // (undocumented)
     TYPE_INDEX = 1,
-    // (undocumented)
     TYPE_MIDDLE = 2,
-    // (undocumented)
     TYPE_PINKY = 4,
-    // (undocumented)
     TYPE_RING = 3,
-    // (undocumented)
     TYPE_THUMB = 0,
-    // (undocumented)
     TYPE_UNKNOWN = -1
 }
 
@@ -299,9 +293,7 @@ export class FlagUtilities {
 
 // @public
 export enum HandChirality {
-    // (undocumented)
     LEFT = 0,
-    // (undocumented)
     RIGHT = 1
 }
 
@@ -309,14 +301,12 @@ export enum HandChirality {
 //
 // @internal
 export class HandFrame {
-    // (undocumented)
     Hands: RawHand[];
 }
 
 // @internal
 class HandPresenceEvent {
     constructor(_state: HandPresenceState);
-    // (undocumented)
     state: HandPresenceState;
 }
 
@@ -408,18 +398,17 @@ interface InteractionConfigFull extends InteractionConfig {
 
 // @public
 export enum InteractionType {
+    // @internal
     GRAB = 0,
     HOVER = 1,
     PUSH = 2,
-    // (undocumented)
     TOUCHPLANE = 3,
-    // (undocumented)
+    // @internal
     VELOCITYSWIPE = 4
 }
 
 // @internal
 interface InteractionZoneEvent {
-    // (undocumented)
     state: InteractionZoneState;
 }
 
@@ -434,13 +423,9 @@ function MapRangeToRange(_value: number, _oldMin: number, _oldMax: number, _newM
 
 // @public
 interface Mask {
-    // (undocumented)
     left: number;
-    // (undocumented)
     lower: number;
-    // (undocumented)
     right: number;
-    // (undocumented)
     upper: number;
 }
 
@@ -449,16 +434,13 @@ class MessageReceiver {
     constructor();
     actionCullToCount: number;
     actionQueue: Array<WebsocketInputAction>;
-    // (undocumented)
     analyticsRequestCallbacks: CallbackList<WebSocketResponse>;
-    // (undocumented)
     analyticsRequestQueue: WebSocketResponse[];
     callbackClearTimer: number;
     CheckForAction(): void;
     CheckForConfigState(): void;
     CheckForHandData(): void;
     CheckForHandshakeResponse(): void;
-    // (undocumented)
     CheckForResponse(): void;
     CheckForServiceStatus(): void;
     // @deprecated
@@ -523,9 +505,7 @@ export { Plugins }
 //
 // @internal
 export class RawBone {
-    // (undocumented)
     NextJoint: Vector;
-    // (undocumented)
     PrevJoint: Vector;
 }
 
@@ -533,9 +513,7 @@ export class RawBone {
 //
 // @internal
 export class RawFinger {
-    // (undocumented)
     Bones: RawBone[];
-    // (undocumented)
     Type: FingerType;
 }
 
@@ -543,13 +521,9 @@ export class RawFinger {
 //
 // @internal
 export class RawHand {
-    // (undocumented)
     CurrentPrimary: boolean;
-    // (undocumented)
     Fingers: RawFinger[];
-    // (undocumented)
     WristPosition: Vector;
-    // (undocumented)
     WristWidth: number;
 }
 
@@ -564,7 +538,6 @@ class ResponseCallback extends TouchFreeRequestCallback<WebSocketResponse> {
 // @internal
 class ServiceConnection {
     constructor(_ip?: string, _port?: string);
-    // (undocumented)
     AnalyticsSessionRequest: (requestType: AnalyticsSessionRequestType, sessionID: string, callback?: ((detail: WebSocketResponse) => void) | undefined) => void;
     Disconnect: () => void;
     get handshakeComplete(): boolean;
@@ -578,7 +551,6 @@ class ServiceConnection {
     ResetInteractionConfigFile: (_callback: (defaultConfig: ConfigState) => void) => void;
     SendMessage: <T extends WebSocketResponse>(_message: string, _requestID: string, _callback: ((detail: WebSocketResponse | T) => void) | null) => void;
     get touchFreeVersion(): string;
-    // (undocumented)
     UpdateAnalyticSessionEvents: (sessionID: string, callback?: ((detail: WebSocketResponse) => void) | undefined) => void;
     webSocket: WebSocket;
 }
@@ -608,7 +580,7 @@ class SimpleRequest {
     requestID: string;
 }
 
-// @internal
+// @public
 interface SuccessWrapper<T> {
     content?: T;
     msg: string;
@@ -622,16 +594,12 @@ class SVGCursor extends TouchlessCursor {
     protected HandleInputAction(inputData: TouchFreeInputAction): void;
     HideCursor(): void;
     ResetToDefaultColors(): void;
-    // (undocumented)
     ResetToDefaultScale(): void;
     // Warning: (ae-forgotten-export) The symbol "CursorPart" needs to be exported by the entry point index.d.ts
     SetColor(cursorPart: CursorPart, color: string): void;
     SetCursorOpacity(opacity: number): void;
-    // (undocumented)
     SetCursorOptimise(optimise: boolean): void;
-    // (undocumented)
     SetCursorScale(scale: number): void;
-    // (undocumented)
     SetRingThicknessScale(scale: number): void;
     ShowCursor(): void;
     // @internal
@@ -640,9 +608,7 @@ class SVGCursor extends TouchlessCursor {
 
 // @public
 export interface TfInitParams {
-    // (undocumented)
     address?: Address;
-    // (undocumented)
     initialiseCursor?: boolean;
 }
 
@@ -691,28 +657,19 @@ export interface TouchFreeEventSignatures {
 // @public
 export class TouchFreeInputAction {
     constructor(_timestamp: number, _interactionType: InteractionType, _handType: HandType, _handChirality: HandChirality, _inputType: InputType, _cursorPosition: Array<number>, _distanceFromScreen: number, _progressToClick: number);
-    // (undocumented)
     Chirality: HandChirality;
-    // (undocumented)
     CursorPosition: Array<number>;
-    // (undocumented)
     DistanceFromScreen: number;
-    // (undocumented)
     HandType: HandType;
-    // (undocumented)
     InputType: InputType;
-    // (undocumented)
     InteractionType: InteractionType;
-    // (undocumented)
     ProgressToClick: number;
-    // (undocumented)
     Timestamp: number;
 }
 
 // @public @virtual
 abstract class TouchFreeRequest {
     constructor(_requestID: string);
-    // (undocumented)
     requestID: string;
 }
 
@@ -730,7 +687,6 @@ abstract class TouchlessCursor {
     DisableCursor(): void;
     EnableCursor(): void;
     enabled: boolean;
-    // (undocumented)
     protected GetDimensions(cursor: HTMLElement): [number, number];
     protected HandleInputAction(_inputAction: TouchFreeInputAction): void;
     HideCursor(): void;
@@ -806,17 +762,9 @@ class TrackingStateRequest {
 
 // @public
 interface TrackingStateResponse {
-    // Warning: (ae-incompatible-release-tags) The symbol "allowImages" is marked as @public, but its signature references "SuccessWrapper" which is marked as @internal
-    // Warning: (ae-incompatible-release-tags) The symbol "allowImages" is marked as @public, but its signature references "SuccessWrapper" which is marked as @internal
     allowImages: SuccessWrapper<boolean> | null;
-    // Warning: (ae-incompatible-release-tags) The symbol "analyticsEnabled" is marked as @public, but its signature references "SuccessWrapper" which is marked as @internal
-    // Warning: (ae-incompatible-release-tags) The symbol "analyticsEnabled" is marked as @public, but its signature references "SuccessWrapper" which is marked as @internal
     analyticsEnabled: SuccessWrapper<boolean> | null;
-    // Warning: (ae-incompatible-release-tags) The symbol "cameraReversed" is marked as @public, but its signature references "SuccessWrapper" which is marked as @internal
-    // Warning: (ae-incompatible-release-tags) The symbol "cameraReversed" is marked as @public, but its signature references "SuccessWrapper" which is marked as @internal
     cameraReversed: SuccessWrapper<boolean> | null;
-    // Warning: (ae-incompatible-release-tags) The symbol "mask" is marked as @public, but its signature references "SuccessWrapper" which is marked as @internal
-    // Warning: (ae-incompatible-release-tags) The symbol "mask" is marked as @public, but its signature references "SuccessWrapper" which is marked as @internal
     mask: SuccessWrapper<Mask> | null;
     requestID: string;
 }
@@ -848,11 +796,8 @@ interface Vector2 {
 
 // @internal
 interface VelocitySwipeSettings {
-    // (undocumented)
     AllowBidirectionalScroll: boolean;
-    // (undocumented)
     AllowHorizontalScroll: boolean;
-    // (undocumented)
     AllowVerticalScroll: boolean;
     // (undocumented)
     DownwardsMinVelocityIncrease_mmps: number;
@@ -862,11 +807,8 @@ interface VelocitySwipeSettings {
     MaxOpposingVelocity_mmps: number;
     // (undocumented)
     MaxReleaseVelocity_mmps: number;
-    // (undocumented)
     MaxSwipeWidth: number;
-    // (undocumented)
     MinScrollVelocity_mmps: number;
-    // (undocumented)
     MinSwipeLength: number;
     // (undocumented)
     ScrollDelayMs: number;
@@ -923,10 +865,10 @@ class WebSocketResponse extends TouchFreeRequest {
 
 // Warnings were encountered during analysis:
 //
-// src/TouchFree.ts:67:52 - (ae-incompatible-release-tags) The symbol "GetAnalyticSessionEvents" is marked as @public, but its signature references "AnalyticSessionEvents" which is marked as @internal
-// src/TouchFree.ts:72:59 - (ae-forgotten-export) The symbol "StartAnalyticsSessionOptions" needs to be exported by the entry point index.d.ts
-// src/TouchFree.ts:80:7 - (ae-incompatible-release-tags) The symbol "UnregisterAnalyticEvents" is marked as @public, but its signature references "AnalyticEventKey" which is marked as @internal
-// src/TouchFree.ts:183:8 - (ae-forgotten-export) The symbol "StopAnalyticsSessionOptions" needs to be exported by the entry point index.d.ts
-// src/TouchFree.ts:409:15 - (ae-incompatible-release-tags) The symbol "RegisterAnalyticEvents" is marked as @public, but its signature references "AnalyticEventKey" which is marked as @internal
+// src/TouchFree.ts:73:52 - (ae-incompatible-release-tags) The symbol "GetAnalyticSessionEvents" is marked as @public, but its signature references "AnalyticSessionEvents" which is marked as @internal
+// src/TouchFree.ts:78:59 - (ae-forgotten-export) The symbol "StartAnalyticsSessionOptions" needs to be exported by the entry point index.d.ts
+// src/TouchFree.ts:86:7 - (ae-incompatible-release-tags) The symbol "UnregisterAnalyticEvents" is marked as @public, but its signature references "AnalyticEventKey" which is marked as @internal
+// src/TouchFree.ts:189:8 - (ae-forgotten-export) The symbol "StopAnalyticsSessionOptions" needs to be exported by the entry point index.d.ts
+// src/TouchFree.ts:376:15 - (ae-incompatible-release-tags) The symbol "RegisterAnalyticEvents" is marked as @public, but its signature references "AnalyticEventKey" which is marked as @internal
 
 ```

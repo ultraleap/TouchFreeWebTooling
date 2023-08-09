@@ -468,8 +468,12 @@ export class ServiceConnection {
         this.webSocket.send(message);
     };
 
-    // Function: BaseAnalyticsRequest
-    // Base functionality for sending an analytics request to the Service
+    /**
+     * Base functionality for sending an analytics request to the Service
+     * @param fields - Object containing the content to send to the Service.
+     * @param actionCode - {@link ActionCode} for the analytics request
+     * @param callback - Optional callback to handle the response from the service
+     */
     private BaseAnalyticsRequest = <T extends UpdateAnalyticSessionEventsRequest | AnalyticsSessionStateChangeRequest>(
         fields: Omit<T, 'requestID'>,
         actionCode: ActionCode,
@@ -510,8 +514,11 @@ export class ServiceConnection {
             callback
         );
 
-    // Function: UpdateAnalyticSessionEvents
-    // Used to send a request to update the analytic session's events stored in the Service
+    /**
+     * Used to send a request to update the analytic session's events stored in the Service
+     * @param sessionID - ID of the session
+     * @param callback - Optional callback to handle the response from the service
+     */
     UpdateAnalyticSessionEvents = (sessionID: string, callback?: (detail: WebSocketResponse) => void) =>
         this.BaseAnalyticsRequest<UpdateAnalyticSessionEventsRequest>(
             { sessionID, sessionEvents: TouchFree.GetAnalyticSessionEvents() },

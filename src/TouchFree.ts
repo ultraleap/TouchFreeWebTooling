@@ -31,7 +31,13 @@ let CurrentSessionId: string | undefined;
  * @public
  */
 export interface TfInitParams {
+    /**
+     * If true or not provided a default {@link SVGCursor} will be created
+     */
     initialiseCursor?: boolean;
+    /**
+     * Custom IP and port to connect to Service on. See {@link Address}
+     */
     address?: Address;
 }
 

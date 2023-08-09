@@ -4,8 +4,13 @@ import { MessageReceiver } from './MessageReceiver';
 import { ServiceConnection } from './ServiceConnection';
 import { HandPresenceState, InteractionZoneState, ServiceStatus } from './TouchFreeServiceTypes';
 
+/**
+ * Custom IP and port to connect to Service on
+ */
 export interface Address {
+    /** Optional IP Address */
     ip?: string;
+    /** Optional Port */
     port?: string;
 }
 

@@ -63,6 +63,11 @@ export abstract class TouchlessCursor {
         }
     }
 
+    /**
+     * Returns the height and width of the cursor in px
+     * @param cursor - cursor to get height off
+     * @returns [cursor width, cursor height]
+     */
     protected GetDimensions(cursor: HTMLElement): [number, number] {
         if (cursor.style.width && cursor.style.height) {
             const getFloat = (dimension: string) => parseFloat(dimension.replace('px', ''));

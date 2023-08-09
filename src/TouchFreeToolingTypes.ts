@@ -27,13 +27,21 @@ export class VersionInfo {
  * @public
  */
 export class TouchFreeInputAction {
+    /** Timestamp of action */
     Timestamp: number;
+    /** Type of interaction. See {@link InteractionType} */
     InteractionType: InteractionType;
+    /** Type of Hand. See {@link HandType} */
     HandType: HandType;
+    /** Hand Chirality or handiness . See {@link HandChirality} */
     Chirality: HandChirality;
+    /** Type of input. See {@link InputType} */
     InputType: InputType;
+    /** Position of cursor in [x,y] */
     CursorPosition: Array<number>;
+    /** Distance the hand is from screen in M */
     DistanceFromScreen: number;
+    /** How close the action is to triggering a click between 0 (no click) and 1 (click) */
     ProgressToClick: number;
 
     constructor(
@@ -334,9 +342,13 @@ export class HandFrame {
  * @internal
  */
 export class RawHand {
+    /** Flag representing if hand is the current primary hand */
     CurrentPrimary = false;
+    /** Array of {@link RawFinger | fingers} */
     Fingers: RawFinger[] = [];
+    /** Width of wrist */
     WristWidth = 0;
+    /** Position of wrist */
     WristPosition: Vector = { X: 0, Y: 0, Z: 0 };
 }
 
@@ -375,8 +387,10 @@ export enum FingerType {
  * @internal
  */
 export class RawBone {
-    NextJoint: Vector = { X: 0, Y: 0, Z: 0 };
+    /** Start joint position of the finger bone */
     PrevJoint: Vector = { X: 0, Y: 0, Z: 0 };
+    /** End joint position of the finger bone */
+    NextJoint: Vector = { X: 0, Y: 0, Z: 0 };
 }
 
 /**
