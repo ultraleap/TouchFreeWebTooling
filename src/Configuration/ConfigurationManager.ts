@@ -1,3 +1,4 @@
+import { ConnectionManager } from '../Connection';
 import {
     ActionCode,
     CommunicationWrapper,
@@ -6,7 +7,6 @@ import {
     WebSocketResponse,
 } from '../Connection/TouchFreeServiceTypes';
 import { InteractionConfig, PhysicalConfig } from './ConfigurationTypes';
-import { ConnectionManager } from 'Connection';
 import { v4 as uuidgen } from 'uuid';
 
 /**
