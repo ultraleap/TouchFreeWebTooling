@@ -62,8 +62,6 @@ abstract class BaseInputController {
     protected HandleInputAction(_inputData: TouchFreeInputAction): void;
 }
 
-// Warning: (ae-internal-missing-underscore) The name "BitmaskFlags" should be prefixed with an underscore because the declaration is marked as @internal
-//
 // @internal
 export enum BitmaskFlags {
     CANCEL = 32,
@@ -219,8 +217,6 @@ class ConnectionManager extends EventTarget {
     static SetAddress(address: Address): void;
 }
 
-// Warning: (ae-internal-missing-underscore) The name "ConvertInputAction" should be prefixed with an underscore because the declaration is marked as @internal
-//
 // @internal
 export function ConvertInputAction(_wsInput: WebsocketInputAction): TouchFreeInputAction;
 
@@ -232,12 +228,6 @@ declare namespace Cursors {
     }
 }
 export { Cursors }
-
-// @public
-const _default: {
-    TrackingManager: typeof TrackingManager;
-    TrackingTypes: typeof TrackingTypes;
-};
 
 // @public
 export const DispatchEvent: <TEvent extends TouchFreeEvent>(eventType: TEvent, ...args: Parameters<TouchFreeEventSignatures[TEvent]>) => void;
@@ -274,8 +264,6 @@ interface EventUpdate<T> {
     status: EventStatus;
 }
 
-// Warning: (ae-internal-missing-underscore) The name "FingerType" should be prefixed with an underscore because the declaration is marked as @internal
-//
 // @internal
 export enum FingerType {
     TYPE_INDEX = 1,
@@ -286,8 +274,6 @@ export enum FingerType {
     TYPE_UNKNOWN = -1
 }
 
-// Warning: (ae-internal-missing-underscore) The name "FlagUtilities" should be prefixed with an underscore because the declaration is marked as @internal
-//
 // @internal
 export class FlagUtilities {
     static GetChiralityFromFlags(_flags: BitmaskFlags): HandChirality;
@@ -303,8 +289,6 @@ export enum HandChirality {
     RIGHT = 1
 }
 
-// Warning: (ae-internal-missing-underscore) The name "HandFrame" should be prefixed with an underscore because the declaration is marked as @internal
-//
 // @internal
 export class HandFrame {
     Hands: RawHand[];
@@ -432,6 +416,14 @@ enum InteractionZoneState {
 // @public
 function MapRangeToRange(_value: number, _oldMin: number, _oldMax: number, _newMin: number, _newMax: number): number;
 
+// @public
+interface Mask {
+    left: number;
+    lower: number;
+    right: number;
+    upper: number;
+}
+
 // @internal
 class MessageReceiver {
     constructor();
@@ -504,24 +496,18 @@ declare namespace Plugins {
 }
 export { Plugins }
 
-// Warning: (ae-internal-missing-underscore) The name "RawBone" should be prefixed with an underscore because the declaration is marked as @internal
-//
 // @internal
 export class RawBone {
     NextJoint: Vector;
     PrevJoint: Vector;
 }
 
-// Warning: (ae-internal-missing-underscore) The name "RawFinger" should be prefixed with an underscore because the declaration is marked as @internal
-//
 // @internal
 export class RawFinger {
     Bones: RawBone[];
     Type: FingerType;
 }
 
-// Warning: (ae-internal-missing-underscore) The name "RawHand" should be prefixed with an underscore because the declaration is marked as @internal
-//
 // @internal
 export class RawHand {
     CurrentPrimary: boolean;
@@ -549,7 +535,6 @@ class ServiceConnection {
     RequestConfigFile: (_callback: (detail: ConfigState) => void) => void;
     RequestConfigState: (_callback: (detail: ConfigState) => void) => void;
     RequestServiceStatus: (_callback: (detail: ServiceStatus) => void) => void;
-    // Warning: (ae-forgotten-export) The symbol "TrackingState" needs to be exported by the entry point index.d.ts
     RequestTrackingChange: (_state: Partial<TrackingState>, _callback: ((detail: TrackingStateResponse) => void) | null) => void;
     RequestTrackingState: (_callback: (detail: TrackingStateResponse) => void) => void;
     ResetInteractionConfigFile: (_callback: (defaultConfig: ConfigState) => void) => void;
@@ -717,16 +702,34 @@ enum TrackedPosition {
 
 declare namespace Tracking {
     export {
-        _default as default
+        TrackingManager,
+        Mask,
+        TrackingState
     }
 }
 export { Tracking }
+
+// @public
+class TrackingManager {
+    static ConvertResponseToState(_response: TrackingStateResponse): Partial<TrackingState>;
+    static RequestTrackingChange(_state: Partial<TrackingState>, _callback?: ((detail: TrackingStateResponse) => void) | null): void;
+    static RequestTrackingState(_callback: (detail: TrackingStateResponse) => void): void;
+}
 
 // @public
 export enum TrackingServiceState {
     CONNECTED = 2,
     NO_CAMERA = 1,
     UNAVAILABLE = 0
+}
+
+// @public
+class TrackingState {
+    constructor(_mask: Mask, _cameraReversed: boolean, _allowImages: boolean, _analyticsEnabled: boolean);
+    allowImages: boolean;
+    analyticsEnabled: boolean;
+    cameraReversed: boolean;
+    mask: Mask;
 }
 
 // @internal
@@ -751,7 +754,6 @@ interface TrackingStateResponse {
     allowImages: SuccessWrapper<boolean> | null;
     analyticsEnabled: SuccessWrapper<boolean> | null;
     cameraReversed: SuccessWrapper<boolean> | null;
-    // Warning: (ae-forgotten-export) The symbol "Mask" needs to be exported by the entry point index.d.ts
     mask: SuccessWrapper<Mask> | null;
     requestID: string;
 }
@@ -805,8 +807,6 @@ class VersionHandshakeResponse extends WebSocketResponse {
     touchFreeVersion: string;
 }
 
-// Warning: (ae-internal-missing-underscore) The name "VersionInfo" should be prefixed with an underscore because the declaration is marked as @internal
-//
 // @internal
 export class VersionInfo {
     static readonly API_HEADER_NAME: string;
@@ -823,8 +823,6 @@ class WebInputController extends BaseInputController {
     HandleMove(_element: Element | null): void;
 }
 
-// Warning: (ae-internal-missing-underscore) The name "WebsocketInputAction" should be prefixed with an underscore because the declaration is marked as @internal
-//
 // @internal
 export class WebsocketInputAction {
     constructor(_timestamp: number, _interactionFlags: BitmaskFlags, _cursorPosition: Vector2, _distanceFromScreen: number, _progressToClick: number);
@@ -850,7 +848,5 @@ class WebSocketResponse extends TouchFreeRequest {
 // src/TouchFree.ts:86:7 - (ae-incompatible-release-tags) The symbol "UnregisterAnalyticEvents" is marked as @public, but its signature references "AnalyticEventKey" which is marked as @internal
 // src/TouchFree.ts:189:8 - (ae-forgotten-export) The symbol "StopAnalyticsSessionOptions" needs to be exported by the entry point index.d.ts
 // src/TouchFree.ts:376:15 - (ae-incompatible-release-tags) The symbol "RegisterAnalyticEvents" is marked as @public, but its signature references "AnalyticEventKey" which is marked as @internal
-// src/Tracking/index.ts:16:90 - (ae-forgotten-export) The symbol "TrackingManager" needs to be exported by the entry point index.d.ts
-// src/Tracking/index.ts:16:90 - (ae-forgotten-export) The symbol "TrackingTypes" needs to be exported by the entry point index.d.ts
 
 ```
