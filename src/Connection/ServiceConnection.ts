@@ -204,12 +204,9 @@ export class ServiceConnection {
     //
     // If your _callback requires context it should be bound to that context via .bind()
     RequestConfigState = (_callback: (detail: ConfigState) => void): void => {
-        if (_callback === null) {
-            console.error('Request for config state failed. This is due to a missing callback');
-            return;
-        }
         this.sendRequest(
             ActionCode.REQUEST_CONFIGURATION_STATE,
+            'config state',
             _callback,
             ConnectionManager.callbackHandler.configStateCallbacks
         );
@@ -217,11 +214,12 @@ export class ServiceConnection {
 
     private sendRequest = <TResponse>(
         actionCode: ActionCode,
+        noCallbackError: string,
         _callback: (detail: TResponse) => void,
         callbackList: CallbackList<TResponse>
     ) => {
         if (_callback === null) {
-            console.error('Request failed. This is due to a missing callback');
+            console.error(`Request for ${noCallbackError} failed. This is due to a missing callback`);
             return;
         }
 
@@ -242,12 +240,9 @@ export class ServiceConnection {
     //
     // If your _callback requires context it should be bound to that context via .bind()
     ResetInteractionConfigFile = (_callback: (defaultConfig: ConfigState) => void): void => {
-        if (_callback === null) {
-            console.error('Request for config state failed. This is due to a missing callback');
-            return;
-        }
         this.sendRequest(
             ActionCode.RESET_INTERACTION_CONFIG_FILE,
+            'config state',
             _callback,
             ConnectionManager.callbackHandler.configStateCallbacks
         );
@@ -259,12 +254,9 @@ export class ServiceConnection {
     //
     // If your _callback requires context it should be bound to that context via .bind()
     RequestServiceStatus = (_callback: (detail: ServiceStatus) => void): void => {
-        if (_callback === null) {
-            console.error('Request for service status failed. This is due to a missing callback');
-            return;
-        }
         this.sendRequest(
             ActionCode.REQUEST_SERVICE_STATUS,
+            'service status',
             _callback,
             ConnectionManager.callbackHandler.serviceStatusCallbacks
         );
@@ -276,12 +268,9 @@ export class ServiceConnection {
     //
     // If your _callback requires context it should be bound to that context via .bind()
     RequestConfigFile = (_callback: (detail: ConfigState) => void): void => {
-        if (_callback === null) {
-            console.error('Request for config file failed. This is due to a missing callback');
-            return;
-        }
         this.sendRequest(
             ActionCode.REQUEST_CONFIGURATION_FILE,
+            'config file',
             _callback,
             ConnectionManager.callbackHandler.configStateCallbacks
         );
@@ -330,12 +319,9 @@ export class ServiceConnection {
     //
     // If your _callback requires context it should be bound to that context via .bind()
     RequestTrackingState = (_callback: (detail: TrackingStateResponse) => void) => {
-        if (!_callback) {
-            console.error('Request for tracking state failed. This is due to a missing callback');
-            return;
-        }
         this.sendRequest(
             ActionCode.GET_TRACKING_STATE,
+            'tracking state',
             _callback,
             ConnectionManager.callbackHandler.trackingStateCallbacks
         );
