@@ -123,7 +123,7 @@ TF_Tooling::Web::package:
   script:
     - mkdir ./Tooling_Package/
     - cp -R ./Tooling_Release/* ./Tooling_Package/
-    - cp -R "./Documentation/Tooling for Web/" ./Tooling_Package/Documentation/
+    - cp -R ./docs/markdown ./Tooling_Package/Documentation/
   artifacts:
     name: 'TouchFree_Tooling_for_Web_${TF_TFW_VERSION}_${CI_COMMIT_SHORT_SHA}'
     paths:
