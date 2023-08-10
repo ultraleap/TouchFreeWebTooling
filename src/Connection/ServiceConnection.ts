@@ -2,28 +2,20 @@ import TouchFree from '../TouchFree';
 import { VersionInfo } from '../TouchFreeToolingTypes';
 import { TrackingState } from '../Tracking/TrackingTypes';
 import { ConnectionManager } from './ConnectionManager';
-import { HandDataHandler } from './MessageReceivers';
-import { IBaseMessageReceiver } from './MessageReceivers/BaseMessageReceiver';
+import { HandDataHandler, IBaseMessageReceiver } from './MessageReceivers';
 import {
     ActionCode,
     CommunicationWrapper,
-    ConfigChangeRequest,
     ConfigState,
-    ConfigStateCallback,
-    ResetInteractionConfigFileRequest,
-    ResponseCallback,
     ServiceStatus,
-    ServiceStatusCallback,
-    ServiceStatusRequest,
     AnalyticsSessionRequestType,
     AnalyticsSessionStateChangeRequest,
-    SimpleRequest,
-    TrackingStateCallback,
     TrackingStateRequest,
     TrackingStateResponse,
     VersionHandshakeResponse,
     WebSocketResponse,
     UpdateAnalyticSessionEventsRequest,
+    CallbackList,
 } from './TouchFreeServiceTypes';
 import { v4 as uuidgen } from 'uuid';
 
@@ -182,7 +174,7 @@ export class ServiceConnection {
         _message: string,
         _requestID: string,
         _callback: ((detail: WebSocketResponse | T) => void) | null,
-        _callbacksStore: { [id: string]: ResponseCallback }
+        _callbacksStore: CallbackList<WebSocketResponse>
     ): void => {
         if (!_requestID) {
             if (_callback) {
@@ -200,7 +192,7 @@ export class ServiceConnection {
         }
 
         if (_callback) {
-            _callbacksStore[_requestID] = new ResponseCallback(Date.now(), _callback);
+            _callbacksStore[_requestID] = { timestamp: Date.now(), callback: _callback };
         }
 
         this.webSocket.send(_message);
@@ -216,13 +208,29 @@ export class ServiceConnection {
             console.error('Request for config state failed. This is due to a missing callback');
             return;
         }
+        this.sendRequest(
+            ActionCode.REQUEST_CONFIGURATION_STATE,
+            _callback,
+            ConnectionManager.callbackHandler.configStateCallbacks
+        );
+    };
+
+    private sendRequest = <TResponse>(
+        actionCode: ActionCode,
+        _callback: (detail: TResponse) => void,
+        callbackList: CallbackList<TResponse>
+    ) => {
+        if (_callback === null) {
+            console.error('Request failed. This is due to a missing callback');
+            return;
+        }
 
         const guid: string = uuidgen();
-        const request: ConfigChangeRequest = new ConfigChangeRequest(guid);
-        const wrapper = new CommunicationWrapper<ConfigChangeRequest>(ActionCode.REQUEST_CONFIGURATION_STATE, request);
+        const request = { requestID: guid };
+        const wrapper = new CommunicationWrapper<unknown>(actionCode, request);
         const message: string = JSON.stringify(wrapper);
 
-        ConnectionManager.callbackHandler.configStateCallbacks[guid] = new ConfigStateCallback(Date.now(), _callback);
+        callbackList[guid] = { timestamp: Date.now(), callback: _callback };
 
         this.webSocket.send(message);
     };
@@ -238,18 +246,11 @@ export class ServiceConnection {
             console.error('Request for config state failed. This is due to a missing callback');
             return;
         }
-
-        const guid: string = uuidgen();
-        const request: ResetInteractionConfigFileRequest = new ResetInteractionConfigFileRequest(guid);
-        const wrapper = new CommunicationWrapper<ResetInteractionConfigFileRequest>(
+        this.sendRequest(
             ActionCode.RESET_INTERACTION_CONFIG_FILE,
-            request
+            _callback,
+            ConnectionManager.callbackHandler.configStateCallbacks
         );
-        const message: string = JSON.stringify(wrapper);
-
-        ConnectionManager.callbackHandler.configStateCallbacks[guid] = new ConfigStateCallback(Date.now(), _callback);
-
-        this.webSocket.send(message);
     };
 
     // Function: RequestServiceStatus
@@ -262,18 +263,11 @@ export class ServiceConnection {
             console.error('Request for service status failed. This is due to a missing callback');
             return;
         }
-
-        const guid: string = uuidgen();
-        const request: ServiceStatusRequest = new ServiceStatusRequest(guid);
-        const wrapper = new CommunicationWrapper<ConfigChangeRequest>(ActionCode.REQUEST_SERVICE_STATUS, request);
-        const message: string = JSON.stringify(wrapper);
-
-        ConnectionManager.callbackHandler.serviceStatusCallbacks[guid] = new ServiceStatusCallback(
-            Date.now(),
-            _callback
+        this.sendRequest(
+            ActionCode.REQUEST_SERVICE_STATUS,
+            _callback,
+            ConnectionManager.callbackHandler.serviceStatusCallbacks
         );
-
-        this.webSocket.send(message);
     };
 
     // Function: RequestConfigFile
@@ -286,15 +280,11 @@ export class ServiceConnection {
             console.error('Request for config file failed. This is due to a missing callback');
             return;
         }
-
-        const guid: string = uuidgen();
-        const request: ConfigChangeRequest = new ConfigChangeRequest(guid);
-        const wrapper = new CommunicationWrapper<ConfigChangeRequest>(ActionCode.REQUEST_CONFIGURATION_FILE, request);
-        const message: string = JSON.stringify(wrapper);
-
-        ConnectionManager.callbackHandler.configStateCallbacks[guid] = new ConfigStateCallback(Date.now(), _callback);
-
-        this.webSocket.send(message);
+        this.sendRequest(
+            ActionCode.REQUEST_CONFIGURATION_FILE,
+            _callback,
+            ConnectionManager.callbackHandler.configStateCallbacks
+        );
     };
 
     // Function: QuickSetupRequest
@@ -321,14 +311,14 @@ export class ServiceConnection {
         const message: string = JSON.stringify(wrapper);
 
         if (_callback !== null) {
-            ConnectionManager.callbackHandler.responseCallbacks[guid] = new ResponseCallback(Date.now(), _callback);
+            ConnectionManager.callbackHandler.responseCallbacks[guid] = { timestamp: Date.now(), callback: _callback };
         }
 
         if (_configurationCallback !== null) {
-            ConnectionManager.callbackHandler.configStateCallbacks[guid] = new ConfigStateCallback(
-                Date.now(),
-                _configurationCallback
-            );
+            ConnectionManager.callbackHandler.configStateCallbacks[guid] = {
+                timestamp: Date.now(),
+                callback: _configurationCallback,
+            };
         }
 
         this.webSocket.send(message);
@@ -344,17 +334,11 @@ export class ServiceConnection {
             console.error('Request for tracking state failed. This is due to a missing callback');
             return;
         }
-        const guid: string = uuidgen();
-        const request: SimpleRequest = new SimpleRequest(guid);
-        const wrapper = new CommunicationWrapper<SimpleRequest>(ActionCode.GET_TRACKING_STATE, request);
-        const message: string = JSON.stringify(wrapper);
-
-        ConnectionManager.callbackHandler.trackingStateCallbacks[guid] = new TrackingStateCallback(
-            Date.now(),
-            _callback
+        this.sendRequest(
+            ActionCode.GET_TRACKING_STATE,
+            _callback,
+            ConnectionManager.callbackHandler.trackingStateCallbacks
         );
-
-        this.webSocket.send(message);
     };
 
     // Function: RequestTrackingChange
@@ -393,10 +377,10 @@ export class ServiceConnection {
         const message: string = JSON.stringify(wrapper);
 
         if (_callback !== null) {
-            ConnectionManager.callbackHandler.trackingStateCallbacks[requestID] = new TrackingStateCallback(
-                Date.now(),
-                _callback
-            );
+            ConnectionManager.callbackHandler.trackingStateCallbacks[requestID] = {
+                timestamp: Date.now(),
+                callback: _callback,
+            };
         }
 
         this.webSocket.send(message);
@@ -415,10 +399,10 @@ export class ServiceConnection {
         const message = JSON.stringify(wrapper);
 
         if (callback) {
-            ConnectionManager.callbackHandler.analyticsRequestCallbacks[requestID] = new ResponseCallback(
-                Date.now(),
-                callback
-            );
+            ConnectionManager.callbackHandler.analyticsRequestCallbacks[requestID] = {
+                timestamp: Date.now(),
+                callback,
+            };
         }
 
         this.webSocket.send(message);

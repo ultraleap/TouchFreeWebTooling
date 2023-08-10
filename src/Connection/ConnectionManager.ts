@@ -1,19 +1,7 @@
 import TouchFree from '../TouchFree';
 import { TrackingServiceState } from '../TouchFreeToolingTypes';
 import { CallbackHandler } from './CallbackHandler';
-import {
-    AnalyticsMessageReceiver,
-    ConfigStateMessageReceiver,
-    HandDataHandler,
-    HandPresenceMessageReceiver,
-    InputActionMessageReceiver,
-    InteractionZoneMessageReceiver,
-    ResponseMessageReceiver,
-    ServiceStateMessageReceiver,
-    TrackingStateMessageReceiver,
-    VersionHandshakeMessageReceiver,
-} from './MessageReceivers';
-import { IBaseMessageReceiver } from './MessageReceivers/BaseMessageReceiver';
+import { HandDataHandler, createMessageReceivers, IBaseMessageReceiver } from './MessageReceivers';
 import { ServiceConnection } from './ServiceConnection';
 import { HandPresenceState, InteractionZoneState, ServiceStatus } from './TouchFreeServiceTypes';
 
@@ -92,17 +80,7 @@ export class ConnectionManager extends EventTarget {
     public static init(initParams?: InitParams) {
         ConnectionManager.callbackHandler = new CallbackHandler();
         ConnectionManager.handDataHandler = new HandDataHandler();
-        ConnectionManager.messageReceivers = [
-            new AnalyticsMessageReceiver(ConnectionManager.callbackHandler),
-            new ConfigStateMessageReceiver(ConnectionManager.callbackHandler),
-            new HandPresenceMessageReceiver(),
-            new InputActionMessageReceiver(),
-            new InteractionZoneMessageReceiver(),
-            new ResponseMessageReceiver(ConnectionManager.callbackHandler),
-            new ServiceStateMessageReceiver(ConnectionManager.callbackHandler),
-            new TrackingStateMessageReceiver(ConnectionManager.callbackHandler),
-            new VersionHandshakeMessageReceiver(ConnectionManager.callbackHandler),
-        ];
+        ConnectionManager.messageReceivers = createMessageReceivers(ConnectionManager.callbackHandler);
 
         ConnectionManager.instance = new ConnectionManager();
         if (initParams?.address) {

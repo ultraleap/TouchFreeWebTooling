@@ -2,7 +2,7 @@ import { ConnectionManager } from '../ConnectionManager';
 import { ActionCode, HandPresenceState } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
-export class HandPresenceMessageReceiver extends BaseMessageReceiver<HandPresenceState> {
+export class HandPresenceMessageReceiver extends BaseMessageReceiver<{ state: HandPresenceState }> {
     public readonly actionCode: ActionCode[] = [ActionCode.HAND_PRESENCE_EVENT];
 
     constructor() {
@@ -11,9 +11,9 @@ export class HandPresenceMessageReceiver extends BaseMessageReceiver<HandPresenc
     }
 
     CheckForState = () => {
-        if (this.lastItem !== undefined && this.lastItem !== HandPresenceState.PROCESSED) {
-            ConnectionManager.HandleHandPresenceEvent(this.lastItem);
-            this.lastItem = HandPresenceState.PROCESSED;
+        if (this.lastItem?.state !== undefined && this.lastItem?.state !== HandPresenceState.PROCESSED) {
+            ConnectionManager.HandleHandPresenceEvent(this.lastItem.state);
+            this.lastItem.state = HandPresenceState.PROCESSED;
         }
     };
 }

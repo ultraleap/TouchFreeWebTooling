@@ -146,43 +146,38 @@ export interface InteractionZoneEvent {
 
 // Class: TouchFreeRequestCallback
 // This data structure is used to hold request callbacks
-export abstract class TouchFreeRequestCallback<T> {
+export interface TouchFreeRequestCallback<T> {
     // Variable: timestamp
     timestamp: number;
     // Variable: callback
     callback: (detail: T) => void;
-
-    constructor(_timestamp: number, _callback: (detail: T) => void) {
-        this.timestamp = _timestamp;
-        this.callback = _callback;
-    }
 }
 
-// Class: TouchFreeRequest
+// Interface: TouchFreeRequest
 // This data structure is used as a base for requests to the TouchFree service.
-export abstract class TouchFreeRequest {
+export interface TouchFreeRequest {
+    // Variable: requestID
     requestID: string;
-    constructor(_requestID: string) {
-        this.requestID = _requestID;
-    }
 }
 
 // Class: PartialConfigState
 // This data structure is used to send requests for changes to configuration or to configuration files.
 //
 // When sending a configuration to the Service the structure can be comprised of either partial or complete objects.
-export class PartialConfigState extends TouchFreeRequest {
+export class PartialConfigState implements TouchFreeRequest {
     // Variable: interaction
     interaction: Partial<InteractionConfig> | null;
     // Variable: physical
     physical: Partial<PhysicalConfig> | null;
+    // Variable: requestID
+    requestID: string;
 
     constructor(
         _id: string,
         _interaction: Partial<InteractionConfig> | null,
         _physical: Partial<PhysicalConfig> | null
     ) {
-        super(_id);
+        this.requestID = _id;
         this.interaction = _interaction;
         this.physical = _physical;
     }
@@ -193,48 +188,33 @@ export class PartialConfigState extends TouchFreeRequest {
 // or its config files.
 //
 // When receiving a configuration from the Service this structure contains ALL configuration data
-export class ConfigState extends TouchFreeRequest {
+export class ConfigState implements TouchFreeRequest {
     // Variable: interaction
     interaction: InteractionConfigFull;
     // Variable: physical
     physical: PhysicalConfig;
+    // Variable: requestID
+    requestID: string;
 
     constructor(_id: string, _interaction: InteractionConfigFull, _physical: PhysicalConfig) {
-        super(_id);
+        this.requestID = _id;
         this.interaction = _interaction;
         this.physical = _physical;
     }
 }
 
-// class: ConfigChangeRequest
-// Used to request the current state of the configuration on the Service. This is received as
-// a <ConfigState> which should be linked to a <ConfigStateCallback> via requestID to make
-// use of the data received.
-export class ConfigChangeRequest extends TouchFreeRequest {}
-
-// Class: ConfigStateCallback
-// Used by <MessageReceiver> to wait for a <ConfigState> from the Service. Owns a callback
-// with a <ConfigState> as a parameter to allow users to make use of the new
-// <ConfigStateResponse>. Stores a timestamp of its creation so the response has the ability to
-// timeout if not seen within a reasonable timeframe.
-export class ConfigStateCallback extends TouchFreeRequestCallback<ConfigState> {}
-
-// class: ResetInteractionConfigFile
-// Used internally to request that the Service resets the Interaction Config File to
-// its default state. Provides the Default <InteractionConfigFull> returned by the Service
-// once the reset is complete.
-export class ResetInteractionConfigFileRequest extends TouchFreeRequest {}
-
 // class: HandRenderDataStateRequest
 // Used to set the state of the Hand Render Data stream.
-export class HandRenderDataStateRequest extends TouchFreeRequest {
+export class HandRenderDataStateRequest implements TouchFreeRequest {
     // Variable: enabled
     enabled: boolean;
     // Variable: lens
     lens: string;
+    // Variable: requestID
+    requestID: string;
 
     constructor(_id: string, enabled: boolean, lens: string) {
-        super(_id);
+        this.requestID = _id;
         this.enabled = enabled;
         this.lens = lens;
     }
@@ -244,7 +224,7 @@ export class HandRenderDataStateRequest extends TouchFreeRequest {
 // This data structure is used to receive service status.
 //
 // When receiving a configuration from the Service this structure contains ALL status data
-export class ServiceStatus extends TouchFreeRequest {
+export class ServiceStatus implements TouchFreeRequest {
     // Variable: trackingServiceState
     trackingServiceState: TrackingServiceState;
     // Variable: configurationState
@@ -257,6 +237,8 @@ export class ServiceStatus extends TouchFreeRequest {
     cameraSerial: string;
     // Variable: cameraFirmwareVersion
     cameraFirmwareVersion: string;
+    // Variable: requestID
+    requestID: string;
 
     constructor(
         _id: string,
@@ -267,7 +249,7 @@ export class ServiceStatus extends TouchFreeRequest {
         _cameraSerial: string,
         _cameraFirmwareVersion: string
     ) {
-        super(_id);
+        this.requestID = _id;
         this.trackingServiceState = _trackingServiceState;
         this.configurationState = _configurationState;
         this.serviceVersion = _serviceVersion;
@@ -277,33 +259,22 @@ export class ServiceStatus extends TouchFreeRequest {
     }
 }
 
-// class: ServiceStatusRequest
-// Used to request the current state of the status of the Service. This is received as
-// a <ServiceStatus> which should be linked to a <ServiceStatusCallback> via requestID to make
-// use of the data received.
-export class ServiceStatusRequest extends TouchFreeRequest {}
-
-// Class: ServiceStatusCallback
-// Used by <MessageReceiver> to wait for a <ServiceStatus> from the Service. Owns a callback
-// with a <ServiceStatus> as a parameter to allow users to make use of the new
-// <ServiceStatusResponse>. Stores a timestamp of its creation so the response has the ability to
-// timeout if not seen within a reasonable timeframe.
-export class ServiceStatusCallback extends TouchFreeRequestCallback<ServiceStatus> {}
-
 // Class: WebSocketResponse
 // The structure seen when the Service responds to a request. This is to verify whether it was
 // successful or not and will include the original request if it fails, to allow for
 // troubleshooting.
-export class WebSocketResponse extends TouchFreeRequest {
+export class WebSocketResponse implements TouchFreeRequest {
     // Variable: status
     status: string;
     // Variable: message
     message: string;
     // Variable: originalRequest
     originalRequest: string;
+    // Variable: requestID
+    requestID: string;
 
     constructor(_id: string, _status: string, _msg: string, _request: string) {
-        super(_id);
+        this.requestID = _id;
         this.status = _status;
         this.message = _msg;
         this.originalRequest = _request;
@@ -331,13 +302,6 @@ export class VersionHandshakeResponse extends WebSocketResponse {
         this.apiVersion = _apiVersion;
     }
 }
-
-// Class: ResponseCallback
-// Used by <MessageReceiver> to wait for a <WebSocketResponse> from the Service. Owns a callback
-// with a <WebSocketResponse> as a parameter to allow users to deal with failed
-// <WebSocketResponses>. Stores a timestamp of its creation so the response has the ability to
-// timeout if not seen within a reasonable timeframe.
-export class ResponseCallback extends TouchFreeRequestCallback<WebSocketResponse> {}
 
 // Class: CommunicationWrapper
 // A container structure used by <ServiceConnection> to interpret incoming data to its appropriate
@@ -367,9 +331,7 @@ export interface SuccessWrapper<T> {
 
 // Class: TrackingStateResponse
 // Type of the response from a GET/SET tracking state request.
-export interface TrackingStateResponse {
-    // Variable: requestID
-    requestID: string;
+export interface TrackingStateResponse extends TouchFreeRequest {
     // Variable: mask
     mask: SuccessWrapper<Mask> | null;
     // Variable: cameraOrientation
@@ -382,7 +344,7 @@ export interface TrackingStateResponse {
 
 // Class: TrackingStateRequest
 // Used to construct a SET_TRACKING_STATE request.
-export class TrackingStateRequest {
+export class TrackingStateRequest implements TouchFreeRequest {
     // Variable: requestID
     requestID: string;
     // Variable: mask
@@ -403,22 +365,9 @@ export class TrackingStateRequest {
     }
 }
 
-// Class: SimpleRequest
-// Used to make a basic request to the service. To be used with <CommunicationWrapper> to create a more complex request.
-export class SimpleRequest {
-    // Variable: requestID
-    requestID: string;
-
-    constructor(_id: string) {
-        this.requestID = _id;
-    }
-}
-
 // Interface BaseAnalyticsRequest
 // Represents the base information needed for an Analytics related request to the Service
-interface BaseAnalyticsRequest {
-    // Variable: requestID
-    requestID: string;
+interface BaseAnalyticsRequest extends TouchFreeRequest {
     // Variable: sessionID
     sessionID: string;
 }
@@ -436,12 +385,6 @@ export interface UpdateAnalyticSessionEventsRequest extends BaseAnalyticsRequest
     // Variable: eventCounts
     sessionEvents: AnalyticSessionEvents;
 }
-
-// Class: TrackingStateCallback
-// Used by <MessageReceiver> to wait for a <TrackingStateResponse> from the Service. Owns a callback with a
-// <TrackingStateResponse> as a parameter. Stores a timestamp of its creation so the response has the ability to
-// timeout if not seen within a reasonable timeframe.
-export class TrackingStateCallback extends TouchFreeRequestCallback<TrackingStateResponse> {}
 
 // Type: CallbackList
 // Represents a list of callbacks keyed against id strings.

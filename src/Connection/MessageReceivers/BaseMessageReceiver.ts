@@ -4,14 +4,9 @@ import {
     CommunicationWrapper,
     TouchFreeRequest,
     TouchFreeRequestCallback,
-    TrackingStateResponse,
     WebSocketResponse,
 } from '../TouchFreeServiceTypes';
-
-export interface IBaseMessageReceiver {
-    ReceiveMessage: (message: CommunicationWrapper<unknown>) => void;
-    actionCode: ActionCode[];
-}
+import { IBaseMessageReceiver } from './IBaseMessageReceiver';
 
 export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageReceiver {
     constructor(useQueue: boolean) {
@@ -38,38 +33,26 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
     protected lastItem: TMessage | undefined;
 
     ReceiveMessage = (message: CommunicationWrapper<unknown>) => {
-        const wsInput = message.content as TMessage;
+        const messageContent = message.content as TMessage;
         if (this.useQueue) {
-            this.queue.push(wsInput);
+            this.queue.push(messageContent);
         } else {
-            this.lastItem = wsInput;
+            this.lastItem = messageContent;
         }
     };
 
     // Function: CheckQueue
     // Gets the next response in a given queue and handles the callback if present.
-    protected CheckQueue = <T extends WebSocketResponse | TrackingStateResponse>(
-        queue: T[],
-        callbacks: CallbackList<T>
-    ) => {
+    protected CheckQueue = <T extends TouchFreeRequest>(queue: T[], callbacks: CallbackList<T>) => {
         const response = queue.shift();
-
-        if (!response || !callbacks) return;
-
-        for (const key in callbacks) {
-            if (key === response.requestID) {
-                callbacks[key].callback(response);
-                delete callbacks[key];
-                return;
-            }
-        }
+        BaseMessageReceiver.HandleCallbackList(response, callbacks);
     };
 
     // Function: HandleCallbackList
     // Checks the dictionary of <callbacks> for a matching request ID. If there is a
     // match, calls the callback action in the matching <TouchFreeRequestCallback>.
     // Returns true if it was able to find a callback, returns false if not
-    protected static HandleCallbackList = <T extends WebSocketResponse | TouchFreeRequest>(
+    protected static HandleCallbackList = <T extends TouchFreeRequest>(
         callbackResult?: T,
         callbacks?: CallbackList<T>
     ): 'Success' | 'NoCallbacksFound' => {
