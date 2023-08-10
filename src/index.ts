@@ -21,20 +21,14 @@ import * as InputControllers from './InputControllers';
 /** Plugins which extend TouchFree's functionality */
 import * as Plugins from './Plugins';
 import TF from './TouchFree';
+
+/** Functionality for controlling the Ultraleap Tracking Service via TouchFree Service */
 import * as Tracking from './Tracking';
+
+/** Utility functionality */
 import * as Utilities from './Utilities';
 
-export {
-    Configuration,
-    Connection,
-    Cursors,
-    InputControllers,
-    Plugins,
-    /** Functionality for controlling the Ultraleap Tracking Service via TouchFree Service */
-    Tracking,
-    /** Utility functionality */
-    Utilities,
-};
+export { Configuration, Connection, Cursors, InputControllers, Plugins, Utilities, Tracking };
 export * from './TouchFreeToolingTypes';
 export * from './TouchFree';
 export default TF;
