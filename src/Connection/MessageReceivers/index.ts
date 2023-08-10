@@ -1,4 +1,3 @@
-
 import { AnalyticsMessageReceiver } from './AnalyticsMessageReceiver';
 import { ConfigStateMessageReceiver } from './ConfigStateMessageReceiver';
 import { HandDataHandler } from './HandDataHandler';
@@ -10,7 +9,6 @@ import { ServiceStateMessageReceiver } from './ServiceStateMessageReceiver';
 import { TrackingStateMessageReceiver } from './TrackingStateMessageReceiver';
 import { VersionHandshakeMessageReceiver } from './VersionHandshakeMessageReceiver';
 
-
 export {
     AnalyticsMessageReceiver,
     ConfigStateMessageReceiver,
@@ -21,5 +19,5 @@ export {
     ResponseMessageReceiver,
     ServiceStateMessageReceiver,
     TrackingStateMessageReceiver,
-    VersionHandshakeMessageReceiver
+    VersionHandshakeMessageReceiver,
 };

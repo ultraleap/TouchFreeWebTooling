@@ -12,7 +12,7 @@ import {
     ResponseMessageReceiver,
     ServiceStateMessageReceiver,
     TrackingStateMessageReceiver,
-    VersionHandshakeMessageReceiver
+    VersionHandshakeMessageReceiver,
 } from './MessageReceivers';
 import {
     ActionCode,
