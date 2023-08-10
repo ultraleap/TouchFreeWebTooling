@@ -1,15 +1,25 @@
 import TouchFree from '../TouchFree';
-import { VersionInfo, WebsocketInputAction } from '../TouchFreeToolingTypes';
+import { VersionInfo } from '../TouchFreeToolingTypes';
 import { TrackingState } from '../Tracking/TrackingTypes';
 import { ConnectionManager } from './ConnectionManager';
+import {
+    AnalyticsMessageReceiver,
+    ConfigStateMessageReceiver,
+    HandDataHandler,
+    HandPresenceMessageReceiver,
+    InputActionMessageReceiver,
+    InteractionZoneMessageReceiver,
+    ResponseMessageReceiver,
+    ServiceStateMessageReceiver,
+    TrackingStateMessageReceiver,
+    VersionHandshakeMessageReceiver
+} from './MessageReceivers';
 import {
     ActionCode,
     CommunicationWrapper,
     ConfigChangeRequest,
     ConfigState,
     ConfigStateCallback,
-    HandPresenceEvent,
-    InteractionZoneEvent,
     ResetInteractionConfigFileRequest,
     ResponseCallback,
     ServiceStatus,
@@ -42,6 +52,20 @@ export class ServiceConnection {
     private handshakeRequested: boolean;
     private handshakeCompleted: boolean;
     private _touchFreeVersion = '';
+
+    private handDataHandler = new HandDataHandler();
+
+    private messageReceivers = [
+        new AnalyticsMessageReceiver(ConnectionManager.callbackHandler),
+        new ConfigStateMessageReceiver(ConnectionManager.callbackHandler),
+        new HandPresenceMessageReceiver(),
+        new InputActionMessageReceiver(),
+        new InteractionZoneMessageReceiver(),
+        new ResponseMessageReceiver(ConnectionManager.callbackHandler),
+        new ServiceStateMessageReceiver(ConnectionManager.callbackHandler),
+        new TrackingStateMessageReceiver(ConnectionManager.callbackHandler),
+        new VersionHandshakeMessageReceiver(ConnectionManager.callbackHandler),
+    ];
 
     // Variable: touchFreeVersion
     // The version of the connected TouchFree Service
@@ -102,7 +126,7 @@ export class ServiceConnection {
                     JSON.stringify(handshakeRequest),
                     guid,
                     this.ConnectionResultCallback,
-                    ConnectionManager.messageReceiver.handshakeCallbacks
+                    ConnectionManager.callbackHandler.handshakeCallbacks
                 );
             }
         }
@@ -135,76 +159,16 @@ export class ServiceConnection {
             const buffer = _message.data as ArrayBuffer;
             const binaryDataType = new Int32Array(buffer, 0, 4)[0];
             if (binaryDataType === ServiceBinaryDataTypes.HandRenderData) {
-                ConnectionManager.messageReceiver.latestHandDataItem = buffer;
+                this.handDataHandler.latestHandDataItem = buffer;
             }
             return;
         }
 
         const looseData: CommunicationWrapper<unknown> = JSON.parse(_message.data);
 
-        switch (looseData.action) {
-            case ActionCode.INPUT_ACTION: {
-                const wsInput = looseData.content as WebsocketInputAction;
-                ConnectionManager.messageReceiver.actionQueue.push(wsInput);
-                break;
-            }
-
-            case ActionCode.HAND_PRESENCE_EVENT: {
-                const handEvent = looseData.content as HandPresenceEvent;
-                ConnectionManager.messageReceiver.lastStateUpdate = handEvent.state;
-                break;
-            }
-
-            case ActionCode.SERVICE_STATUS: {
-                const serviceStatus = looseData.content as ServiceStatus;
-                ConnectionManager.messageReceiver.serviceStatusQueue.push(serviceStatus);
-                break;
-            }
-
-            case ActionCode.CONFIGURATION_STATE:
-            case ActionCode.CONFIGURATION_FILE_STATE:
-            case ActionCode.QUICK_SETUP_CONFIG: {
-                const configFileState = looseData.content as ConfigState;
-                ConnectionManager.messageReceiver.configStateQueue.push(configFileState);
-                break;
-            }
-
-            case ActionCode.VERSION_HANDSHAKE_RESPONSE: {
-                const response = looseData.content as WebSocketResponse;
-                ConnectionManager.messageReceiver.handshakeQueue.push(response);
-                break;
-            }
-
-            case ActionCode.CONFIGURATION_RESPONSE:
-            case ActionCode.SERVICE_STATUS_RESPONSE:
-            case ActionCode.CONFIGURATION_FILE_CHANGE_RESPONSE:
-            case ActionCode.QUICK_SETUP_RESPONSE: {
-                const response = looseData.content as WebSocketResponse;
-                ConnectionManager.messageReceiver.responseQueue.push(response);
-                break;
-            }
-            case ActionCode.TRACKING_STATE: {
-                const trackingResponse = looseData.content as TrackingStateResponse;
-                ConnectionManager.messageReceiver.trackingStateQueue.push(trackingResponse);
-                break;
-            }
-
-            case ActionCode.INTERACTION_ZONE_EVENT: {
-                const { state } = looseData.content as InteractionZoneEvent;
-                ConnectionManager.messageReceiver.lastInteractionZoneUpdate = { status: 'UNPROCESSED', state: state };
-                break;
-            }
-
-            case ActionCode.ANALYTICS_SESSION_REQUEST: {
-                ConnectionManager.messageReceiver.analyticsRequestQueue.push(looseData.content as WebSocketResponse);
-                break;
-            }
-
-            case ActionCode.ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST: {
-                ConnectionManager.messageReceiver.analyticsRequestQueue.push(looseData.content as WebSocketResponse);
-                break;
-            }
-        }
+        // Get the first message receiver with a matching action code
+        const receiver = this.messageReceivers.find((x) => x.actionCode.find((a) => a === looseData.action));
+        receiver?.ReceiveMessage(looseData);
     };
 
     // Function: SendMessage
@@ -222,7 +186,7 @@ export class ServiceConnection {
             _message,
             _requestID,
             _callback,
-            ConnectionManager.messageReceiver.responseCallbacks
+            ConnectionManager.callbackHandler.responseCallbacks
         );
     };
 
@@ -270,7 +234,7 @@ export class ServiceConnection {
         const wrapper = new CommunicationWrapper<ConfigChangeRequest>(ActionCode.REQUEST_CONFIGURATION_STATE, request);
         const message: string = JSON.stringify(wrapper);
 
-        ConnectionManager.messageReceiver.configStateCallbacks[guid] = new ConfigStateCallback(Date.now(), _callback);
+        ConnectionManager.callbackHandler.configStateCallbacks[guid] = new ConfigStateCallback(Date.now(), _callback);
 
         this.webSocket.send(message);
     };
@@ -295,7 +259,7 @@ export class ServiceConnection {
         );
         const message: string = JSON.stringify(wrapper);
 
-        ConnectionManager.messageReceiver.configStateCallbacks[guid] = new ConfigStateCallback(Date.now(), _callback);
+        ConnectionManager.callbackHandler.configStateCallbacks[guid] = new ConfigStateCallback(Date.now(), _callback);
 
         this.webSocket.send(message);
     };
@@ -316,7 +280,7 @@ export class ServiceConnection {
         const wrapper = new CommunicationWrapper<ConfigChangeRequest>(ActionCode.REQUEST_SERVICE_STATUS, request);
         const message: string = JSON.stringify(wrapper);
 
-        ConnectionManager.messageReceiver.serviceStatusCallbacks[guid] = new ServiceStatusCallback(
+        ConnectionManager.callbackHandler.serviceStatusCallbacks[guid] = new ServiceStatusCallback(
             Date.now(),
             _callback
         );
@@ -340,7 +304,7 @@ export class ServiceConnection {
         const wrapper = new CommunicationWrapper<ConfigChangeRequest>(ActionCode.REQUEST_CONFIGURATION_FILE, request);
         const message: string = JSON.stringify(wrapper);
 
-        ConnectionManager.messageReceiver.configStateCallbacks[guid] = new ConfigStateCallback(Date.now(), _callback);
+        ConnectionManager.callbackHandler.configStateCallbacks[guid] = new ConfigStateCallback(Date.now(), _callback);
 
         this.webSocket.send(message);
     };
@@ -369,11 +333,11 @@ export class ServiceConnection {
         const message: string = JSON.stringify(wrapper);
 
         if (_callback !== null) {
-            ConnectionManager.messageReceiver.responseCallbacks[guid] = new ResponseCallback(Date.now(), _callback);
+            ConnectionManager.callbackHandler.responseCallbacks[guid] = new ResponseCallback(Date.now(), _callback);
         }
 
         if (_configurationCallback !== null) {
-            ConnectionManager.messageReceiver.configStateCallbacks[guid] = new ConfigStateCallback(
+            ConnectionManager.callbackHandler.configStateCallbacks[guid] = new ConfigStateCallback(
                 Date.now(),
                 _configurationCallback
             );
@@ -397,7 +361,7 @@ export class ServiceConnection {
         const wrapper = new CommunicationWrapper<SimpleRequest>(ActionCode.GET_TRACKING_STATE, request);
         const message: string = JSON.stringify(wrapper);
 
-        ConnectionManager.messageReceiver.trackingStateCallbacks[guid] = new TrackingStateCallback(
+        ConnectionManager.callbackHandler.trackingStateCallbacks[guid] = new TrackingStateCallback(
             Date.now(),
             _callback
         );
@@ -441,7 +405,7 @@ export class ServiceConnection {
         const message: string = JSON.stringify(wrapper);
 
         if (_callback !== null) {
-            ConnectionManager.messageReceiver.trackingStateCallbacks[requestID] = new TrackingStateCallback(
+            ConnectionManager.callbackHandler.trackingStateCallbacks[requestID] = new TrackingStateCallback(
                 Date.now(),
                 _callback
             );
@@ -463,7 +427,7 @@ export class ServiceConnection {
         const message = JSON.stringify(wrapper);
 
         if (callback) {
-            ConnectionManager.messageReceiver.analyticsRequestCallbacks[requestID] = new ResponseCallback(
+            ConnectionManager.callbackHandler.analyticsRequestCallbacks[requestID] = new ResponseCallback(
                 Date.now(),
                 callback
             );

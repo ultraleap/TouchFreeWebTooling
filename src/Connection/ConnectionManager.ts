@@ -1,6 +1,6 @@
 import TouchFree from '../TouchFree';
 import { TrackingServiceState } from '../TouchFreeToolingTypes';
-import { MessageReceiver } from './MessageReceiver';
+import { CallbackHandler } from './CallbackHandler';
 import { ServiceConnection } from './ServiceConnection';
 import { HandPresenceState, InteractionZoneState, ServiceStatus } from './TouchFreeServiceTypes';
 
@@ -37,10 +37,9 @@ export class ConnectionManager extends EventTarget {
         return ConnectionManager.currentServiceConnection;
     }
 
-    // Variable: messageReceiver
-    // A reference to the receiver that handles distribution of data received
-    // via the <currentServiceConnection> if connected.
-    public static messageReceiver: MessageReceiver;
+    // Variable: callbackHandler
+    // A reference to the handler that distributes callbacks on message responses.
+    public static callbackHandler: CallbackHandler;
 
     // Variable: instance
     // The instance of the singleton for referencing the events transmitted
@@ -67,10 +66,10 @@ export class ConnectionManager extends EventTarget {
     // Group: Functions
 
     // Function: init
-    // Used to begin the connection. Creates the required <MessageReceiver>.
+    // Used to begin the connection. Creates the required <CallbackHandler>.
     // Also attempts to immediately <Connect> to a WebSocket.
     public static init(initParams?: InitParams) {
-        ConnectionManager.messageReceiver = new MessageReceiver();
+        ConnectionManager.callbackHandler = new CallbackHandler();
         ConnectionManager.instance = new ConnectionManager();
         if (initParams?.address) {
             ConnectionManager.SetAddress(initParams.address);
