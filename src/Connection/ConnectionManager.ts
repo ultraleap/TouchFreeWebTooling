@@ -1,6 +1,19 @@
 import TouchFree from '../TouchFree';
 import { TrackingServiceState } from '../TouchFreeToolingTypes';
 import { CallbackHandler } from './CallbackHandler';
+import {
+    AnalyticsMessageReceiver,
+    ConfigStateMessageReceiver,
+    HandDataHandler,
+    HandPresenceMessageReceiver,
+    InputActionMessageReceiver,
+    InteractionZoneMessageReceiver,
+    ResponseMessageReceiver,
+    ServiceStateMessageReceiver,
+    TrackingStateMessageReceiver,
+    VersionHandshakeMessageReceiver,
+} from './MessageReceivers';
+import { IBaseMessageReceiver } from './MessageReceivers/BaseMessageReceiver';
 import { ServiceConnection } from './ServiceConnection';
 import { HandPresenceState, InteractionZoneState, ServiceStatus } from './TouchFreeServiceTypes';
 
@@ -41,6 +54,14 @@ export class ConnectionManager extends EventTarget {
     // A reference to the handler that distributes callbacks on message responses.
     public static callbackHandler: CallbackHandler;
 
+    // Variable: messageReceivers
+    // A reference to the message receivers that process individual messages.
+    private static messageReceivers: IBaseMessageReceiver[];
+
+    // Variable: handDataHandler
+    // A reference to the handler that receives hand data.
+    private static handDataHandler: HandDataHandler;
+
     // Variable: instance
     // The instance of the singleton for referencing the events transmitted
     public static instance: ConnectionManager;
@@ -70,6 +91,19 @@ export class ConnectionManager extends EventTarget {
     // Also attempts to immediately <Connect> to a WebSocket.
     public static init(initParams?: InitParams) {
         ConnectionManager.callbackHandler = new CallbackHandler();
+        ConnectionManager.handDataHandler = new HandDataHandler();
+        ConnectionManager.messageReceivers = [
+            new AnalyticsMessageReceiver(ConnectionManager.callbackHandler),
+            new ConfigStateMessageReceiver(ConnectionManager.callbackHandler),
+            new HandPresenceMessageReceiver(),
+            new InputActionMessageReceiver(),
+            new InteractionZoneMessageReceiver(),
+            new ResponseMessageReceiver(ConnectionManager.callbackHandler),
+            new ServiceStateMessageReceiver(ConnectionManager.callbackHandler),
+            new TrackingStateMessageReceiver(ConnectionManager.callbackHandler),
+            new VersionHandshakeMessageReceiver(ConnectionManager.callbackHandler),
+        ];
+
         ConnectionManager.instance = new ConnectionManager();
         if (initParams?.address) {
             ConnectionManager.SetAddress(initParams.address);
@@ -102,6 +136,8 @@ export class ConnectionManager extends EventTarget {
     // Also invokes <OnConnected> on all listeners.
     public static Connect(): void {
         ConnectionManager.currentServiceConnection = new ServiceConnection(
+            ConnectionManager.messageReceivers,
+            ConnectionManager.handDataHandler,
             ConnectionManager.iPAddress,
             ConnectionManager.port
         );

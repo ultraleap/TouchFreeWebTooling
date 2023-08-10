@@ -2,18 +2,8 @@ import TouchFree from '../TouchFree';
 import { VersionInfo } from '../TouchFreeToolingTypes';
 import { TrackingState } from '../Tracking/TrackingTypes';
 import { ConnectionManager } from './ConnectionManager';
-import {
-    AnalyticsMessageReceiver,
-    ConfigStateMessageReceiver,
-    HandDataHandler,
-    HandPresenceMessageReceiver,
-    InputActionMessageReceiver,
-    InteractionZoneMessageReceiver,
-    ResponseMessageReceiver,
-    ServiceStateMessageReceiver,
-    TrackingStateMessageReceiver,
-    VersionHandshakeMessageReceiver,
-} from './MessageReceivers';
+import { HandDataHandler } from './MessageReceivers';
+import { IBaseMessageReceiver } from './MessageReceivers/BaseMessageReceiver';
 import {
     ActionCode,
     CommunicationWrapper,
@@ -53,19 +43,9 @@ export class ServiceConnection {
     private handshakeCompleted: boolean;
     private _touchFreeVersion = '';
 
-    private handDataHandler = new HandDataHandler();
+    private readonly handDataHandler: HandDataHandler;
 
-    private messageReceivers = [
-        new AnalyticsMessageReceiver(ConnectionManager.callbackHandler),
-        new ConfigStateMessageReceiver(ConnectionManager.callbackHandler),
-        new HandPresenceMessageReceiver(),
-        new InputActionMessageReceiver(),
-        new InteractionZoneMessageReceiver(),
-        new ResponseMessageReceiver(ConnectionManager.callbackHandler),
-        new ServiceStateMessageReceiver(ConnectionManager.callbackHandler),
-        new TrackingStateMessageReceiver(ConnectionManager.callbackHandler),
-        new VersionHandshakeMessageReceiver(ConnectionManager.callbackHandler),
-    ];
+    private readonly messageReceivers: IBaseMessageReceiver[];
 
     // Variable: touchFreeVersion
     // The version of the connected TouchFree Service
@@ -85,7 +65,15 @@ export class ServiceConnection {
     // messages to <OnMessage>. Puts a listener on the websocket so that once it opens, a handshake
     // request is sent with this Tooling's API version number. The service will not send data over
     // an open connection until this handshake is completed successfully.
-    constructor(_ip = '127.0.0.1', _port = '9739') {
+    constructor(
+        messageReceivers: IBaseMessageReceiver[],
+        handDataHandler: HandDataHandler,
+        _ip = '127.0.0.1',
+        _port = '9739'
+    ) {
+        this.messageReceivers = messageReceivers;
+        this.handDataHandler = handDataHandler;
+
         this.webSocket = new WebSocket(`ws://${_ip}:${_port}/connect`);
         this.webSocket.binaryType = 'arraybuffer';
 

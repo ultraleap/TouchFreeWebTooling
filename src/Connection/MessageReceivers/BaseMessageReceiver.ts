@@ -8,7 +8,12 @@ import {
     WebSocketResponse,
 } from '../TouchFreeServiceTypes';
 
-export abstract class BaseMessageReceiver<TMessage> {
+export interface IBaseMessageReceiver {
+    ReceiveMessage: (message: CommunicationWrapper<unknown>) => void;
+    actionCode: ActionCode[];
+}
+
+export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageReceiver {
     constructor(useQueue: boolean) {
         this.useQueue = useQueue;
     }
