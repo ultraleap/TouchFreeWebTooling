@@ -16,7 +16,7 @@ export class ConfigStateMessageReceiver extends BaseMessageReceiver<ConfigState>
     // Function: CheckForState
     // Used to check the <configStateQueue> for a <ConfigState>. Sends it to <HandleCallbackList> with
     // the <configStateCallbacks> dictionary if there is one.
-    CheckForState(callbackHandler: CallbackHandler): void {
+    CheckForState = (callbackHandler: CallbackHandler): void => {
         const configState: ConfigState | undefined = this.queue.shift();
 
         if (configState) {
@@ -33,5 +33,5 @@ export class ConfigStateMessageReceiver extends BaseMessageReceiver<ConfigState>
                     break;
             }
         }
-    }
+    };
 }

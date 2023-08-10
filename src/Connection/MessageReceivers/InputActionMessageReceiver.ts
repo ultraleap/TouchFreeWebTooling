@@ -35,7 +35,7 @@ export class InputActionMessageReceiver extends BaseMessageReceiver<WebsocketInp
     // <InputActionManager> to handle the action.
     // UP <InputType>s have their positions set to the last known position to ensure
     // input events trigger correctly.
-    CheckForState(): void {
+    CheckForState = (): void => {
         while (this.queue.length > this.actionCullToCount) {
             if (this.queue[0] !== undefined) {
                 // Stop shrinking the queue if we have a 'key' input event
@@ -69,5 +69,5 @@ export class InputActionMessageReceiver extends BaseMessageReceiver<WebsocketInp
                 InputActionManager.HandleInputAction(converted);
             });
         }
-    }
+    };
 }

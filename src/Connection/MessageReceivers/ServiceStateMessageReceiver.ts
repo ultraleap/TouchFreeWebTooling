@@ -13,7 +13,7 @@ export class ServiceStateMessageReceiver extends BaseMessageReceiver<ServiceStat
     // Function: CheckForServiceStatus
     // Used to check the <serviceStatusQueue> for a <ServiceStatus>. Sends it to <HandleCallbackList> with
     // the <serviceStatusCallbacks> dictionary if there is one.
-    CheckForState(callbackHandler: CallbackHandler): void {
+    CheckForState = (callbackHandler: CallbackHandler): void => {
         const serviceStatus: ServiceStatus | undefined = this.queue.shift();
 
         if (serviceStatus) {
@@ -40,5 +40,5 @@ export class ServiceStateMessageReceiver extends BaseMessageReceiver<ServiceStat
                     break;
             }
         }
-    }
+    };
 }

@@ -12,7 +12,7 @@ export class VersionHandshakeMessageReceiver extends BaseMessageReceiver<WebSock
     // Function: CheckForState
     // Used to check the <responseQueue> for a <WebSocketResponse>. Sends it to Sends it to <HandleCallbackList> with
     // the <responseCallbacks> dictionary if there is one.
-    CheckForState(callbackHandler: CallbackHandler): void {
+    CheckForState = (callbackHandler: CallbackHandler): void => {
         const response: WebSocketResponse | undefined = this.queue.shift();
 
         if (response) {
@@ -35,5 +35,5 @@ export class VersionHandshakeMessageReceiver extends BaseMessageReceiver<WebSock
                     break;
             }
         }
-    }
+    };
 }

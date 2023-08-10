@@ -18,7 +18,7 @@ export class HandDataHandler {
     // Function: CheckForHandData
     // Checks <latestHandDataItem> and if the <HandFrame> is not undefined sends it to
     // <HandDataManager> to handle the frame.
-    CheckForHandData(): void {
+    CheckForHandData = () => {
         const handFrame = this.latestHandDataItem;
 
         if (handFrame) {
@@ -28,5 +28,5 @@ export class HandDataHandler {
                 HandDataManager.HandleHandFrame(handFrame);
             });
         }
-    }
+    };
 }

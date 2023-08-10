@@ -18,7 +18,7 @@ export class ResponseMessageReceiver extends BaseMessageReceiver<WebSocketRespon
     // Function: CheckForState
     // Used to check the <responseQueue> for a <WebSocketResponse>. Sends it to Sends it to <HandleCallbackList> with
     // the <responseCallbacks> dictionary if there is one.
-    CheckForState(callbackHandler: CallbackHandler): void {
+    CheckForState = (callbackHandler: CallbackHandler): void => {
         const response: WebSocketResponse | undefined = this.queue.shift();
 
         if (response) {
@@ -36,5 +36,5 @@ export class ResponseMessageReceiver extends BaseMessageReceiver<WebSocketRespon
                     break;
             }
         }
-    }
+    };
 }

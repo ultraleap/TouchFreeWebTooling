@@ -48,10 +48,10 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
 
     // Function: CheckQueue
     // Gets the next response in a given queue and handles the callback if present.
-    protected CheckQueue<T extends WebSocketResponse | TrackingStateResponse>(
+    protected CheckQueue = <T extends WebSocketResponse | TrackingStateResponse>(
         queue: T[],
         callbacks: CallbackList<T>
-    ): void {
+    ) => {
         const response = queue.shift();
 
         if (!response || !callbacks) return;
@@ -63,16 +63,16 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
                 return;
             }
         }
-    }
+    };
 
     // Function: HandleCallbackList
     // Checks the dictionary of <callbacks> for a matching request ID. If there is a
     // match, calls the callback action in the matching <TouchFreeRequestCallback>.
     // Returns true if it was able to find a callback, returns false if not
-    protected static HandleCallbackList<T extends WebSocketResponse | TouchFreeRequest>(
+    protected static HandleCallbackList = <T extends WebSocketResponse | TouchFreeRequest>(
         callbackResult?: T,
         callbacks?: CallbackList<T>
-    ): 'Success' | 'NoCallbacksFound' {
+    ): 'Success' | 'NoCallbacksFound' => {
         if (!callbackResult || !callbacks) return 'NoCallbacksFound';
         for (const key in callbacks) {
             if (key === callbackResult.requestID) {
@@ -83,9 +83,9 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
         }
 
         return 'NoCallbacksFound';
-    }
+    };
 
-    protected static LogNoCallbacksWarning(response: WebSocketResponse): void {
+    protected static LogNoCallbacksWarning = (response: WebSocketResponse): void => {
         console.warn(
             'Received a Handshake Response that did not match a callback.' +
                 'This is the content of the response: \n Response ID: ' +
@@ -97,12 +97,12 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
                 '\n Original request - ' +
                 response.originalRequest
         );
-    }
+    };
 
-    protected static ClearUnresponsiveItems<T>(
+    protected static ClearUnresponsiveItems = <T>(
         lastClearTime: number,
         callbacks: { [id: string]: TouchFreeRequestCallback<T> }
-    ) {
+    ) => {
         if (callbacks !== undefined) {
             for (const key in callbacks) {
                 if (callbacks[key].timestamp < lastClearTime) {
@@ -112,5 +112,5 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
                 }
             }
         }
-    }
+    };
 }

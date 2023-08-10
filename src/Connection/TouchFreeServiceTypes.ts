@@ -441,17 +441,7 @@ export interface UpdateAnalyticSessionEventsRequest extends BaseAnalyticsRequest
 // Used by <MessageReceiver> to wait for a <TrackingStateResponse> from the Service. Owns a callback with a
 // <TrackingStateResponse> as a parameter. Stores a timestamp of its creation so the response has the ability to
 // timeout if not seen within a reasonable timeframe.
-export class TrackingStateCallback {
-    // Variable: timestamp
-    timestamp: number;
-    // Variable: callback
-    callback: (detail: TrackingStateResponse) => void;
-
-    constructor(_timestamp: number, _callback: (detail: TrackingStateResponse) => void) {
-        this.timestamp = _timestamp;
-        this.callback = _callback;
-    }
-}
+export class TrackingStateCallback extends TouchFreeRequestCallback<TrackingStateResponse> {}
 
 // Type: CallbackList
 // Represents a list of callbacks keyed against id strings.
