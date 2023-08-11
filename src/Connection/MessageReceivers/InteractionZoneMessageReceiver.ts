@@ -16,7 +16,7 @@ export class InteractionZoneMessageReceiver extends BaseMessageReceiver<EventUpd
         this.setup(() => this.CheckForState());
     }
 
-    ReceiveMessage = (message: CommunicationWrapper<unknown>) => {
+    override ReceiveMessage = (message: CommunicationWrapper<unknown>) => {
         const { state } = message.content as InteractionZoneEvent;
         this.lastItem = { status: 'UNPROCESSED', state: state };
     };

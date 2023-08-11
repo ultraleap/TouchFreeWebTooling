@@ -248,13 +248,13 @@ export class ServiceConnection {
      * Request service status from the Service.
      *
      * @param _callback - Callback to handle the response from the service
+     */
+    RequestServiceStatus = (_callback: (detail: ServiceStatus) => void): void => {
         this.BaseRequestWithRequiredCallback(
             ActionCode.REQUEST_SERVICE_STATUS,
             'service status',
             _callback,
             ConnectionManager.callbackHandler.serviceStatusCallbacks
-            Date.now(),
-            _callback
         );
     };
 
@@ -382,6 +382,7 @@ export class ServiceConnection {
         callback?: ((detail: TResponse) => void) | null
     ) => {
         this.BaseRequestWithMultipleCallbacks(fields, actionCode, callbackList, callback);
+    };
 
     /**
      * Base functionality for sending a request to the Service
