@@ -10,13 +10,13 @@ import { IBaseMessageReceiver } from './IBaseMessageReceiver';
 
 /**
  * Base message receiver class to contain generic message processing functionality
- * 
+ *
  * @internal
  */
 export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageReceiver {
     /**
      * Constructs the class
-     * 
+     *
      * @param useQueue Whether the message receiver should use a queue or just store the last item
      */
     constructor(useQueue: boolean) {
@@ -54,7 +54,7 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
      * A queue of {@link TMessage}s that have been received from the Service.
      */
     protected queue: TMessage[] = [];
-    
+
     /**
      * The latest {@link TMessage} that has been received from the Service.
      */
@@ -64,7 +64,7 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
      * Handles processing the message from the service into a consumable format
      * and adds it either to a queue or updates the latest item depending on the
      * value of {@link useQueue}
-     * 
+     *
      * @param message The message received from the Service
      */
     ReceiveMessage = (message: CommunicationWrapper<unknown>) => {
@@ -78,7 +78,7 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
 
     /**
      * Takes an item off a queue and passes it to be handled
-     * 
+     *
      * @param queue The message queue to process
      * @param callbacks The callback list to check the response against
      */

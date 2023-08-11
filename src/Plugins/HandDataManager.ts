@@ -1,10 +1,9 @@
 /**
  * Handles dispatching `"TransmitHandData"` events from received hand frame messages
- * 
+ *
  * @internal
  */
 export class HandDataManager extends EventTarget {
-    
     /** Global static instance of the manager */
     private static _instance: HandDataManager;
 

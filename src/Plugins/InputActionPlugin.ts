@@ -27,7 +27,7 @@ export abstract class InputActionPlugin extends EventTarget {
 
     /**
      * Proxy function for derived classes to modify input actions before they are dispatched.
-     * 
+     *
      * @internal
      */
     ModifyInputAction(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
@@ -37,7 +37,7 @@ export abstract class InputActionPlugin extends EventTarget {
     /**
      * For derived classes to invoke the `InputActionOutput` event.
      * @param _inputAction - InputAction state to dispatch event with
-     * 
+     *
      * @internal
      */
     TransmitInputAction(_inputAction: TouchFreeInputAction): void {

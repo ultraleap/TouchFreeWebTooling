@@ -8,7 +8,6 @@ import {
 } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
-
 /**
  * Receives interaction zone messages from the service and distributes them
  *
@@ -30,7 +29,7 @@ export class InteractionZoneMessageReceiver extends BaseMessageReceiver<EventUpd
 
     /**
      * Handles processing the message from the service into a consumable format
-     * 
+     *
      * @param message The message received from the Service
      */
     override ReceiveMessage = (message: CommunicationWrapper<unknown>) => {

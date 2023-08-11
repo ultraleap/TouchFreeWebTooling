@@ -2,7 +2,6 @@ import { CallbackHandler } from '../CallbackHandler';
 import { ActionCode, WebSocketResponse } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
-
 /**
  * Receives response messages from the service and distributes them
  *

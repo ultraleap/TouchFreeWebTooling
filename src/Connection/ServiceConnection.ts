@@ -345,7 +345,6 @@ export class ServiceConnection {
         );
     };
 
-
     /**
      * Base functionality for sending a request to the Service
      * @param fields - Object containing the content to send to the Service.

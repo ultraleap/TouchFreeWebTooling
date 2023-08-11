@@ -10,7 +10,6 @@ import { InputActionPlugin } from './InputActionPlugin';
  * @public
  */
 export class InputActionManager extends EventTarget {
-
     /**
      * Static global instance of the manager
      */

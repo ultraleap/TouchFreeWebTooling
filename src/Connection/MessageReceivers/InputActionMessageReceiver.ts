@@ -9,7 +9,6 @@ import {
 import { ActionCode } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
-
 /**
  * Receives input action messages from the service and distributes them
  *

@@ -3,7 +3,6 @@ import { CallbackHandler } from '../CallbackHandler';
 import { ActionCode, ServiceStatus } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
-
 /**
  * Receives service state messages from the service and distributes them
  *
