@@ -1,4 +1,4 @@
-import TouchFree from '../TouchFree';
+import * as TouchFree from '../TouchFree';
 import { TouchFreeInputAction, InputType } from '../TouchFreeToolingTypes';
 import { mapRangeToRange } from '../Utilities';
 import { TouchlessCursor } from './TouchlessCursor';

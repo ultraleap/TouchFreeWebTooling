@@ -1,4 +1,4 @@
-import TouchFree from '../../TouchFree';
+import * as TouchFree from '../../TouchFree';
 import { HandChirality, HandType, InputType, InteractionType, TouchFreeInputAction } from '../../TouchFreeToolingTypes';
 import {
     createInputAction,

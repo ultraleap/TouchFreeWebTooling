@@ -1,4 +1,4 @@
-import TouchFree from '../TouchFree';
+import * as TouchFree from '../TouchFree';
 import { TouchFreeInputAction } from '../TouchFreeToolingTypes';
 
 /**

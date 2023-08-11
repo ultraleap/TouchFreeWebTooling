@@ -23,7 +23,7 @@ let inputController: WebInputController | undefined;
  * Global cursor initialized by {@link init}
  * @public
  */
-let CurrentCursor: TouchlessCursor | undefined;
+let currentCursor: TouchlessCursor | undefined;
 let currentSessionId: string | undefined;
 
 /**
@@ -41,11 +41,11 @@ export interface TfInitParams {
     address?: Address;
 }
 
-const getCurrentCursor = () => CurrentCursor;
-const setCurrentCursor = (cursor: TouchlessCursor | undefined) => (CurrentCursor = cursor);
-const getInputController = () => inputController;
+export const getCurrentCursor = () => currentCursor;
+export const setCurrentCursor = (cursor?: TouchlessCursor) => (currentCursor = cursor);
+export const getInputController = () => inputController;
 
-const isAnalyticsActive = () => currentSessionId !== undefined;
+export const isAnalyticsActive = () => currentSessionId !== undefined;
 
 /**
  * Initializes TouchFree - must be called before any functionality requiring a TouchFree service connection.
@@ -53,16 +53,16 @@ const isAnalyticsActive = () => currentSessionId !== undefined;
  * @param tfInitParams - Optional extra initialization parameters
  * @public
  */
-const init = (tfInitParams?: TfInitParams): void => {
+export const init = (tfInitParams?: TfInitParams): void => {
     ConnectionManager.init({ address: tfInitParams?.address });
 
     inputController = new WebInputController();
 
     if (tfInitParams === undefined) {
-        CurrentCursor = new SVGCursor();
+        currentCursor = new SVGCursor();
     } else {
         if (tfInitParams.initialiseCursor === undefined || tfInitParams.initialiseCursor === true) {
-            CurrentCursor = new SVGCursor();
+            currentCursor = new SVGCursor();
         }
     }
 };
@@ -70,12 +70,14 @@ const init = (tfInitParams?: TfInitParams): void => {
 const analyticEvents: { [key in AnalyticEventKey]?: (e: Event) => void } = {};
 
 /** Returns the list of registered analytic event keys */
-const getRegisteredAnalyticEventKeys = (): string[] => Object.keys(analyticEvents);
+export function getRegisteredAnalyticEventKeys(): string[] {
+    return Object.keys(analyticEvents);
+}
 
 let sessionEvents: AnalyticSessionEvents = {};
 
 /** Returns a copy of an indexed object detailing how many times each analytics event has been triggered */
-const getAnalyticSessionEvents = (): AnalyticSessionEvents => Object.assign({}, sessionEvents);
+export const getAnalyticSessionEvents = (): AnalyticSessionEvents => Object.assign({}, sessionEvents);
 
 const defaultAnalyticEvents: readonly AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
 
@@ -87,7 +89,7 @@ const isTFPointerEvent = (e: Event): boolean => 'pointerType' in e && e.pointerT
  *
  * @public
  */
-function registerAnalyticEvents(eventsIn: readonly AnalyticEventKey[] = defaultAnalyticEvents) {
+export function registerAnalyticEvents(eventsIn: readonly AnalyticEventKey[] = defaultAnalyticEvents) {
     eventsIn.forEach((evt) => {
         if (analyticEvents[evt]) return;
         const onEvent = (e: Event) => {
@@ -106,7 +108,7 @@ function registerAnalyticEvents(eventsIn: readonly AnalyticEventKey[] = defaultA
  *
  * @public
  */
-function unregisterAnalyticEvents(eventsIn?: AnalyticEventKey[]) {
+export function unregisterAnalyticEvents(eventsIn?: AnalyticEventKey[]) {
     const events: AnalyticEventKey[] = eventsIn ?? (Object.keys(analyticEvents) as AnalyticEventKey[]);
 
     events.forEach((evt) => {
@@ -185,23 +187,23 @@ function controlAnalyticsSession(
 }
 
 /** Options to use with {@link StopAnalyticsSession} */
-interface StopAnalyticsSessionOptions {
+export interface StopAnalyticsSessionOptions {
     callback?: WebSocketCallback;
 }
 
 /**
  * Used to stop an analytics session with an optional callback
- * @param applicationName - Name of application
+export  * @param applicationName - Name of application
  * @param options - See {@link StopAnalyticsSessionOptions}
  *
  * @public
  */
-function stopAnalyticsSession(applicationName: string, options?: StopAnalyticsSessionOptions) {
+export function stopAnalyticsSession(applicationName: string, options?: StopAnalyticsSessionOptions) {
     controlAnalyticsSession('STOP', applicationName, options?.callback);
 }
 
 /** Options to use with {@link StartAnalyticsSession} */
-interface StartAnalyticsSessionOptions {
+export interface StartAnalyticsSessionOptions {
     callback?: WebSocketCallback;
     stopCurrentSession?: boolean;
 }
@@ -213,7 +215,7 @@ interface StartAnalyticsSessionOptions {
  *
  * @public
  */
-function startAnalyticsSession(applicationName: string, options?: StartAnalyticsSessionOptions) {
+export function startAnalyticsSession(applicationName: string, options?: StartAnalyticsSessionOptions) {
     if (options?.stopCurrentSession && currentSessionId) {
         controlAnalyticsSession('STOP', applicationName, (detail) => {
             controlAnalyticsSession('START', applicationName, options.callback);
@@ -398,7 +400,7 @@ const eventImplementations: () => EventImpls = () =>
  *
  * @public
  */
-const registerEventCallback = <TEvent extends TouchFreeEvent>(
+export const registerEventCallback = <TEvent extends TouchFreeEvent>(
     event: TEvent,
     callback: TouchFreeEventSignatures[TEvent]
 ): EventHandle => {
@@ -434,30 +436,3 @@ export const dispatchEvent = <TEvent extends TouchFreeEvent>(
     const target = eventImplementations()[eventType].target;
     target.dispatchEvent(event);
 };
-
-// Bundle all our exports into a default object
-// Benefit to this is IDE autocomplete for "TouchFree" will find this object
-/**
- * Top level TouchFree object - an entry point for using TouchFree
- *
- * @public
- */
-export const TouchFree = {
-    /** @deprecated for {@link getCurrentCursor} and {@link setCurrentCursor} */
-    CurrentCursor,
-    getCurrentCursor,
-    setCurrentCursor,
-    dispatchEvent,
-    init,
-    getInputController,
-    isConnected,
-    registerEventCallback,
-    registerAnalyticEvents,
-    unregisterAnalyticEvents,
-    isAnalyticsActive,
-    getRegisteredAnalyticEventKeys,
-    getAnalyticSessionEvents,
-    startAnalyticsSession,
-    stopAnalyticsSession,
-};
-export default TouchFree;

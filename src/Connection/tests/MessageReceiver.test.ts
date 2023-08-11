@@ -1,5 +1,5 @@
 import { HandDataManager } from '../../Plugins/HandDataManager';
-import TouchFree, { EventHandle } from '../../TouchFree';
+import * as TouchFree from '../../TouchFree';
 import { BitmaskFlags, WebsocketInputAction, convertInputAction } from '../../TouchFreeToolingTypes';
 import { intervalTest } from '../../tests/testUtils';
 import { ConnectionManager } from '../ConnectionManager';
@@ -65,7 +65,7 @@ describe('MessageReceiver', () => {
         );
     };
 
-    let handler: EventHandle;
+    let handler: TouchFree.EventHandle;
 
     afterEach(() => {
         if (!handler) return;

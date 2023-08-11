@@ -1,5 +1,5 @@
 import { InputActionManager } from '../Plugins/InputActionManager';
-import TouchFree from '../TouchFree';
+import * as TouchFree from '../TouchFree';
 import { TouchFreeInputAction, InteractionType, HandType, HandChirality, InputType } from '../TouchFreeToolingTypes';
 
 export const createInputAction = (input?: Partial<TouchFreeInputAction>) =>

@@ -1,4 +1,4 @@
-import TouchFree, { EventHandle } from '../TouchFree';
+import * as TouchFree from '../TouchFree';
 import { TouchFreeInputAction, InputType } from '../TouchFreeToolingTypes';
 
 /**
@@ -11,7 +11,7 @@ import { TouchFreeInputAction, InputType } from '../TouchFreeToolingTypes';
  */
 export abstract class BaseInputController {
     private static instantiated = false;
-    private handleInputActionCallback: EventHandle | undefined;
+    private handleInputActionCallback: TouchFree.EventHandle | undefined;
 
     /**
      * Subscribes to the TouchFree `'TransmitInputAction'` event, invoke {@link handleInputAction}

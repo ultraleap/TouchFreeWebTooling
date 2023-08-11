@@ -2,7 +2,7 @@ import { ConnectionManager } from '../Connection/ConnectionManager';
 import { DotCursor } from '../Cursors/DotCursor';
 import { SVGCursor } from '../Cursors/SvgCursor';
 import { WebInputController } from '../InputControllers/WebInputController';
-import TouchFree from '../TouchFree';
+import * as TouchFree from '../TouchFree';
 import { TouchFreeEventSignatures, TouchFreeEvent } from '../TouchFreeToolingTypes';
 
 const events: TouchFreeEventSignatures = {

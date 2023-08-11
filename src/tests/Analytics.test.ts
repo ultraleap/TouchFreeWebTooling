@@ -1,7 +1,7 @@
 import { ConnectionManager } from '../Connection/ConnectionManager';
 import { ServiceConnection } from '../Connection/ServiceConnection';
 import { WebSocketResponse, AnalyticEventKey } from '../Connection/TouchFreeServiceTypes';
-import TouchFree from '../TouchFree';
+import * as TouchFree from '../TouchFree';
 
 const successResponse = new WebSocketResponse('test', 'Success', 'test', 'test');
 

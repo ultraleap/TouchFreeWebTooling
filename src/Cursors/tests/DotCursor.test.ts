@@ -1,4 +1,4 @@
-import TouchFree from '../../TouchFree';
+import * as TouchFree from '../../TouchFree';
 import { InputType } from '../../TouchFreeToolingTypes';
 import { intervalTest, mockTfInputAction } from '../../tests/testUtils';
 import { DotCursor } from '../DotCursor';

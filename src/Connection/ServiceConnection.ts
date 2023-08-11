@@ -1,4 +1,4 @@
-import TouchFree, { dispatchEvent } from '../TouchFree';
+import * as TouchFree from '../TouchFree';
 import { VersionInfo, WebsocketInputAction } from '../TouchFreeToolingTypes';
 import { TrackingState } from '../Tracking/TrackingTypes';
 import { ConnectionManager } from './ConnectionManager';
@@ -121,7 +121,7 @@ export class ServiceConnection {
      * result of the Version Checking handshake.
      *
      * @remarks
-     * Dispatches `"OnConnected"` event via {@link dispatchEvent} upon successful handshake response
+     * Dispatches `"OnConnected"` event via {@link TouchFree.dispatchEvent} upon successful handshake response
      *
      * @param response - VersionHandshakeResponse if connection was successful or another websocket response otherwise
      */
@@ -134,7 +134,7 @@ export class ServiceConnection {
             }
 
             this.handshakeCompleted = true;
-            dispatchEvent('onConnected');
+            TouchFree.dispatchEvent('onConnected');
         } else {
             console.error(`Connection to Service failed. Details:\n${response.message}`);
         }
@@ -273,7 +273,7 @@ export class ServiceConnection {
     };
 
     /**
-     * Request updated {@link ConfigState} from the Service
+     * Request updated {@link Connection.ConfigState | ConfigState} from the Service
      *
      * @param callback - Callback to handle the response from the service
      */
