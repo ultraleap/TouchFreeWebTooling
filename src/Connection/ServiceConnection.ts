@@ -9,13 +9,12 @@ import {
     ConfigState,
     ServiceStatus,
     AnalyticsSessionRequestType,
-    AnalyticsSessionStateChangeRequest,
     TrackingStateRequest,
     TrackingStateResponse,
     VersionHandshakeResponse,
     WebSocketResponse,
-    UpdateAnalyticSessionEventsRequest,
     CallbackList,
+    TouchFreeRequest,
 } from './TouchFreeServiceTypes';
 import { v4 as uuidgen } from 'uuid';
 
@@ -94,10 +93,9 @@ export class ServiceConnection {
                 action: ActionCode.VERSION_HANDSHAKE,
                 content: {
                     requestID: guid,
+                    [VersionInfo.API_HEADER_NAME]: VersionInfo.ApiVersion,
                 },
             };
-
-            handshakeRequest.content[VersionInfo.API_HEADER_NAME] = VersionInfo.ApiVersion;
 
             if (!this.handshakeRequested) {
                 this.handshakeRequested = true;
@@ -204,33 +202,12 @@ export class ServiceConnection {
     //
     // If your _callback requires context it should be bound to that context via .bind()
     RequestConfigState = (_callback: (detail: ConfigState) => void): void => {
-        this.sendRequest(
+        this.BaseRequestWithRequiredCallback(
             ActionCode.REQUEST_CONFIGURATION_STATE,
             'config state',
             _callback,
             ConnectionManager.callbackHandler.configStateCallbacks
         );
-    };
-
-    private sendRequest = <TResponse>(
-        actionCode: ActionCode,
-        noCallbackError: string,
-        _callback: (detail: TResponse) => void,
-        callbackList: CallbackList<TResponse>
-    ) => {
-        if (_callback === null) {
-            console.error(`Request for ${noCallbackError} failed. This is due to a missing callback`);
-            return;
-        }
-
-        const guid: string = uuidgen();
-        const request = { requestID: guid };
-        const wrapper = new CommunicationWrapper<unknown>(actionCode, request);
-        const message: string = JSON.stringify(wrapper);
-
-        callbackList[guid] = { timestamp: Date.now(), callback: _callback };
-
-        this.webSocket.send(message);
     };
 
     // Function: ResetInteractionConfigFile
@@ -240,7 +217,7 @@ export class ServiceConnection {
     //
     // If your _callback requires context it should be bound to that context via .bind()
     ResetInteractionConfigFile = (_callback: (defaultConfig: ConfigState) => void): void => {
-        this.sendRequest(
+        this.BaseRequestWithRequiredCallback(
             ActionCode.RESET_INTERACTION_CONFIG_FILE,
             'config state',
             _callback,
@@ -254,7 +231,7 @@ export class ServiceConnection {
     //
     // If your _callback requires context it should be bound to that context via .bind()
     RequestServiceStatus = (_callback: (detail: ServiceStatus) => void): void => {
-        this.sendRequest(
+        this.BaseRequestWithRequiredCallback(
             ActionCode.REQUEST_SERVICE_STATUS,
             'service status',
             _callback,
@@ -268,7 +245,7 @@ export class ServiceConnection {
     //
     // If your _callback requires context it should be bound to that context via .bind()
     RequestConfigFile = (_callback: (detail: ConfigState) => void): void => {
-        this.sendRequest(
+        this.BaseRequestWithRequiredCallback(
             ActionCode.REQUEST_CONFIGURATION_FILE,
             'config file',
             _callback,
@@ -289,28 +266,16 @@ export class ServiceConnection {
         _callback: (detail: WebSocketResponse) => void,
         _configurationCallback: (detail: ConfigState) => void
     ): void => {
-        const position = atTopTarget ? 'Top' : 'Bottom';
-        const guid: string = uuidgen();
-
-        const request = {
-            requestID: guid,
-            position,
-        };
-        const wrapper = new CommunicationWrapper(ActionCode.QUICK_SETUP, request);
-        const message: string = JSON.stringify(wrapper);
-
-        if (_callback !== null) {
-            ConnectionManager.callbackHandler.responseCallbacks[guid] = { timestamp: Date.now(), callback: _callback };
-        }
-
-        if (_configurationCallback !== null) {
-            ConnectionManager.callbackHandler.configStateCallbacks[guid] = {
-                timestamp: Date.now(),
-                callback: _configurationCallback,
-            };
-        }
-
-        this.webSocket.send(message);
+        this.BaseRequestWithMultipleCallbacks(
+            {
+                position: atTopTarget ? 'Top' : 'Bottom',
+            },
+            ActionCode.QUICK_SETUP,
+            ConnectionManager.callbackHandler.responseCallbacks,
+            _callback,
+            ConnectionManager.callbackHandler.configStateCallbacks,
+            _configurationCallback
+        );
     };
 
     // Function: RequestTrackingState
@@ -319,7 +284,7 @@ export class ServiceConnection {
     //
     // If your _callback requires context it should be bound to that context via .bind()
     RequestTrackingState = (_callback: (detail: TrackingStateResponse) => void) => {
-        this.sendRequest(
+        this.BaseRequestWithRequiredCallback(
             ActionCode.GET_TRACKING_STATE,
             'tracking state',
             _callback,
@@ -336,10 +301,7 @@ export class ServiceConnection {
         _state: Partial<TrackingState>,
         _callback: ((detail: TrackingStateResponse) => void) | null
     ) => {
-        const requestID = uuidgen();
-        const requestContent: Partial<TrackingStateRequest> = {
-            requestID,
-        };
+        const requestContent: Partial<TrackingStateRequest> = {};
 
         if (_state.mask !== undefined) {
             requestContent.mask = _state.mask;
@@ -357,27 +319,50 @@ export class ServiceConnection {
             requestContent.analyticsEnabled = _state.analyticsEnabled;
         }
 
-        const wrapper: CommunicationWrapper<Partial<TrackingStateRequest>> = new CommunicationWrapper<
-            Partial<TrackingStateRequest>
-        >(ActionCode.SET_TRACKING_STATE, requestContent);
-        const message: string = JSON.stringify(wrapper);
-
-        if (_callback !== null) {
-            ConnectionManager.callbackHandler.trackingStateCallbacks[requestID] = {
-                timestamp: Date.now(),
-                callback: _callback,
-            };
-        }
-
-        this.webSocket.send(message);
+        this.BaseRequest(
+            requestContent,
+            ActionCode.SET_TRACKING_STATE,
+            ConnectionManager.callbackHandler.trackingStateCallbacks,
+            _callback
+        );
     };
 
-    // Function: BaseAnalyticsRequest
-    // Base functionality for sending an analytics request to the Service
-    private BaseAnalyticsRequest = <T extends UpdateAnalyticSessionEventsRequest | AnalyticsSessionStateChangeRequest>(
+    // Function: BaseRequestWithRequiredCallback
+    // Base functionality for sending requests to the service with a required callback
+    private BaseRequestWithRequiredCallback = <TResponse>(
+        actionCode: ActionCode,
+        noCallbackError: string,
+        _callback: (detail: TResponse) => void,
+        callbackList: CallbackList<TResponse>
+    ) => {
+        if (_callback === null) {
+            console.error(`Request for ${noCallbackError} failed. This is due to a missing callback`);
+            return;
+        }
+
+        this.BaseRequest({}, actionCode, callbackList, _callback);
+    };
+
+    // Function: BaseRequest
+    // Base functionality for sending requests to the service
+    private BaseRequest = <T extends TouchFreeRequest, TResponse>(
         fields: Omit<T, 'requestID'>,
         actionCode: ActionCode,
-        callback?: (detail: WebSocketResponse) => void
+        callbackList: CallbackList<TResponse>,
+        callback?: ((detail: TResponse) => void) | null
+    ) => {
+        this.BaseRequestWithMultipleCallbacks(fields, actionCode, callbackList, callback);
+    };
+
+    // Function: BaseRequest
+    // Base functionality for sending requests to the service
+    private BaseRequestWithMultipleCallbacks = <T extends TouchFreeRequest, TResponse, TSecondResponse>(
+        fields: Omit<T, 'requestID'>,
+        actionCode: ActionCode,
+        callbackList: CallbackList<TResponse>,
+        callback?: ((detail: TResponse) => void) | null,
+        secondCallbackList?: CallbackList<TSecondResponse>,
+        secondCallback?: ((detail: TSecondResponse) => void) | null
     ) => {
         const requestID = uuidgen();
         const content = { ...fields, requestID } as T;
@@ -385,9 +370,16 @@ export class ServiceConnection {
         const message = JSON.stringify(wrapper);
 
         if (callback) {
-            ConnectionManager.callbackHandler.analyticsRequestCallbacks[requestID] = {
+            callbackList[requestID] = {
                 timestamp: Date.now(),
                 callback,
+            };
+        }
+
+        if (secondCallback && secondCallbackList) {
+            secondCallbackList[requestID] = {
+                timestamp: Date.now(),
+                callback: secondCallback,
             };
         }
 
@@ -401,18 +393,20 @@ export class ServiceConnection {
         sessionID: string,
         callback?: (detail: WebSocketResponse) => void
     ) =>
-        this.BaseAnalyticsRequest<AnalyticsSessionStateChangeRequest>(
+        this.BaseRequest(
             { sessionID, requestType },
             ActionCode.ANALYTICS_SESSION_REQUEST,
+            ConnectionManager.callbackHandler.analyticsRequestCallbacks,
             callback
         );
 
     // Function: UpdateAnalyticSessionEvents
     // Used to send a request to update the analytic session's events stored in the Service
     UpdateAnalyticSessionEvents = (sessionID: string, callback?: (detail: WebSocketResponse) => void) =>
-        this.BaseAnalyticsRequest<UpdateAnalyticSessionEventsRequest>(
+        this.BaseRequest(
             { sessionID, sessionEvents: TouchFree.GetAnalyticSessionEvents() },
             ActionCode.ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST,
+            ConnectionManager.callbackHandler.analyticsRequestCallbacks,
             callback
         );
 }

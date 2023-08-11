@@ -365,27 +365,6 @@ export class TrackingStateRequest implements TouchFreeRequest {
     }
 }
 
-// Interface BaseAnalyticsRequest
-// Represents the base information needed for an Analytics related request to the Service
-interface BaseAnalyticsRequest extends TouchFreeRequest {
-    // Variable: sessionID
-    sessionID: string;
-}
-
-// Interface: AnalyticsSessionStateChangeRequest
-// Represents a request to the service to change the state of an analytics session.
-export interface AnalyticsSessionStateChangeRequest extends BaseAnalyticsRequest {
-    // Variable: state
-    requestType: AnalyticsSessionRequestType;
-}
-
-// Interface: UpdateAnalyticSessionEventsRequest
-// Represents a request to the service to update the event counts in the current analytics session.
-export interface UpdateAnalyticSessionEventsRequest extends BaseAnalyticsRequest {
-    // Variable: eventCounts
-    sessionEvents: AnalyticSessionEvents;
-}
-
 // Type: CallbackList
 // Represents a list of callbacks keyed against id strings.
 export type CallbackList<T> = { [id: string]: TouchFreeRequestCallback<T> };
