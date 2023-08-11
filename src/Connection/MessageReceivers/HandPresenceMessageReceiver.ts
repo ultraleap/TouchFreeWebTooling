@@ -2,6 +2,12 @@ import { ConnectionManager } from '../ConnectionManager';
 import { ActionCode, HandPresenceState } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
+
+/**
+ * Receives hand presence messages from the service and distributes them
+ *
+ * @internal
+ */
 export class HandPresenceMessageReceiver extends BaseMessageReceiver<{ state: HandPresenceState }> {
     /**
      * The {@link ActionCode}s that are handled by this message receiver

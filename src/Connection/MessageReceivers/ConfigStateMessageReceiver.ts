@@ -2,6 +2,11 @@ import { CallbackHandler } from '../CallbackHandler';
 import { ActionCode, ConfigState } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
+/**
+ * Receives configuration state messages from the service and distributes them
+ *
+ * @internal
+ */
 export class ConfigStateMessageReceiver extends BaseMessageReceiver<ConfigState> {
     /**
      * The {@link ActionCode}s that are handled by this message receiver

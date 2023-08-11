@@ -4,7 +4,6 @@ import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**
  * Receives analytics messages from the service and distributes them
- * calls callbacks
  *
  * @internal
  */

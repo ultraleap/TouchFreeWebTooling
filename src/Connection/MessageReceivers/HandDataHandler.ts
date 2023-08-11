@@ -1,5 +1,10 @@
 import { HandDataManager } from '../../Plugins/HandDataManager';
 
+/**
+ * Receives hand data messages from the service and distributes them
+ *
+ * @internal
+ */
 export class HandDataHandler {
     /**
      * How many times per second to check {@link latestHandDataItem}

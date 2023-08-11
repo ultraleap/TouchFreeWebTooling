@@ -10,6 +10,8 @@ import { IBaseMessageReceiver } from './IBaseMessageReceiver';
 
 /**
  * Base message receiver class to contain generic message processing functionality
+ * 
+ * @internal
  */
 export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageReceiver {
     /**

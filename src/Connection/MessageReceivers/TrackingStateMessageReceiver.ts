@@ -2,6 +2,11 @@ import { CallbackHandler } from '../CallbackHandler';
 import { ActionCode, TrackingStateResponse } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
+/**
+ * Receives tracking state messages from the service and distributes them
+ *
+ * @internal
+ */
 export class TrackingStateMessageReceiver extends BaseMessageReceiver<TrackingStateResponse> {
     /**
      * The {@link ActionCode}s that are handled by this message receiver

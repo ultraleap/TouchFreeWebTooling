@@ -2,6 +2,11 @@ import { CallbackHandler } from '../CallbackHandler';
 import { ActionCode, WebSocketResponse } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
+/**
+ * Receives handshake messages from the service and distributes them
+ *
+ * @internal
+ */
 export class VersionHandshakeMessageReceiver extends BaseMessageReceiver<WebSocketResponse> {
     /**
      * The {@link ActionCode}s that are handled by this message receiver
