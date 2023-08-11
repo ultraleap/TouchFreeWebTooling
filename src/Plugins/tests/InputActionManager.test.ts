@@ -18,7 +18,7 @@ describe('InputActionManager', () => {
         let pluginCallCount = 0;
 
         class MockPlugin extends InputActionPlugin {
-            RunPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+            override RunPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 expect(inputAction).toStrictEqual(currentInputAction);
                 const modifiedInputAction = super.RunPlugin(inputAction);
                 expect(modifiedInputAction).toStrictEqual(currentModifiedAction);
@@ -26,12 +26,12 @@ describe('InputActionManager', () => {
                 return modifiedInputAction;
             }
 
-            ModifyInputAction(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+            override ModifyInputAction(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 currentModifiedAction = { ...inputAction, Timestamp: Date.now() };
                 return currentModifiedAction;
             }
 
-            TransmitInputAction(inputAction: TouchFreeInputAction): void {
+            override TransmitInputAction(inputAction: TouchFreeInputAction): void {
                 expect(inputAction).toStrictEqual(currentModifiedAction);
             }
         }
@@ -66,7 +66,7 @@ describe('InputActionManager', () => {
                 this.orderNumber = orderNumber;
             }
 
-            RunPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+            override RunPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 expect(pluginCallCount).toBe(this.orderNumber);
                 pluginCallCount++;
                 return inputAction;
@@ -89,7 +89,7 @@ describe('InputActionManager', () => {
         let passed = false;
 
         class MockCallSuperPlugin extends InputActionPlugin {
-            RunPlugin(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+            override RunPlugin(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 callCount++;
                 const copy = copyInputAction(_inputAction);
                 const returnedInputAction = super.RunPlugin(copy);
@@ -98,7 +98,7 @@ describe('InputActionManager', () => {
                 return returnedInputAction;
             }
 
-            ModifyInputAction(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+            override ModifyInputAction(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 callCount++;
                 const copy = copyInputAction(_inputAction);
                 const returnInputAction = super.ModifyInputAction(copy);
@@ -108,7 +108,7 @@ describe('InputActionManager', () => {
                 return _inputAction;
             }
 
-            TransmitInputAction(_inputAction: TouchFreeInputAction): void {
+            override TransmitInputAction(_inputAction: TouchFreeInputAction): void {
                 callCount++;
                 this.addEventListener('InputActionOutput', (event) => {
                     const actionEvent = event as CustomEvent<TouchFreeInputAction>;
@@ -139,7 +139,7 @@ describe('InputActionManager', () => {
         let nulledInputAction: TouchFreeInputAction;
 
         class MockNullPlugin extends InputActionPlugin {
-            RunPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+            override RunPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 // Store the nulled input action to check against later
                 nulledInputAction = inputAction;
                 pluginCallCount++;
