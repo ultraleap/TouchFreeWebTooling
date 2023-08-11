@@ -65,7 +65,7 @@ TF_Tooling::Docs::build:
     # Run unit tests
     - cd ${CI_PROJECT_DIR}
     - npm i
-    - npm run build:docs | Tee-Object -FilePath "${CI_PROJECT_DIR}/docs_output.txt"
+    - npm run build:docs *> "${CI_PROJECT_DIR}/docs_output.txt"
     - gc ${CI_PROJECT_DIR}/docs_output.txt
     - if ((cat ${CI_PROJECT_DIR}/docs_output.txt | Select-String "You have changed the public API signature for this project.").Count -gt 0) { exit 1 }
   artifacts:
