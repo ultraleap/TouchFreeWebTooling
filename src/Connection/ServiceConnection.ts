@@ -145,9 +145,8 @@ export class ServiceConnection {
     };
 
     /**
-     * The first point of contact for new messages received. Messages are handled differently
-     * based on their {@link ActionCode}, typically being sent to a queue or handler in
-     * {@link ConnectionManager.messageReceiver}.
+     * The first point of contact for new messages received. Messages are passed to a
+     * message receiver depending on their {@link ActionCode}.
      *
      * @param _message - Message to handle
      */
@@ -423,8 +422,6 @@ export class ServiceConnection {
         this.webSocket.send(message);
     };
 
-    // Function: AnalyticsSessionRequest
-    // Used to either start a new analytics session, or stop the current session.
     /**
      * Used to either start a new analytics session, or stop the current session.
      *

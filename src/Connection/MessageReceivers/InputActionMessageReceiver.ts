@@ -10,31 +10,42 @@ import { ActionCode } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 export class InputActionMessageReceiver extends BaseMessageReceiver<WebsocketInputAction> {
+    /**
+     * The {@link ActionCode}s that are handled by this message receiver
+     */
     public readonly actionCode: ActionCode[] = [ActionCode.INPUT_ACTION];
 
+    /**
+     * Sets up consuming messages from the queue and passing them to the {@link InputActionManager}
+     */
     constructor() {
         super(true);
         this.setup(() => this.CheckForState());
     }
 
-    // Variable: actionCullToCount
-    // How many non-essential <TouchFreeInputActions> should the <actionQueue> be trimmed *to* per
-    // frame. This is used to ensure the Tooling can keep up with the Events sent over the
-    // WebSocket.
+    /**
+     * How many non-essential {@link TouchFreeInputAction}s should the {@link queue}
+     * be trimmed *to* per frame. This is used to ensure the Tooling can keep up with the
+     * Events sent over the WebSocket.
+     */
     actionCullToCount = 2;
 
-    // Used to ensure UP events are sent at the correct position relative to the previous
-    // MOVE event.
-    // This is required due to the culling of events from the actionQueue in CheckForState.
+    /**
+     * Used to ensure UP events are sent at the correct position relative to the previous MOVE event.
+     * This is required due to the culling of events from the {@link actionQueue} in {@link CheckForAction}.
+     */
     lastKnownCursorPosition: Array<number> = [0, 0];
 
-    // Function: CheckForState
-    // Checks <actionQueue> for valid <TouchFreeInputActions>. If there are too many in the queue,
-    // clears out non-essential <TouchFreeInputActions> down to the number specified by
-    // <actionCullToCount>. If any remain, sends the oldest <TouchFreeInputAction> to
-    // <InputActionManager> to handle the action.
-    // UP <InputType>s have their positions set to the last known position to ensure
-    // input events trigger correctly.
+    /**
+     * Checks {@link queue} for a single {@link TouchFreeInputAction} and handles it.
+     *
+     * @remarks
+     * If there are too many in the queue, clears out non-essential {@link TouchFreeInputAction}
+     * down to the number specified by {@link actionCullToCount}.
+     * If any remain, sends the oldest {@link TouchFreeInputAction} to {@link InputActionManager}
+     * to handle the action. Actions with UP {@link InputType} have their positions set to
+     * {@link lastKnownCursorPosition} to ensure input events trigger correctly.
+     */
     CheckForState = (): void => {
         while (this.queue.length > this.actionCullToCount) {
             if (this.queue[0] !== undefined) {

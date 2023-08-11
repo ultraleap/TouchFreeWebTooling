@@ -3,6 +3,9 @@ import { ActionCode, WebSocketResponse } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 export class ResponseMessageReceiver extends BaseMessageReceiver<WebSocketResponse> {
+    /**
+     * The {@link ActionCode}s that are handled by this message receiver
+     */
     public readonly actionCode: ActionCode[] = [
         ActionCode.CONFIGURATION_RESPONSE,
         ActionCode.SERVICE_STATUS_RESPONSE,
@@ -10,14 +13,18 @@ export class ResponseMessageReceiver extends BaseMessageReceiver<WebSocketRespon
         ActionCode.QUICK_SETUP_RESPONSE,
     ];
 
+    /**
+     * Sets up consuming messages from a queue and passing them to the callbacks
+     */
     constructor(callbackHandler: CallbackHandler) {
         super(true);
         this.setup(() => this.CheckForState(callbackHandler));
     }
 
-    // Function: CheckForState
-    // Used to check the <responseQueue> for a <WebSocketResponse>. Sends it to Sends it to <HandleCallbackList> with
-    // the <responseCallbacks> dictionary if there is one.
+    /**
+     * Used to check the {@link queue} for a {@link WebSocketResponse}.
+     * Sends it to {@link HandleCallbackList} with the {@link responseCallbacks} dictionary if there is one.
+     */
     CheckForState = (callbackHandler: CallbackHandler): void => {
         const response: WebSocketResponse | undefined = this.queue.shift();
 

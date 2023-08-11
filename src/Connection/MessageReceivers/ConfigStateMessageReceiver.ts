@@ -3,19 +3,26 @@ import { ActionCode, ConfigState } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 export class ConfigStateMessageReceiver extends BaseMessageReceiver<ConfigState> {
+    /**
+     * The {@link ActionCode}s that are handled by this message receiver
+     */
     public readonly actionCode: ActionCode[] = [
         ActionCode.CONFIGURATION_STATE,
         ActionCode.CONFIGURATION_FILE_STATE,
         ActionCode.QUICK_SETUP_CONFIG,
     ];
+
+    /**
+     * Sets up consuming messages from a queue and passing them to the callbacks
+     */
     constructor(callbackHandler: CallbackHandler) {
         super(true);
         this.setup(() => this.CheckForState(callbackHandler));
     }
 
-    // Function: CheckForState
-    // Used to check the <configStateQueue> for a <ConfigState>. Sends it to <HandleCallbackList> with
-    // the <configStateCallbacks> dictionary if there is one.
+    /**
+     * Checks {@link queue} for a single {@link configState} and handles it.
+     */
     CheckForState = (callbackHandler: CallbackHandler): void => {
         const configState: ConfigState | undefined = this.queue.shift();
 

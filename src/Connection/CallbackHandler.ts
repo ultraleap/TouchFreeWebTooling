@@ -6,49 +6,58 @@ import {
     WebSocketResponse,
 } from './TouchFreeServiceTypes';
 
+/**
+ * Holds all of the callbacks that are pending response from the service.
+ *
+ * @internal
+ */
 export class CallbackHandler {
+    /**
+     * Starts a regular interval - {@link ClearUnresponsivePromises} (at {@link callbackClearTimer})
+     */
     constructor() {
         setInterval(this.ClearUnresponsivePromises, this.callbackClearTimer);
     }
 
-    // Variable: callbackClearTimer
-    // The amount of time between checks of <responseCallbacks> to eliminate expired
-    // <ResponseCallbacks>. Used in <ClearUnresponsiveCallbacks>.
+    /**
+     * The amount of time between response callback handling to eliminate unhandled callbacks.
+     * Prevents a performance death spiral scenario.
+     */
     callbackClearTimer = 300;
 
-    // Variable: analyticsRequestCallbacks
-    // A dictionary of unique request IDs and <ResponseCallback> that represent requests
-    // that are awaiting response from the Service.
+    /**
+     * A {@link CallbackList} awaiting {@link WebSocketResponse} reponses from the Service.
+     */
     analyticsRequestCallbacks: CallbackList<WebSocketResponse> = {};
 
-    // Variable: configStateCallbacks
-    // A dictionary of unique request IDs and <ConfigStateCallback> that represent requests
-    // that are awaiting response from the Service.
+    /**
+     * A {@link CallbackList} awaiting {@link ConfigState} reponses from the Service.
+     */
     configStateCallbacks: CallbackList<ConfigState> = {};
 
-    // Variable: responseCallbacks
-    // A dictionary of unique request IDs and <ResponseCallbacks> that represent requests
-    // that are awaiting response from the Service.
+    /**
+     * A {@link CallbackList} awaiting {@link WebSocketResponse} reponses from the Service.
+     */
     responseCallbacks: CallbackList<WebSocketResponse> = {};
 
-    // Variable: serviceStatusCallbacks
-    // A dictionary of unique request IDs and <ServiceStatusCallback> that represent requests
-    // that are awaiting response from the Service.
+    /**
+     * A {@link CallbackList} awaiting {@link ServiceStatus} reponses from the Service.
+     */
     serviceStatusCallbacks: CallbackList<ServiceStatus> = {};
 
-    // Variable: trackingSettingsStateCallbacks
-    // A dictionary of unique request IDs and <TrackingStateCallback> that represent requests
-    // that are awaiting response from the Service.
+    /**
+     * A {@link CallbackList} awaiting {@link TrackingStateResponse} reponses from the Service.
+     */
     trackingStateCallbacks: CallbackList<TrackingStateResponse> = {};
 
-    // Variable: handshakeCallbacks
-    // A dictionary of unique request IDs and <ResponseCallbacks> that represent handshake requests
-    // that are awaiting response from the Service.
+    /**
+     * A {@link CallbackList} awaiting {@link WebSocketResponse} reponses from the Service.
+     */
     handshakeCallbacks: CallbackList<WebSocketResponse> = {};
 
-    // Function: ClearUnresponsiveCallbacks
-    // Waits for <callbackClearTimer> seconds and clears all <ResponseCallbacks> that are
-    // expired from <responseCallbacks>.
+    /**
+     * Clear {@link responseCallbacks} that have been around for more than {@link callbackClearTimer}.
+     */
     ClearUnresponsivePromises(): void {
         const lastClearTime: number = Date.now();
 

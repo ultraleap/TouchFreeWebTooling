@@ -4,15 +4,22 @@ import { ActionCode, ServiceStatus } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 export class ServiceStateMessageReceiver extends BaseMessageReceiver<ServiceStatus> {
+    /**
+     * The {@link ActionCode}s that are handled by this message receiver
+     */
     public readonly actionCode: ActionCode[] = [ActionCode.SERVICE_STATUS];
+
+    /**
+     * Sets up consuming messages from a queue and passing them to the callbacks
+     */
     constructor(callbackHandler: CallbackHandler) {
         super(true);
         this.setup(() => this.CheckForState(callbackHandler));
     }
 
-    // Function: CheckForServiceStatus
-    // Used to check the <serviceStatusQueue> for a <ServiceStatus>. Sends it to <HandleCallbackList> with
-    // the <serviceStatusCallbacks> dictionary if there is one.
+    /**
+     * Checks {@link queue} for a single {@link ServiceStatus} and handles it.
+     */
     CheckForState = (callbackHandler: CallbackHandler): void => {
         const serviceStatus: ServiceStatus | undefined = this.queue.shift();
 

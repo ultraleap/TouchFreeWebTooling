@@ -1,23 +1,29 @@
 import { HandDataManager } from '../../Plugins/HandDataManager';
 
 export class HandDataHandler {
-    // Variable: update Rate
-    updateRate = 60;
+    /**
+     * How many times per second to check {@link latestHandDataItem}
+     */
+    private updateRate = 60;
 
-    // Calculated on construction for use in setting the update interval
+    /**
+     * Duration (in seconds) of update interval - inverse of {@link updateRate}
+     */
     private updateDuration: number = (1 / this.updateRate) * 1000;
 
     constructor() {
         setInterval(this.CheckForHandData, this.updateDuration);
     }
 
-    // Variable: latestHandDataItem
-    // The latest <HandFrame> that has been received from the Service.
+    /**
+     * The latest `HandFrame` that has been received from the Service.
+     */
     latestHandDataItem?: ArrayBuffer = undefined;
 
-    // Function: CheckForHandData
-    // Checks <latestHandDataItem> and if the <HandFrame> is not undefined sends it to
-    // <HandDataManager> to handle the frame.
+    /**
+     * Checks {@link latestHandDataItem} and if the `HandFrame` is not undefined sends it to
+     * {@link HandDataManager} to handle the frame.
+     */
     CheckForHandData = () => {
         const handFrame = this.latestHandDataItem;
 
