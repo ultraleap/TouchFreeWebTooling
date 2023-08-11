@@ -259,6 +259,7 @@ export interface EventHandle {
 type EventStatus = 'PROCESSED' | 'UNPROCESSED';
 
 // @internal
+// TEST DIFF
 interface EventUpdate<T> {
     state: T;
     status: EventStatus;
