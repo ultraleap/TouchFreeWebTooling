@@ -15,12 +15,12 @@ export const createInputAction = (input?: Partial<TouchFreeInputAction>) =>
     );
 
 export const mockTfInputAction = (input?: Partial<TouchFreeInputAction>) =>
-    TouchFree.DispatchEvent('TransmitInputAction', createInputAction(input));
+    TouchFree.dispatchEvent('transmitInputAction', createInputAction(input));
 
 export const mockTfPluginPartialInputAction = (input?: Partial<TouchFreeInputAction>) =>
-    InputActionManager.HandleInputAction(createInputAction(input));
+    InputActionManager.handleInputAction(createInputAction(input));
 
-export const mockTfPluginInputAction = (input: TouchFreeInputAction) => InputActionManager.HandleInputAction(input);
+export const mockTfPluginInputAction = (input: TouchFreeInputAction) => InputActionManager.handleInputAction(input);
 
 export const checkTwoInputActionsAreSame = (
     a: TouchFreeInputAction | null,

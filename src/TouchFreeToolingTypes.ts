@@ -2,7 +2,7 @@ import { Vector, Vector2 } from './Configuration/ConfigurationTypes';
 import { ServiceStatus } from './Connection/TouchFreeServiceTypes';
 
 /**
- * This class is used when comparing the {@link ApiVersion} of the Tooling and the Service.
+ * This class is used when comparing the {@link API_VERSION} of the Tooling and the Service.
  *
  * @internal
  */
@@ -10,7 +10,7 @@ export class VersionInfo {
     /**
      * The current version of communication API used between Tooling and the TouchFree Service
      */
-    public static readonly ApiVersion: string = '1.5.0';
+    public static readonly API_VERSION: string = '1.5.0';
 
     /**
      * The name of the header we wish the Service to compare our version with.
@@ -45,47 +45,47 @@ export class TouchFreeInputAction {
     ProgressToClick: number;
 
     constructor(
-        _timestamp: number,
-        _interactionType: InteractionType,
-        _handType: HandType,
-        _handChirality: HandChirality,
-        _inputType: InputType,
-        _cursorPosition: Array<number>,
-        _distanceFromScreen: number,
-        _progressToClick: number
+        timestamp: number,
+        interactionType: InteractionType,
+        handType: HandType,
+        handChirality: HandChirality,
+        inputType: InputType,
+        cursorPosition: Array<number>,
+        distanceFromScreen: number,
+        progressToClick: number
     ) {
-        this.Timestamp = _timestamp;
-        this.InteractionType = _interactionType;
-        this.HandType = _handType;
-        this.Chirality = _handChirality;
-        this.InputType = _inputType;
-        this.CursorPosition = _cursorPosition;
-        this.DistanceFromScreen = _distanceFromScreen;
-        this.ProgressToClick = _progressToClick;
+        this.Timestamp = timestamp;
+        this.InteractionType = interactionType;
+        this.HandType = handType;
+        this.Chirality = handChirality;
+        this.InputType = inputType;
+        this.CursorPosition = cursorPosition;
+        this.DistanceFromScreen = distanceFromScreen;
+        this.ProgressToClick = progressToClick;
     }
 }
 
 /**
  * Converts a {@link WebsocketInputAction} into the Tooling-friendly {@link TouchFreeInputAction}.
  *
- * @param _wsInput - Raw input action received by the WebSocket
+ * @param wsInput - Raw input action received by the WebSocket
  * @returns User friendly conversion of the InputAction - {@link TouchFreeInputAction}
  *
  * @internal
  */
-export function ConvertInputAction(_wsInput: WebsocketInputAction): TouchFreeInputAction {
-    const yPosition = window.innerHeight - _wsInput.CursorPosition.y / window.devicePixelRatio;
-    const xPosition = _wsInput.CursorPosition.x / window.devicePixelRatio;
+export function convertInputAction(wsInput: WebsocketInputAction): TouchFreeInputAction {
+    const yPosition = window.innerHeight - wsInput.CursorPosition.y / window.devicePixelRatio;
+    const xPosition = wsInput.CursorPosition.x / window.devicePixelRatio;
 
     return new TouchFreeInputAction(
-        _wsInput.Timestamp,
-        FlagUtilities.GetInteractionTypeFromFlags(_wsInput.InteractionFlags),
-        FlagUtilities.GetHandTypeFromFlags(_wsInput.InteractionFlags),
-        FlagUtilities.GetChiralityFromFlags(_wsInput.InteractionFlags),
-        FlagUtilities.GetInputTypeFromFlags(_wsInput.InteractionFlags),
+        wsInput.Timestamp,
+        FlagUtilities.getInteractionTypeFromFlags(wsInput.InteractionFlags),
+        FlagUtilities.getHandTypeFromFlags(wsInput.InteractionFlags),
+        FlagUtilities.getChiralityFromFlags(wsInput.InteractionFlags),
+        FlagUtilities.getInputTypeFromFlags(wsInput.InteractionFlags),
         [xPosition, yPosition],
-        _wsInput.DistanceFromScreen,
-        _wsInput.ProgressToClick
+        wsInput.DistanceFromScreen,
+        wsInput.ProgressToClick
     );
 }
 
@@ -235,28 +235,28 @@ export interface TouchFreeEventSignatures {
     /**
      * Event dispatched when connecting to the TouchFree service
      */
-    OnConnected: () => void;
+    onConnected: () => void;
     /**
      * Same as OnConnected but calls callback when already connected.
      * Note this event piggybacks as an "OnConnected" event on event targets.
      */
-    WhenConnected: () => void;
+    whenConnected: () => void;
     /**
      * Event dispatched when the connection between TouchFreeService and Ultraleap Tracking Service changes
      */
-    OnTrackingServiceStateChange: (state: TrackingServiceState) => void;
+    onTrackingServiceStateChange: (state: TrackingServiceState) => void;
     /**
      * Event dispatched when the status of TouchFree Service changes
      */
-    OnServiceStatusChange: (state: ServiceStatus) => void;
+    onServiceStatusChange: (state: ServiceStatus) => void;
     /**
      * Event dispatched when the first hand has started tracking
      */
-    HandFound: () => void;
+    handFound: () => void;
     /**
      * Event dispatched when the last hand has stopped tracking
      */
-    HandsLost: () => void;
+    handsLost: () => void;
     /**
      * Event dispatched when new hand data is available
      *
@@ -266,27 +266,27 @@ export interface TouchFreeEventSignatures {
      *
      * @internal
      */
-    TransmitHandData: (data: HandFrame) => void;
+    transmitHandData: (data: HandFrame) => void;
     /**
      * Event dispatched when any input action is received from the TouchFree service
      */
-    InputAction: (inputAction: TouchFreeInputAction) => void;
+    inputAction: (inputAction: TouchFreeInputAction) => void;
     /**
      * Event dispatched directly from the `InputActionManager` without any proxying
      */
-    TransmitInputActionRaw: (inputAction: TouchFreeInputAction) => void;
+    transmitInputActionRaw: (inputAction: TouchFreeInputAction) => void;
     /**
      * Event dispatched from the `InputActionManager` to each registered Plugin
      */
-    TransmitInputAction: (inputAction: TouchFreeInputAction) => void;
+    transmitInputAction: (inputAction: TouchFreeInputAction) => void;
     /**
      * Event dispatched when the active hand enters the interaction zone
      */
-    HandEntered: () => void;
+    handEntered: () => void;
     /**
      * Event dispatched when the active hand enters the interaction zone
      */
-    HandExited: () => void;
+    handExited: () => void;
 }
 
 /**
@@ -297,7 +297,7 @@ export type TouchFreeEvent = Extract<keyof TouchFreeEventSignatures, string>;
 
 /**
  * The version of an InputAction received via the WebSocket. This must be converted into a
- * {@link TouchFreeInputAction} to be used by the Tooling and can be done so via {@link ConvertInputAction}.
+ * {@link TouchFreeInputAction} to be used by the Tooling and can be done so via {@link convertInputAction}.
  *
  * @internal
  */
@@ -314,17 +314,17 @@ export class WebsocketInputAction {
     ProgressToClick: number;
 
     constructor(
-        _timestamp: number,
-        _interactionFlags: BitmaskFlags,
-        _cursorPosition: Vector2,
-        _distanceFromScreen: number,
-        _progressToClick: number
+        timestamp: number,
+        interactionFlags: BitmaskFlags,
+        cursorPosition: Vector2,
+        distanceFromScreen: number,
+        progressToClick: number
     ) {
-        this.Timestamp = _timestamp;
-        this.InteractionFlags = _interactionFlags;
-        this.CursorPosition = _cursorPosition;
-        this.DistanceFromScreen = _distanceFromScreen;
-        this.ProgressToClick = _progressToClick;
+        this.Timestamp = timestamp;
+        this.InteractionFlags = interactionFlags;
+        this.CursorPosition = cursorPosition;
+        this.DistanceFromScreen = distanceFromScreen;
+        this.ProgressToClick = progressToClick;
     }
 }
 
@@ -334,7 +334,7 @@ export class WebsocketInputAction {
  */
 export class HandFrame {
     /** Array of {@link RawHand | hand data} */
-    Hands: RawHand[] = [];
+    hands: RawHand[] = [];
 }
 
 /**
@@ -343,13 +343,13 @@ export class HandFrame {
  */
 export class RawHand {
     /** Flag representing if hand is the current primary hand */
-    CurrentPrimary = false;
+    currentPrimary = false;
     /** Array of {@link RawFinger | fingers} */
-    Fingers: RawFinger[] = [];
+    fingers: RawFinger[] = [];
     /** Width of wrist */
-    WristWidth = 0;
+    wristWidth = 0;
     /** Position of wrist */
-    WristPosition: Vector = { X: 0, Y: 0, Z: 0 };
+    wristPosition: Vector = { X: 0, Y: 0, Z: 0 };
 }
 
 /**
@@ -358,9 +358,9 @@ export class RawHand {
  */
 export class RawFinger {
     /** Array of {@link RawBone | Bones}  */
-    Bones: RawBone[] = [];
+    bones: RawBone[] = [];
     /** Type of finger. See {@link FingerType} */
-    Type: FingerType = FingerType.TYPE_UNKNOWN;
+    type: FingerType = FingerType.TYPE_UNKNOWN;
 }
 
 /**
@@ -388,28 +388,28 @@ export enum FingerType {
  */
 export class RawBone {
     /** Start joint position of the finger bone */
-    PrevJoint: Vector = { X: 0, Y: 0, Z: 0 };
+    prevJoint: Vector = { X: 0, Y: 0, Z: 0 };
     /** End joint position of the finger bone */
-    NextJoint: Vector = { X: 0, Y: 0, Z: 0 };
+    nextJoint: Vector = { X: 0, Y: 0, Z: 0 };
 }
 
 /**
- * A collection of Utilities to be used when working with BitmaskFlags
+ * A collection of utilities to be used when working with BitmaskFlags
  * @internal
  */
 export class FlagUtilities {
     /**
      * Convert a collection of interaction enums to BitmaskFlags for sending to the Service
      */
-    static GetInteractionFlags(
-        _interactionType: InteractionType,
-        _handType: HandType,
-        _chirality: HandChirality,
-        _inputType: InputType
+    static getInteractionFlags(
+        interactionType: InteractionType,
+        handType: HandType,
+        chirality: HandChirality,
+        inputType: InputType
     ): BitmaskFlags {
         let returnVal: BitmaskFlags = BitmaskFlags.NONE;
 
-        switch (_handType) {
+        switch (handType) {
             case HandType.PRIMARY:
                 returnVal ^= BitmaskFlags.PRIMARY;
                 break;
@@ -419,7 +419,7 @@ export class FlagUtilities {
                 break;
         }
 
-        switch (_chirality) {
+        switch (chirality) {
             case HandChirality.LEFT:
                 returnVal ^= BitmaskFlags.LEFT;
                 break;
@@ -429,7 +429,7 @@ export class FlagUtilities {
                 break;
         }
 
-        switch (_inputType) {
+        switch (inputType) {
             case InputType.NONE:
                 returnVal ^= BitmaskFlags.NONE_INPUT;
                 break;
@@ -451,7 +451,7 @@ export class FlagUtilities {
                 break;
         }
 
-        switch (_interactionType) {
+        switch (interactionType) {
             case InteractionType.PUSH:
                 returnVal ^= BitmaskFlags.PUSH;
                 break;
@@ -479,15 +479,15 @@ export class FlagUtilities {
     /**
      * Extract HandChirality from a BitmaskFlags
      * @remarks Favours RIGHT if none or both are found
-     * @param _flags - BitmaskFlags to extract from
+     * @param flags - BitmaskFlags to extract from
      * @returns Extracted chirality
      */
-    static GetChiralityFromFlags(_flags: BitmaskFlags): HandChirality {
+    static getChiralityFromFlags(flags: BitmaskFlags): HandChirality {
         let chirality: HandChirality = HandChirality.RIGHT;
 
-        if (_flags & BitmaskFlags.RIGHT) {
+        if (flags & BitmaskFlags.RIGHT) {
             chirality = HandChirality.RIGHT;
-        } else if (_flags & BitmaskFlags.LEFT) {
+        } else if (flags & BitmaskFlags.LEFT) {
             chirality = HandChirality.LEFT;
         } else {
             console.error("InputActionData missing: No Chirality found. Defaulting to 'RIGHT'");
@@ -499,15 +499,15 @@ export class FlagUtilities {
     /**
      * Extract HandType from a BitmaskFlags
      * @remarks Favours PRIMARY if none or both are found
-     * @param _flags - BitmaskFlags to extract from
+     * @param flags - BitmaskFlags to extract from
      * @returns Extracted hand type
      */
-    static GetHandTypeFromFlags(_flags: BitmaskFlags): HandType {
+    static getHandTypeFromFlags(flags: BitmaskFlags): HandType {
         let handType: HandType = HandType.PRIMARY;
 
-        if (_flags & BitmaskFlags.PRIMARY) {
+        if (flags & BitmaskFlags.PRIMARY) {
             handType = HandType.PRIMARY;
-        } else if (_flags & BitmaskFlags.SECONDARY) {
+        } else if (flags & BitmaskFlags.SECONDARY) {
             handType = HandType.SECONDARY;
         } else {
             console.error("InputActionData missing: No HandData found. Defaulting to 'PRIMARY'");
@@ -519,21 +519,21 @@ export class FlagUtilities {
     /**
      * Extract InputType from a BitmaskFlags
      * @remarks Favours NONE if none are found
-     * @param _flags - BitmaskFlags to extract from
+     * @param flags - BitmaskFlags to extract from
      * @returns Extracted input type
      */
-    static GetInputTypeFromFlags(_flags: BitmaskFlags): InputType {
+    static getInputTypeFromFlags(flags: BitmaskFlags): InputType {
         let inputType: InputType = InputType.NONE;
 
-        if (_flags & BitmaskFlags.NONE_INPUT) {
+        if (flags & BitmaskFlags.NONE_INPUT) {
             inputType = InputType.NONE;
-        } else if (_flags & BitmaskFlags.CANCEL) {
+        } else if (flags & BitmaskFlags.CANCEL) {
             inputType = InputType.CANCEL;
-        } else if (_flags & BitmaskFlags.UP) {
+        } else if (flags & BitmaskFlags.UP) {
             inputType = InputType.UP;
-        } else if (_flags & BitmaskFlags.DOWN) {
+        } else if (flags & BitmaskFlags.DOWN) {
             inputType = InputType.DOWN;
-        } else if (_flags & BitmaskFlags.MOVE) {
+        } else if (flags & BitmaskFlags.MOVE) {
             inputType = InputType.MOVE;
         } else {
             console.error("InputActionData missing: No InputType found. Defaulting to 'NONE'");
@@ -545,21 +545,21 @@ export class FlagUtilities {
     /**
      * Extract InteractionType from a BitmaskFlags
      * @remarks Favours PUSH if none are found
-     * @param _flags - BitmaskFlags to extract from
+     * @param flags - BitmaskFlags to extract from
      * @returns Extracted interaction type
      */
-    static GetInteractionTypeFromFlags(_flags: BitmaskFlags): InteractionType {
+    static getInteractionTypeFromFlags(flags: BitmaskFlags): InteractionType {
         let interactionType: InteractionType = InteractionType.PUSH;
 
-        if (_flags & BitmaskFlags.PUSH) {
+        if (flags & BitmaskFlags.PUSH) {
             interactionType = InteractionType.PUSH;
-        } else if (_flags & BitmaskFlags.HOVER) {
+        } else if (flags & BitmaskFlags.HOVER) {
             interactionType = InteractionType.HOVER;
-        } else if (_flags & BitmaskFlags.GRAB) {
+        } else if (flags & BitmaskFlags.GRAB) {
             interactionType = InteractionType.GRAB;
-        } else if (_flags & BitmaskFlags.TOUCHPLANE) {
+        } else if (flags & BitmaskFlags.TOUCHPLANE) {
             interactionType = InteractionType.TOUCHPLANE;
-        } else if (_flags & BitmaskFlags.VELOCITYSWIPE) {
+        } else if (flags & BitmaskFlags.VELOCITYSWIPE) {
             interactionType = InteractionType.VELOCITYSWIPE;
         } else {
             console.error("InputActionData missing: No InteractionType found. Defaulting to 'PUSH'");

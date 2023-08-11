@@ -7,7 +7,7 @@ export class Vector2 {
         this.y = y;
     }
 
-    public static FromTuple(tuple: { x: number; y: number }): Vector2 {
+    public static fromTuple(tuple: { x: number; y: number }): Vector2 {
         return new Vector2(tuple.x, tuple.y);
     }
 

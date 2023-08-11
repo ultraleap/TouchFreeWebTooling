@@ -27,10 +27,10 @@ export class TrackingState {
     /** Toggle analytics */
     analyticsEnabled: boolean;
 
-    constructor(_mask: Mask, _cameraReversed: boolean, _allowImages: boolean, _analyticsEnabled: boolean) {
-        this.mask = _mask;
-        this.cameraReversed = _cameraReversed;
-        this.allowImages = _allowImages;
-        this.analyticsEnabled = _analyticsEnabled;
+    constructor(mask: Mask, cameraReversed: boolean, allowImages: boolean, analyticsEnabled: boolean) {
+        this.mask = mask;
+        this.cameraReversed = cameraReversed;
+        this.allowImages = allowImages;
+        this.analyticsEnabled = analyticsEnabled;
     }
 }

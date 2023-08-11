@@ -14,11 +14,9 @@ Note: these links work by overwriting query parameters of the current url. If th
 
 _Summary of the purpose of this pull request._
 
-
 ### Tests Added
 
 _Summary of the tests added as part of this change, or reason why no tests are required._
-
 
 ## Contributor Tasks
 
@@ -32,6 +30,7 @@ _These tasks are for the pull request creator to tick off._
 - [ ] Consider any licensing/other legal implications e.g., notices required
 
 If there is an associated JIRA issue:
+
 - [ ] Include a link to the JIRA issue in the summary above
 - [ ] Make sure the fix version on the issue is set correctly
 

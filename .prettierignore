@@ -3,3 +3,4 @@
 /release
 *_Example.html
 coverage/
+.gitlab-ci.yml

@@ -1,15 +1,16 @@
 <!--links-->
-[discord]: https://discord.com/invite/3VCndThqxS "Discord Server"
-[touchfree]: https://developer.leapmotion.com/touchfree "TouchFree Download"
-[web]: https://developer.leapmotion.com/touchfree-tooling-for-web "TouchFree Web Tooling"
-[unity]: https://developer.leapmotion.com/touchfree-tooling-unity "TouchFree Unity Tooling"
 
-[download]: https://developer.leapmotion.com/touchfree-tooling-for-web "Ultraleap TouchFree Web Tooling Bundle Download"
-[documentation]: https://docs.ultraleap.com/touchfree-user-manual/tooling-for-web.html "Ultraleap TouchFree Web Tooling Documentation"
-[setup]: https://docs.ultraleap.com/touchfree-user-manual/tooling-for-web.html#setup "Ultraleap TouchFree Web Tooling Setup Documentation"
-[examples]: https://github.com/ultraleap/TouchFree-Tooling-Examples/tree/develop/Examples-Web "Ultraleap TouchFree Tooling Web Examples"
+[discord]: https://discord.com/invite/3VCndThqxS 'Discord Server'
+[touchfree]: https://developer.leapmotion.com/touchfree 'TouchFree Download'
+[web]: https://developer.leapmotion.com/touchfree-tooling-for-web 'TouchFree Web Tooling'
+[unity]: https://developer.leapmotion.com/touchfree-tooling-unity 'TouchFree Unity Tooling'
+[download]: https://developer.leapmotion.com/touchfree-tooling-for-web 'Ultraleap TouchFree Web Tooling Bundle Download'
+[documentation]: https://docs.ultraleap.com/touchfree-user-manual/tooling-for-web.html 'Ultraleap TouchFree Web Tooling Documentation'
+[setup]: https://docs.ultraleap.com/touchfree-user-manual/tooling-for-web.html#setup 'Ultraleap TouchFree Web Tooling Setup Documentation'
+[examples]: https://github.com/ultraleap/TouchFree-Tooling-Examples/tree/develop/Examples-Web 'Ultraleap TouchFree Tooling Web Examples'
 
 <!--content-->
+
 # Ultraleap TouchFree Web Tooling
 
 [![touchfree](https://img.shields.io/badge/TouchFree-00cf75)][touchfree]

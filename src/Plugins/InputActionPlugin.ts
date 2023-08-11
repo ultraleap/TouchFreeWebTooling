@@ -12,14 +12,14 @@ import { TouchFreeInputAction } from '../TouchFreeToolingTypes';
 export abstract class InputActionPlugin extends EventTarget {
     /**
      * Run this plugin, modifying the `InputAction` and dispatching an `"InputActionOutput"` event from this plugin
-     * @param _inputAction - Input action input
+     * @param inputAction - Input action input
      * @returns Modified input action
      */
-    RunPlugin(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
-        const modifiedInputAction = this.ModifyInputAction(_inputAction);
+    runPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+        const modifiedInputAction = this.modifyInputAction(inputAction);
 
         if (modifiedInputAction != null) {
-            this.TransmitInputAction(modifiedInputAction);
+            this.transmitInputAction(modifiedInputAction);
         }
 
         return modifiedInputAction;
@@ -27,24 +27,21 @@ export abstract class InputActionPlugin extends EventTarget {
 
     /**
      * Proxy function for derived classes to modify input actions before they are dispatched.
-     * 
+     *
      * @internal
      */
-    ModifyInputAction(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
-        return _inputAction;
+    modifyInputAction(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+        return inputAction;
     }
 
     /**
      * For derived classes to invoke the `InputActionOutput` event.
-     * @param _inputAction - InputAction state to dispatch event with
-     * 
+     * @param inputAction - InputAction state to dispatch event with
+     *
      * @internal
      */
-    TransmitInputAction(_inputAction: TouchFreeInputAction): void {
-        const InputActionEvent: CustomEvent<TouchFreeInputAction> = new CustomEvent<TouchFreeInputAction>(
-            'InputActionOutput',
-            { detail: _inputAction }
-        );
-        this.dispatchEvent(InputActionEvent);
+    transmitInputAction(inputAction: TouchFreeInputAction): void {
+        const inputActionEvent = new CustomEvent<TouchFreeInputAction>('InputActionOutput', { detail: inputAction });
+        this.dispatchEvent(inputActionEvent);
     }
 }

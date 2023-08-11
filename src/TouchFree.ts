@@ -14,17 +14,17 @@ import { TouchFreeEvent, TouchFreeEventSignatures } from './TouchFreeToolingType
 import { v4 as uuidgen } from 'uuid';
 
 /**
- * Global input controller initialized by {@link Init}
+ * Global input controller initialized by {@link init}
  * @public
  */
-let InputController: WebInputController | undefined;
+let inputController: WebInputController | undefined;
 
 /**
- * Global cursor initialized by {@link Init}
+ * Global cursor initialized by {@link init}
  * @public
  */
 let CurrentCursor: TouchlessCursor | undefined;
-let CurrentSessionId: string | undefined;
+let currentSessionId: string | undefined;
 
 /**
  * Extra options for initializing TouchFree
@@ -41,22 +41,22 @@ export interface TfInitParams {
     address?: Address;
 }
 
-const GetCurrentCursor = () => CurrentCursor;
-const SetCurrentCursor = (cursor: TouchlessCursor | undefined) => (CurrentCursor = cursor);
-const GetInputController = () => InputController;
+const getCurrentCursor = () => CurrentCursor;
+const setCurrentCursor = (cursor: TouchlessCursor | undefined) => (CurrentCursor = cursor);
+const getInputController = () => inputController;
 
-const IsAnalyticsActive = () => CurrentSessionId !== undefined;
+const isAnalyticsActive = () => currentSessionId !== undefined;
 
 /**
  * Initializes TouchFree - must be called before any functionality requiring a TouchFree service connection.
  *
- * @param _tfInitParams - Optional extra initialization parameters
+ * @param tfInitParams - Optional extra initialization parameters
  * @public
  */
-const Init = (tfInitParams?: TfInitParams): void => {
+const init = (tfInitParams?: TfInitParams): void => {
     ConnectionManager.init({ address: tfInitParams?.address });
 
-    InputController = new WebInputController();
+    inputController = new WebInputController();
 
     if (tfInitParams === undefined) {
         CurrentCursor = new SVGCursor();
@@ -70,12 +70,12 @@ const Init = (tfInitParams?: TfInitParams): void => {
 const analyticEvents: { [key in AnalyticEventKey]?: (e: Event) => void } = {};
 
 /** Returns the list of registered analytic event keys */
-const GetRegisteredAnalyticEventKeys = (): string[] => Object.keys(analyticEvents);
+const getRegisteredAnalyticEventKeys = (): string[] => Object.keys(analyticEvents);
 
 let sessionEvents: AnalyticSessionEvents = {};
 
 /** Returns a copy of an indexed object detailing how many times each analytics event has been triggered */
-const GetAnalyticSessionEvents = (): AnalyticSessionEvents => Object.assign({}, sessionEvents);
+const getAnalyticSessionEvents = (): AnalyticSessionEvents => Object.assign({}, sessionEvents);
 
 const defaultAnalyticEvents: readonly AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
 
@@ -83,11 +83,11 @@ const isTFPointerEvent = (e: Event): boolean => 'pointerType' in e && e.pointerT
 
 /**
  * Registers a given list of event for the TouchFree service to record.
- * @param eventsIn Events to register. If none are provided then default set of events will be recorded.
+ * @param eventsIn - Events to register. If none are provided then default set of events will be recorded.
  *
  * @public
  */
-const RegisterAnalyticEvents = (eventsIn: readonly AnalyticEventKey[] = defaultAnalyticEvents) => {
+function registerAnalyticEvents(eventsIn: readonly AnalyticEventKey[] = defaultAnalyticEvents) {
     eventsIn.forEach((evt) => {
         if (analyticEvents[evt]) return;
         const onEvent = (e: Event) => {
@@ -98,15 +98,15 @@ const RegisterAnalyticEvents = (eventsIn: readonly AnalyticEventKey[] = defaultA
         analyticEvents[evt] = onEvent;
         document.addEventListener(evt, onEvent, true);
     });
-};
+}
 
 /**
  * Unregisters a given list of event for the TouchFree service to record.
- * @param eventsIn Events to unregister. If none are provided then all events will be unregistered.
+ * @param eventsIn - Events to unregister. If none are provided then all events will be unregistered.
  *
  * @public
  */
-const UnregisterAnalyticEvents = (eventsIn?: AnalyticEventKey[]) => {
+function unregisterAnalyticEvents(eventsIn?: AnalyticEventKey[]) {
     const events: AnalyticEventKey[] = eventsIn ?? (Object.keys(analyticEvents) as AnalyticEventKey[]);
 
     events.forEach((evt) => {
@@ -116,7 +116,7 @@ const UnregisterAnalyticEvents = (eventsIn?: AnalyticEventKey[]) => {
             delete analyticEvents[evt];
         }
     });
-};
+}
 
 /**
  * Are we connected to the TouchFree service?
@@ -124,7 +124,7 @@ const UnregisterAnalyticEvents = (eventsIn?: AnalyticEventKey[]) => {
  * @returns Whether connected to TouchFree service or not.
  * @public
  */
-const IsConnected = (): boolean => ConnectionManager.IsConnected;
+const isConnected = (): boolean => ConnectionManager.isConnected;
 
 let analyticsHeartbeat: number;
 
@@ -133,32 +133,32 @@ type WebSocketCallback = (detail: WebSocketResponse) => void;
 /**
  * Used to start or stop an analytics session
  *
- * @param requestType START or STOP session. See {@link AnalyticsSessionRequestType}
- * @param application Name of application
- * @param callback Optional callback to handle Service's response
+ * @param requestType - START or STOP session. See {@link AnalyticsSessionRequestType}
+ * @param application - Name of application
+ * @param callback - Optional callback to handle Service's response
  *
  * @internal
  */
-const ControlAnalyticsSession = (
+function controlAnalyticsSession(
     requestType: AnalyticsSessionRequestType,
     application: string,
     callback?: WebSocketCallback
-) => {
+) {
     const serviceConnection = ConnectionManager.serviceConnection();
     if (!serviceConnection) return;
 
     if (requestType === 'START') {
-        if (CurrentSessionId) {
-            console.warn(`Session: ${CurrentSessionId} already in progress`);
+        if (currentSessionId) {
+            console.warn(`Session: ${currentSessionId} already in progress`);
             return;
         }
         const newID = `${application}:${uuidgen()}`;
 
-        serviceConnection.AnalyticsSessionRequest(requestType, newID, (detail) => {
+        serviceConnection.analyticsSessionRequest(requestType, newID, (detail) => {
             if (detail.status !== 'Failure') {
-                CurrentSessionId = newID;
+                currentSessionId = newID;
                 analyticsHeartbeat = window.setInterval(
-                    () => serviceConnection.UpdateAnalyticSessionEvents(newID),
+                    () => serviceConnection.updateAnalyticSessionEvents(newID),
                     2000
                 );
                 callback?.(detail);
@@ -168,21 +168,21 @@ const ControlAnalyticsSession = (
     }
 
     if (requestType === 'STOP') {
-        if (!CurrentSessionId) {
+        if (!currentSessionId) {
             console.warn('No active session');
             return;
         }
 
-        const validSessionId = CurrentSessionId;
+        const validSessionId = currentSessionId;
         clearInterval(analyticsHeartbeat);
-        serviceConnection.UpdateAnalyticSessionEvents(validSessionId, () => {
+        serviceConnection.updateAnalyticSessionEvents(validSessionId, () => {
             // Clear session events
             sessionEvents = {};
-            serviceConnection.AnalyticsSessionRequest(requestType, validSessionId, callback);
-            CurrentSessionId = undefined;
+            serviceConnection.analyticsSessionRequest(requestType, validSessionId, callback);
+            currentSessionId = undefined;
         });
     }
-};
+}
 
 /** Options to use with {@link StopAnalyticsSession} */
 interface StopAnalyticsSessionOptions {
@@ -191,14 +191,14 @@ interface StopAnalyticsSessionOptions {
 
 /**
  * Used to stop an analytics session with an optional callback
- * @param applicationName Name of application
- * @param options See {@link StopAnalyticsSessionOptions}
+ * @param applicationName - Name of application
+ * @param options - See {@link StopAnalyticsSessionOptions}
  *
  * @public
  */
-const StopAnalyticsSession = (applicationName: string, options?: StopAnalyticsSessionOptions) => {
-    ControlAnalyticsSession('STOP', applicationName, options?.callback);
-};
+function stopAnalyticsSession(applicationName: string, options?: StopAnalyticsSessionOptions) {
+    controlAnalyticsSession('STOP', applicationName, options?.callback);
+}
 
 /** Options to use with {@link StartAnalyticsSession} */
 interface StartAnalyticsSessionOptions {
@@ -208,22 +208,22 @@ interface StartAnalyticsSessionOptions {
 
 /**
  * Used to stop an analytics session with an optional callback
- * @param applicationName Name of application
- * @param options See {@link StartAnalyticsSessionOptions}
+ * @param applicationName - Name of application
+ * @param options - See {@link StartAnalyticsSessionOptions}
  *
  * @public
  */
-const StartAnalyticsSession = (applicationName: string, options?: StartAnalyticsSessionOptions) => {
-    if (options?.stopCurrentSession && CurrentSessionId) {
-        ControlAnalyticsSession('STOP', applicationName, (detail) => {
-            ControlAnalyticsSession('START', applicationName, options.callback);
+function startAnalyticsSession(applicationName: string, options?: StartAnalyticsSessionOptions) {
+    if (options?.stopCurrentSession && currentSessionId) {
+        controlAnalyticsSession('STOP', applicationName, (detail) => {
+            controlAnalyticsSession('START', applicationName, options.callback);
             options.callback?.(detail);
         });
         return;
     }
 
-    ControlAnalyticsSession('START', applicationName, options?.callback);
-};
+    controlAnalyticsSession('START', applicationName, options?.callback);
+}
 
 /**
  * Object that can unregister a callback from an event
@@ -233,7 +233,7 @@ export interface EventHandle {
     /**
      * Unregister the callback represented by this object
      */
-    UnregisterEventCallback(): void;
+    unregisterEventCallback(): void;
 }
 
 /**
@@ -242,7 +242,7 @@ export interface EventHandle {
  * @param callback - The callback to wrap
  * @returns EventListener with the wrapper callback
  */
-const MakeCustomEventWrapper = <T>(callback: (arg: T) => void): EventListener => {
+const makeCustomEventWrapper = <T>(callback: (arg: T) => void): EventListener => {
     return ((evt: CustomEvent<T>) => {
         callback(evt.detail);
     }) as EventListener;
@@ -256,19 +256,19 @@ type RegisterEventFunc = (target: EventTarget, eventType: TouchFreeEvent, listen
 /**
  * Default implementation of RegisterEvent
  */
-const DefaultRegisterEventFunc: RegisterEventFunc = (target, eventType, listener) => {
+const defaultRegisterEventFunc: RegisterEventFunc = (target, eventType, listener) => {
     target.addEventListener(eventType, listener);
-    return { UnregisterEventCallback: () => target.removeEventListener(eventType, listener) };
+    return { unregisterEventCallback: () => target.removeEventListener(eventType, listener) };
 };
 
 /**
  * Interface for each individual event's implementation details
  */
 interface EventImpl<T extends TouchFreeEvent> {
-    Target: EventTarget;
-    WithCallback: (callback: TouchFreeEventSignatures[T]) => {
-        Listener: EventListener;
-        RegisterEventFunc: RegisterEventFunc;
+    target: EventTarget;
+    withCallback: (callback: TouchFreeEventSignatures[T]) => {
+        listener: EventListener;
+        registerEventFunc: RegisterEventFunc;
     };
 }
 
@@ -282,7 +282,7 @@ type EventImpls = {
 /**
  * Backing field to cache object creation
  */
-let EventImplementationsBackingField: EventImpls | undefined;
+let eventImplementationsBackingField: EventImpls | undefined;
 
 /**
  * Implementation details for all events
@@ -292,98 +292,98 @@ let EventImplementationsBackingField: EventImpls | undefined;
  *
  * @returns A function that returns all event implementations
  */
-const EventImplementations: () => EventImpls = () =>
-    (EventImplementationsBackingField ??= {
-        OnConnected: {
-            Target: ConnectionManager.instance,
-            WithCallback: (callback) => ({
-                Listener: callback, // Void callback can be returned directly
-                RegisterEventFunc: DefaultRegisterEventFunc,
+const eventImplementations: () => EventImpls = () =>
+    (eventImplementationsBackingField ??= {
+        onConnected: {
+            target: ConnectionManager.instance,
+            withCallback: (callback) => ({
+                listener: callback, // Void callback can be returned directly
+                registerEventFunc: defaultRegisterEventFunc,
             }),
         },
-        WhenConnected: {
-            Target: ConnectionManager.instance,
-            WithCallback: (callback) => ({
-                Listener: callback, // Void callback can be returned directly
-                RegisterEventFunc: (_target, _eventType, _listener) => {
+        whenConnected: {
+            target: ConnectionManager.instance,
+            withCallback: (callback) => ({
+                listener: callback, // Void callback can be returned directly
+                registerEventFunc: (_target, _eventType, _listener) => {
                     // If we're already connected then run the callback
-                    if (IsConnected()) {
+                    if (isConnected()) {
                         callback();
                     }
 
                     // Piggyback OnConnected
-                    return RegisterEventCallback('OnConnected', callback);
+                    return registerEventCallback('onConnected', callback);
                 },
             }),
         },
-        OnServiceStatusChange: {
-            Target: ConnectionManager.instance,
-            WithCallback: (callback) => ({
-                Listener: MakeCustomEventWrapper(callback),
-                RegisterEventFunc: DefaultRegisterEventFunc,
+        onServiceStatusChange: {
+            target: ConnectionManager.instance,
+            withCallback: (callback) => ({
+                listener: makeCustomEventWrapper(callback),
+                registerEventFunc: defaultRegisterEventFunc,
             }),
         },
-        OnTrackingServiceStateChange: {
-            Target: ConnectionManager.instance,
-            WithCallback: (callback) => ({
-                Listener: MakeCustomEventWrapper(callback),
-                RegisterEventFunc: DefaultRegisterEventFunc,
+        onTrackingServiceStateChange: {
+            target: ConnectionManager.instance,
+            withCallback: (callback) => ({
+                listener: makeCustomEventWrapper(callback),
+                registerEventFunc: defaultRegisterEventFunc,
             }),
         },
-        HandFound: {
-            Target: ConnectionManager.instance,
-            WithCallback: (callback) => ({
-                Listener: callback, // Void callback can be returned directly
-                RegisterEventFunc: DefaultRegisterEventFunc,
+        handFound: {
+            target: ConnectionManager.instance,
+            withCallback: (callback) => ({
+                listener: callback, // Void callback can be returned directly
+                registerEventFunc: defaultRegisterEventFunc,
             }),
         },
-        HandsLost: {
-            Target: ConnectionManager.instance,
-            WithCallback: (callback) => ({
-                Listener: callback, // Void callback can be returned directly
-                RegisterEventFunc: DefaultRegisterEventFunc,
+        handsLost: {
+            target: ConnectionManager.instance,
+            withCallback: (callback) => ({
+                listener: callback, // Void callback can be returned directly
+                registerEventFunc: defaultRegisterEventFunc,
             }),
         },
-        InputAction: {
-            Target: InputActionManager.instance,
-            WithCallback: (callback) => ({
-                Listener: MakeCustomEventWrapper(callback),
-                RegisterEventFunc: DefaultRegisterEventFunc,
+        inputAction: {
+            target: InputActionManager.instance,
+            withCallback: (callback) => ({
+                listener: makeCustomEventWrapper(callback),
+                registerEventFunc: defaultRegisterEventFunc,
             }),
         },
-        TransmitHandData: {
-            Target: HandDataManager.instance,
-            WithCallback: (callback) => ({
-                Listener: MakeCustomEventWrapper(callback),
-                RegisterEventFunc: DefaultRegisterEventFunc,
+        transmitHandData: {
+            target: HandDataManager.instance,
+            withCallback: (callback) => ({
+                listener: makeCustomEventWrapper(callback),
+                registerEventFunc: defaultRegisterEventFunc,
             }),
         },
-        TransmitInputAction: {
-            Target: InputActionManager.instance,
-            WithCallback: (callback) => ({
-                Listener: MakeCustomEventWrapper(callback),
-                RegisterEventFunc: DefaultRegisterEventFunc,
+        transmitInputAction: {
+            target: InputActionManager.instance,
+            withCallback: (callback) => ({
+                listener: makeCustomEventWrapper(callback),
+                registerEventFunc: defaultRegisterEventFunc,
             }),
         },
-        TransmitInputActionRaw: {
-            Target: InputActionManager.instance,
-            WithCallback: (callback) => ({
-                Listener: MakeCustomEventWrapper(callback),
-                RegisterEventFunc: DefaultRegisterEventFunc,
+        transmitInputActionRaw: {
+            target: InputActionManager.instance,
+            withCallback: (callback) => ({
+                listener: makeCustomEventWrapper(callback),
+                registerEventFunc: defaultRegisterEventFunc,
             }),
         },
-        HandEntered: {
-            Target: ConnectionManager.instance,
-            WithCallback: (callback) => ({
-                Listener: callback, // Void callback can be returned directly
-                RegisterEventFunc: DefaultRegisterEventFunc,
+        handEntered: {
+            target: ConnectionManager.instance,
+            withCallback: (callback) => ({
+                listener: callback, // Void callback can be returned directly
+                registerEventFunc: defaultRegisterEventFunc,
             }),
         },
-        HandExited: {
-            Target: ConnectionManager.instance,
-            WithCallback: (callback) => ({
-                Listener: callback, // Void callback can be returned directly
-                RegisterEventFunc: DefaultRegisterEventFunc,
+        handExited: {
+            target: ConnectionManager.instance,
+            withCallback: (callback) => ({
+                listener: callback, // Void callback can be returned directly
+                registerEventFunc: defaultRegisterEventFunc,
             }),
         },
     });
@@ -398,15 +398,15 @@ const EventImplementations: () => EventImpls = () =>
  *
  * @public
  */
-const RegisterEventCallback = <TEvent extends TouchFreeEvent>(
+const registerEventCallback = <TEvent extends TouchFreeEvent>(
     event: TEvent,
     callback: TouchFreeEventSignatures[TEvent]
 ): EventHandle => {
-    const eventImpl = EventImplementations()[event];
-    const target = eventImpl.Target;
-    const callbackImpl = eventImpl.WithCallback(callback);
-    const listener = callbackImpl.Listener;
-    return callbackImpl.RegisterEventFunc(target, event, listener);
+    const eventImpl = eventImplementations()[event];
+    const target = eventImpl.target;
+    const callbackImpl = eventImpl.withCallback(callback);
+    const listener = callbackImpl.listener;
+    return callbackImpl.registerEventFunc(target, event, listener);
 };
 
 /**
@@ -420,7 +420,7 @@ const RegisterEventCallback = <TEvent extends TouchFreeEvent>(
  *
  * @public
  */
-export const DispatchEvent = <TEvent extends TouchFreeEvent>(
+export const dispatchEvent = <TEvent extends TouchFreeEvent>(
     eventType: TEvent,
     ...args: Parameters<TouchFreeEventSignatures[TEvent]>
 ) => {
@@ -431,7 +431,7 @@ export const DispatchEvent = <TEvent extends TouchFreeEvent>(
         event = new CustomEvent(eventType, { detail: args[0] });
     }
 
-    const target = EventImplementations()[eventType].Target;
+    const target = eventImplementations()[eventType].target;
     target.dispatchEvent(event);
 };
 
@@ -443,22 +443,21 @@ export const DispatchEvent = <TEvent extends TouchFreeEvent>(
  * @public
  */
 export const TouchFree = {
-    /** @deprecated for {@link GetCurrentCursor} and {@link SetCurrentCursor} */
+    /** @deprecated for {@link getCurrentCursor} and {@link setCurrentCursor} */
     CurrentCursor,
-    GetCurrentCursor,
-    SetCurrentCursor,
-    DispatchEvent,
-    Init,
-    InputController,
-    GetInputController,
-    IsConnected,
-    RegisterEventCallback,
-    RegisterAnalyticEvents,
-    UnregisterAnalyticEvents,
-    IsAnalyticsActive,
-    GetRegisteredAnalyticEventKeys,
-    GetAnalyticSessionEvents,
-    StartAnalyticsSession,
-    StopAnalyticsSession,
+    getCurrentCursor,
+    setCurrentCursor,
+    dispatchEvent,
+    init,
+    getInputController,
+    isConnected,
+    registerEventCallback,
+    registerAnalyticEvents,
+    unregisterAnalyticEvents,
+    isAnalyticsActive,
+    getRegisteredAnalyticEventKeys,
+    getAnalyticSessionEvents,
+    startAnalyticsSession,
+    stopAnalyticsSession,
 };
 export default TouchFree;

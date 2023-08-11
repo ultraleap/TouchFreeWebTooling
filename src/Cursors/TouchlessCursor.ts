@@ -5,7 +5,7 @@ import { TouchFreeInputAction } from '../TouchFreeToolingTypes';
  * Base class for creating touchless cursors.
  *
  * @remarks
- * Override {@link HandleInputAction} to react to {@link TouchFreeInputAction}s
+ * Override {@link handleInputAction} to react to {@link TouchFreeInputAction}s
  * @public
  */
 export abstract class TouchlessCursor {
@@ -33,33 +33,33 @@ export abstract class TouchlessCursor {
      * Registers the Cursor for updates via the `'TransmitInputAction'` TouchFree event
      *
      * @remarks
-     * If you intend to make use of `WebInputController`, make sure both {@link _cursor} has
+     * If you intend to make use of `WebInputController`, make sure both {@link cursor} has
      * the `touchfree-cursor` class. This prevents them from blocking other elements from
      * receiving events.
-     * @param _cursor - Cursor element
+     * @param cursor - Cursor element
      */
-    constructor(_cursor: HTMLElement | SVGElement | undefined) {
-        TouchFree.RegisterEventCallback('TransmitInputAction', this.HandleInputAction.bind(this));
+    constructor(cursor: HTMLElement | SVGElement | undefined) {
+        TouchFree.registerEventCallback('transmitInputAction', this.handleInputAction.bind(this));
 
-        this.cursor = _cursor;
+        this.cursor = cursor;
         this.enabled = true;
         this.shouldShow = true;
     }
 
     /**
-     * Sets the position of the cursor, should be run after {@link HandleInputAction}.
-     * @param _inputAction - Input action to use when updating cursor
+     * Sets the position of the cursor, should be run after {@link handleInputAction}.
+     * @param inputAction - Input action to use when updating cursor
      */
-    protected UpdateCursor(_inputAction: TouchFreeInputAction): void {
+    protected updateCursor(inputAction: TouchFreeInputAction): void {
         if (this.cursor) {
             let width = this.cursor.clientWidth;
             let height = this.cursor.clientHeight;
             if (this.cursor instanceof HTMLElement) {
-                [width, height] = this.GetDimensions(this.cursor);
+                [width, height] = this.getDimensions(this.cursor);
             }
 
-            this.cursor.style.left = _inputAction.CursorPosition[0] - width / 2 + 'px';
-            this.cursor.style.top = _inputAction.CursorPosition[1] - height / 2 + 'px';
+            this.cursor.style.left = inputAction.CursorPosition[0] - width / 2 + 'px';
+            this.cursor.style.top = inputAction.CursorPosition[1] - height / 2 + 'px';
         }
     }
 
@@ -68,7 +68,7 @@ export abstract class TouchlessCursor {
      * @param cursor - cursor to get height off
      * @returns [cursor width, cursor height]
      */
-    protected GetDimensions(cursor: HTMLElement): [number, number] {
+    protected getDimensions(cursor: HTMLElement): [number, number] {
         if (cursor.style.width && cursor.style.height) {
             const getFloat = (dimension: string) => parseFloat(dimension.replace('px', ''));
             return [getFloat(cursor.style.width), getFloat(cursor.style.height)];
@@ -81,53 +81,53 @@ export abstract class TouchlessCursor {
     /**
      * Invoked when new {@link TouchFreeInputAction}s are received.
      * Override to implement cursor behaviour.
-     * @param _inputAction - The latest input action received from TouchFree Service.
+     * @param inputAction - The latest input action received from TouchFree Service.
      */
-    protected HandleInputAction(_inputAction: TouchFreeInputAction): void {
-        this.UpdateCursor(_inputAction);
+    protected handleInputAction(inputAction: TouchFreeInputAction): void {
+        this.updateCursor(inputAction);
     }
 
     /**
      * Make the cursor visible. Fades over time.
      */
-    ShowCursor(): void {
+    showCursor(): void {
         this.shouldShow = true;
         if (this.enabled) {
-            this.SetCursorOpacity(this.opacityOnHandsLost);
+            this.setCursorOpacity(this.opacityOnHandsLost);
         }
     }
 
     /**
      * Make the cursor invisible. Fades over time.
      */
-    HideCursor(): void {
+    hideCursor(): void {
         if (this.shouldShow) {
             // If opacity is NaN or 0 then set it to be 1
             this.opacityOnHandsLost = Number(this.cursor?.style.opacity) || 1;
         }
         this.shouldShow = false;
-        this.SetCursorOpacity(0);
+        this.setCursorOpacity(0);
     }
 
     /**
      * Used to enable the cursor so that it will show if hands are present
      */
-    EnableCursor(): void {
+    enableCursor(): void {
         this.enabled = true;
         if (this.shouldShow) {
             this.opacityOnHandsLost = 1;
-            this.ShowCursor();
+            this.showCursor();
         }
     }
 
     /**
      * Used to disable the cursor so that it will never show
      */
-    DisableCursor(): void {
+    disableCursor(): void {
         this.enabled = false;
         const shouldShowOnEnable = this.shouldShow;
         if (shouldShowOnEnable) {
-            this.HideCursor();
+            this.hideCursor();
         }
         this.shouldShow = shouldShowOnEnable;
     }
@@ -135,7 +135,7 @@ export abstract class TouchlessCursor {
     /**
      * Used to set the opacity of the cursor
      */
-    SetCursorOpacity(opacity: number): void {
+    setCursorOpacity(opacity: number): void {
         if (this.cursor) {
             this.cursor.style.opacity = opacity.toString();
         }
