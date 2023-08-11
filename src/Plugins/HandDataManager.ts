@@ -1,5 +1,5 @@
 /**
- * Handles dispatching `"TransmitHandData"` events from received hand frame messages
+ * Handles dispatching `"transmitHandData"` events from received hand frame messages
  *
  * @internal
  */
@@ -25,7 +25,7 @@ export class HandDataManager extends EventTarget {
     static lastFrame: number | undefined = undefined;
 
     /**
-     * Handles a buffer on hand frame data and dispatches a `"TransmitHandData"` event
+     * Handles a buffer on hand frame data and dispatches a `"transmitHandData"` event
      * @param data - Buffer of hand frame data
      */
     public static handleHandFrame(data: ArrayBuffer): void {
@@ -34,7 +34,7 @@ export class HandDataManager extends EventTarget {
             !HandDataManager.lastFrame ||
             HandDataManager.lastFrame + HandDataManager.maximumFrameFrequencyMs < currentTimeStamp
         ) {
-            const rawHandsEvent: CustomEvent<ArrayBuffer> = new CustomEvent<ArrayBuffer>('TransmitHandData', {
+            const rawHandsEvent: CustomEvent<ArrayBuffer> = new CustomEvent<ArrayBuffer>('transmitHandData', {
                 detail: data,
             });
             HandDataManager.instance.dispatchEvent(rawHandsEvent);

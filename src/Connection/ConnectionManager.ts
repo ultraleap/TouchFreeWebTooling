@@ -22,7 +22,7 @@ interface InitParams {
  * Manages the connection to the Service
  *
  * @remarks
- * Dispatches an `"OnConnected"` event when connecting to the service.
+ * Dispatches an `"onConnected"` event when connecting to the service.
  *
  * @public
  */
@@ -90,14 +90,14 @@ export class ConnectionManager extends EventTarget {
     }
 
     /**
-     * Adds a listener for the `"OnConnected"` event.
+     * Adds a listener for the `"onConnected"` event.
      *
      * @remarks
      * Will call the passed function if already connected.
      *
      * @param onConnectFunc - Callback function to call when event is triggered
      *
-     * @deprecated Use {@link TouchFree.registerEventCallback} 'WhenConnected'
+     * @deprecated Use {@link TouchFree.registerEventCallback} 'whenConnected'
      */
     public static addConnectionListener(onConnectFunc: () => void): void {
         TouchFree.registerEventCallback('whenConnected', onConnectFunc);
@@ -115,11 +115,11 @@ export class ConnectionManager extends EventTarget {
     }
 
     /**
-     * Adds a listener for the `"OnTrackingServiceStateChange"` event.
+     * Adds a listener for the `"onTrackingServiceStateChange"` event.
      *
      * @param serviceStatusFunc - Callback function to call when event is triggered
      *
-     * @deprecated Use {@link TouchFree.registerEventCallback} 'OnTrackingServiceStateChange'
+     * @deprecated Use {@link TouchFree.registerEventCallback} 'onTrackingServiceStateChange'
      */
     public static addServiceStatusListener(serviceStatusFunc: (serviceStatus: TrackingServiceState) => void): void {
         TouchFree.registerEventCallback('onTrackingServiceStateChange', serviceStatusFunc);
@@ -127,7 +127,7 @@ export class ConnectionManager extends EventTarget {
 
     /**
      * Creates a new {@link ServiceConnection} using {@link ipAddress} and {@link port}.
-     * A successful connection will dispatch the `"OnConnected"` event.
+     * A successful connection will dispatch the `"onConnected"` event.
      */
     public static connect(): void {
         ConnectionManager.currentServiceConnection = new ServiceConnection(
@@ -138,7 +138,7 @@ export class ConnectionManager extends EventTarget {
 
     /**
      * Handles HandPresence events from the service and dispatches
-     * the `HandFound` and `HandsLost` events on this class
+     * the `handFound` and `handsLost` events on this class
      * @param state - Hand state
      */
     public static handleHandPresenceEvent(state: HandPresenceState): void {
@@ -153,7 +153,7 @@ export class ConnectionManager extends EventTarget {
 
     /**
      * Handle an InteractionZone event by dispatching
-     * `HandEntered` and `HandsExited` events on this class
+     * `handEntered` and `HandsExited` events on this class
      */
     public static handleInteractionZoneEvent(state: InteractionZoneState): void {
         ConnectionManager.currentInteractionZoneState = state;

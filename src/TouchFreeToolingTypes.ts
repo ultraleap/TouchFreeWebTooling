@@ -19,7 +19,7 @@ export class VersionInfo {
 }
 
 /**
- * A structure representing the Tooling version of an InputAction.
+ * A structure representing the Tooling version of an inputAction.
  *
  * @remarks
  * This is used to pass key information relating to an action that has happened on the Service.
@@ -69,7 +69,7 @@ export class TouchFreeInputAction {
  * Converts a {@link WebsocketInputAction} into the Tooling-friendly {@link TouchFreeInputAction}.
  *
  * @param wsInput - Raw input action received by the WebSocket
- * @returns User friendly conversion of the InputAction - {@link TouchFreeInputAction}
+ * @returns User friendly conversion of the inputAction - {@link TouchFreeInputAction}
  *
  * @internal
  */
@@ -112,7 +112,7 @@ export enum HandType {
 }
 
 /**
- * Type of an InputAction
+ * Type of an inputAction
  * @public
  */
 export enum InputType {
@@ -237,8 +237,8 @@ export interface TouchFreeEventSignatures {
      */
     onConnected: () => void;
     /**
-     * Same as OnConnected but calls callback when already connected.
-     * Note this event piggybacks as an "OnConnected" event on event targets.
+     * Same as onConnected but calls callback when already connected.
+     * Note this event piggybacks as an "onConnected" event on event targets.
      */
     whenConnected: () => void;
     /**
@@ -296,7 +296,7 @@ export interface TouchFreeEventSignatures {
 export type TouchFreeEvent = Extract<keyof TouchFreeEventSignatures, string>;
 
 /**
- * The version of an InputAction received via the WebSocket. This must be converted into a
+ * The version of an inputAction received via the WebSocket. This must be converted into a
  * {@link TouchFreeInputAction} to be used by the Tooling and can be done so via {@link convertInputAction}.
  *
  * @internal

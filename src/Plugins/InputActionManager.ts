@@ -3,10 +3,10 @@ import { TouchFreeInputAction } from '../TouchFreeToolingTypes';
 import { InputActionPlugin } from './InputActionPlugin';
 
 /**
- * Manages all `TouchFreeInputAction` events, dispatching a `TransmitInputAction` event for each action received.
+ * Manages all `TouchFreeInputAction` events, dispatching a `transmitInputAction` event for each action received.
  * @remarks
- * Runs `InputAction` data through all `InputActionPlugins` before dispatching.
- * Also dispatches a `TransmitInputActionRaw` event with the `InputAction` data unmodified by any plugins.
+ * Runs `inputAction` data through all `InputActionPlugins` before dispatching.
+ * Also dispatches a `transmitInputActionRaw` event with the `inputAction` data unmodified by any plugins.
  * @public
  */
 export class InputActionManager extends EventTarget {
@@ -40,8 +40,8 @@ export class InputActionManager extends EventTarget {
     }
 
     /**
-     * Handles an `InputAction`, running it through all plugins and dispatching a `"TransmitInputAction"` event
-     * @param action - InputAction to handle
+     * Handles an `inputAction`, running it through all plugins and dispatching a `"transmitInputAction"` event
+     * @param action - inputAction to handle
      * @internal
      */
     public static handleInputAction(action: TouchFreeInputAction): void {
@@ -56,7 +56,7 @@ export class InputActionManager extends EventTarget {
                 if (modifiedAction !== null) {
                     newAction = modifiedAction;
                 } else {
-                    // The plugin has cancelled the InputAction entirely
+                    // The plugin has cancelled the inputAction entirely
                     return;
                 }
             }

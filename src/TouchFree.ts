@@ -313,7 +313,7 @@ const eventImplementations: () => EventImpls = () =>
                         callback();
                     }
 
-                    // Piggyback OnConnected
+                    // Piggyback onConnected
                     return registerEventCallback('onConnected', callback);
                 },
             }),

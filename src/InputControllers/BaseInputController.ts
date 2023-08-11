@@ -5,7 +5,7 @@ import { TouchFreeInputAction, InputType } from '../TouchFreeToolingTypes';
  * Converts {@link TouchFreeInputAction | TouchFreeInputActions} into inputs for specific environments.
  *
  * @remarks
- * This base class handles subscribing to the TouchFree `'TransmitInputAction'` event.
+ * This base class handles subscribing to the TouchFree `'transmitInputAction'` event.
  * Override {@link handleInputAction} in subclasses to implement specific behaviour.
  * @public
  */
@@ -14,7 +14,7 @@ export abstract class BaseInputController {
     private handleInputActionCallback: TouchFree.EventHandle | undefined;
 
     /**
-     * Subscribes to the TouchFree `'TransmitInputAction'` event, invoke {@link handleInputAction}
+     * Subscribes to the TouchFree `'transmitInputAction'` event, invoke {@link handleInputAction}
      * with {@link TouchFreeInputAction | TouchFreeInputActions} as they are received.
      *
      * @remarks

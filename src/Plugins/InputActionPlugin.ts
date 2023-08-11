@@ -4,14 +4,14 @@ import { TouchFreeInputAction } from '../TouchFreeToolingTypes';
  * Base class for input action plugins
  * @remarks
  * The `InputActionManager` runs each plugin upon receiving a message
- * from the service before dispatching an InputAction event.
+ * from the service before dispatching an inputAction event.
  * Input action plugins invoke a `"InputActionOutput"` event on themselves
  * for subscribers to listen to if the results of a specific plugin is required.
  * @public
  */
 export abstract class InputActionPlugin extends EventTarget {
     /**
-     * Run this plugin, modifying the `InputAction` and dispatching an `"InputActionOutput"` event from this plugin
+     * Run this plugin, modifying the `inputAction` and dispatching an `"InputActionOutput"` event from this plugin
      * @param inputAction - Input action input
      * @returns Modified input action
      */
@@ -36,7 +36,7 @@ export abstract class InputActionPlugin extends EventTarget {
 
     /**
      * For derived classes to invoke the `InputActionOutput` event.
-     * @param inputAction - InputAction state to dispatch event with
+     * @param inputAction - inputAction state to dispatch event with
      *
      * @internal
      */

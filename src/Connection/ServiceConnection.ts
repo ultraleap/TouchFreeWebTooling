@@ -121,7 +121,7 @@ export class ServiceConnection {
      * result of the Version Checking handshake.
      *
      * @remarks
-     * Dispatches `"OnConnected"` event via {@link TouchFree.dispatchEvent} upon successful handshake response
+     * Dispatches `"onConnected"` event via {@link TouchFree.dispatchEvent} upon successful handshake response
      *
      * @param response - VersionHandshakeResponse if connection was successful or another websocket response otherwise
      */

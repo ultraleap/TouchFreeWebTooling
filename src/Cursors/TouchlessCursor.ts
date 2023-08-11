@@ -30,7 +30,7 @@ export abstract class TouchlessCursor {
     protected opacityOnHandsLost = 1;
 
     /**
-     * Registers the Cursor for updates via the `'TransmitInputAction'` TouchFree event
+     * Registers the Cursor for updates via the `'transmitInputAction'` TouchFree event
      *
      * @remarks
      * If you intend to make use of `WebInputController`, make sure both {@link cursor} has
