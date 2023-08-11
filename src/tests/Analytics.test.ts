@@ -14,12 +14,10 @@ const requestMock = (serviceConnection: ServiceConnection | null) => {
 };
 
 describe('Analytics', () => {
-    describe('no service connection', () => {
-        test('', () => {
-            const testFn = jest.fn();
-            TouchFree.StartAnalyticsSession('test', { callback: testFn });
-            expect(testFn).toBeCalledTimes(0);
-        });
+    test('no service connection', () => {
+        const testFn = jest.fn();
+        TouchFree.StartAnalyticsSession('test', { callback: testFn });
+        expect(testFn).toBeCalledTimes(0);
     });
 
     describe('Start/StopAnalyticsSession', () => {
@@ -323,11 +321,22 @@ describe('Analytics', () => {
             document.dispatchEvent(new Event('pointerup'));
             expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 5, keypress: 3 });
         });
+        it('should not increment when a registered event is triggered by TF', () => {
+            document.dispatchEvent(new Event('pointerdown'));
+            expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 6, keypress: 3 });
+            // PointerEvent is not defined in jest (see https://github.com/kulshekhar/ts-jest/issues/1035).
+            // Instead we have to mimic it by forcibly adding the pointerType property to the Event
+            const tfEvent = new Event('pointerdown');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (tfEvent as any).pointerType = 'pen';
+            document.dispatchEvent(tfEvent);
+            expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 6, keypress: 3 });
+        });
         it('should not increment when an un-registered event is trigger', () => {
             TouchFree.UnregisterAnalyticEvents(['pointerdown']);
             document.dispatchEvent(pointerDownEvent);
             document.dispatchEvent(keypressEvent);
-            expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 5, keypress: 4 });
+            expect(TouchFree.GetAnalyticSessionEvents()).toEqual({ pointerdown: 6, keypress: 4 });
         });
     });
 });

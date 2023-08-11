@@ -67,7 +67,7 @@ const Init = (tfInitParams?: TfInitParams): void => {
     }
 };
 
-const analyticEvents: { [key in AnalyticEventKey]?: () => void } = {};
+const analyticEvents: { [key in AnalyticEventKey]?: (e: Event) => void } = {};
 // Function: GetRegisteredAnalyticEvents
 // Returns a list of registered analytic event keys
 const GetRegisteredAnalyticEventKeys = (): string[] => Object.keys(analyticEvents);
@@ -79,13 +79,16 @@ const GetAnalyticSessionEvents = (): AnalyticSessionEvents => Object.assign({}, 
 
 const defaultAnalyticEvents: AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
 
+const isTFPointerEvent = (e: Event): boolean => 'pointerType' in e && e.pointerType === 'pen' && !e.isTrusted;
+
 // Function: RegisterAnalyticEvents
 // Registers a given list of event for the TouchFree service to record.
 // If no list of events is provided then the default set of events will be recorded.
 const RegisterAnalyticEvents = (eventsIn: AnalyticEventKey[] = defaultAnalyticEvents) => {
     eventsIn.forEach((evt) => {
         if (analyticEvents[evt]) return;
-        const onEvent = () => {
+        const onEvent = (e: Event) => {
+            if (isTFPointerEvent(e)) return;
             const eventCount = sessionEvents[evt];
             sessionEvents[evt] = eventCount === undefined ? 1 : eventCount + 1;
         };
