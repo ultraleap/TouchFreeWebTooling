@@ -65,7 +65,8 @@ TF_Tooling::Docs::build:
     # Run unit tests
     - cd ${CI_PROJECT_DIR}
     - npm i
-    - npm run build:docs
+    - npm run build:docs | tee docs_output.txt
+    - ! grep "You have changed the public API signature for this project." docs_output.txt
   artifacts:
     name: 'TouchFree_Tooling_Documentation'
     paths:
