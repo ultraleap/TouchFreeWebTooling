@@ -17,7 +17,7 @@ export class SnappingPlugin extends InputActionPlugin {
 
     private snapSoftness = 0.3;
 
-    ModifyInputAction(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+    override ModifyInputAction(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
         const cursorPos: { x: number; y: number } = {
             x: _inputAction.CursorPosition[0],
             y: _inputAction.CursorPosition[1],
