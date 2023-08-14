@@ -47,8 +47,6 @@
           "evt",
           "func",
           "guid",
-          "Impl",
-          "Impls",
           "jsDom",
           "lerp",
           "mmps",
@@ -59,22 +57,22 @@
           "snapforce",
           "svg",
           "timeframe",
-          "ts",
-          "tsx",
           "Ultraleap",
           "umd",
           "uuidgen",
           "vars"
         ],
         "skipWordIfMatch": [
-          "^pointer.*$",
+          "^pointer(down|up|enter|leave|out|over|move|cancel)?$",
           "(\\S+(32|64)+)",
-          "^touch.*$",
+          "^touch(free|start|move|end|freecursor)?$",
           "^(p|P)lugin(s)?$",
           "^(c|C)hiralit(y|ies)$",
           "^(c|C)olor(s|ed)?$",
           "^casted(Key)?$",
-          "(un|Un)?register(s)?"
+          "(un|Un)?register(s)?",
+          "\\.?ts(x)?$",
+          "^Impl(s)?$"
         ],
         "minLength": 3
       }
