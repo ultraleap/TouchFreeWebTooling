@@ -212,7 +212,7 @@ export interface StopAnalyticsSessionOptions {
 
 /**
  * Used to stop an analytics session with an optional callback
-export  * @param applicationName - Name of application
+ * @param applicationName - Name of application
  * @param options - See {@link StopAnalyticsSessionOptions}
  *
  * @public

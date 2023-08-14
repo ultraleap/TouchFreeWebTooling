@@ -13,7 +13,7 @@ export class TrackingManager {
      * Use {@link convertResponseToState} on the response to get TrackingState in a more helpful form
      * @param callback - Callback to call with {@link TrackingStateResponse}
      */
-    public static requestTrackingState(callback: (detail: TrackingStateResponse) => void) {
+    public static requestTrackingState(callback?: (detail: TrackingStateResponse) => void) {
         if (!callback) {
             console.error('Config file state request failed. This call requires a callback.');
             return;
@@ -29,7 +29,7 @@ export class TrackingManager {
      */
     public static requestTrackingChange(
         state: Partial<TrackingState>,
-        callback: ((detail: TrackingStateResponse) => void) | null = null
+        callback?: (detail: TrackingStateResponse) => void
     ): void {
         ConnectionManager.serviceConnection()?.requestTrackingChange(state, callback);
     }

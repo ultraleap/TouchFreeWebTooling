@@ -179,8 +179,8 @@ export class ConnectionManager extends EventTarget {
      * Request service status from the service
      * @param callback - Callback to call with the response
      */
-    public static requestServiceStatus(callback: (detail: ServiceStatus) => void): void {
-        if (callback === null) {
+    public static requestServiceStatus(callback?: (detail: ServiceStatus) => void): void {
+        if (!callback) {
             console.error('Request failed. This is due to a missing callback');
             return;
         }
@@ -196,7 +196,7 @@ export class ConnectionManager extends EventTarget {
     }
 
     /**
-     * get current interaction zone state
+     * Get current interaction zone state
      */
     public static getCurrentInteractionZoneState(): InteractionZoneState {
         return ConnectionManager.currentInteractionZoneState;

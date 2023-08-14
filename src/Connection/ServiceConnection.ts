@@ -234,7 +234,7 @@ export class ServiceConnection {
     sendMessage = <T extends WebSocketResponse>(
         message: string,
         requestID: string,
-        callback: ((detail: WebSocketResponse | T) => void) | null
+        callback?: (detail: WebSocketResponse | T) => void
     ): void => {
         this.sendMessageWithSimpleResponse(
             message,
@@ -247,8 +247,8 @@ export class ServiceConnection {
     private sendMessageWithSimpleResponse = <T extends WebSocketResponse>(
         message: string,
         requestID: string,
-        callback: ((detail: WebSocketResponse | T) => void) | null,
-        callbacksStore: { [id: string]: ResponseCallback }
+        callback?: (detail: WebSocketResponse | T) => void,
+        callbacksStore?: { [id: string]: ResponseCallback }
     ): void => {
         if (!requestID) {
             if (callback) {
@@ -265,7 +265,7 @@ export class ServiceConnection {
             return;
         }
 
-        if (callback) {
+        if (callback && callbacksStore) {
             callbacksStore[requestID] = new ResponseCallback(Date.now(), callback);
         }
 
@@ -277,8 +277,8 @@ export class ServiceConnection {
      *
      * @param callback - Callback to handle the response from the service
      */
-    requestConfigState = (callback: (detail: ConfigState) => void): void => {
-        if (callback === null) {
+    requestConfigState = (callback?: (detail: ConfigState) => void): void => {
+        if (!callback) {
             console.error('Request for config state failed. This is due to a missing callback');
             return;
         }
@@ -298,8 +298,8 @@ export class ServiceConnection {
      *
      * @param callback - Callback to handle the response from the service
      */
-    resetInteractionConfigFile = (callback: (defaultConfig: ConfigState) => void): void => {
-        if (callback === null) {
+    resetInteractionConfigFile = (callback?: (defaultConfig: ConfigState) => void): void => {
+        if (!callback) {
             console.error('Request for config state failed. This is due to a missing callback');
             return;
         }
@@ -322,8 +322,8 @@ export class ServiceConnection {
      *
      * @param callback - Callback to handle the response from the service
      */
-    requestServiceStatus = (callback: (detail: ServiceStatus) => void): void => {
-        if (callback === null) {
+    requestServiceStatus = (callback?: (detail: ServiceStatus) => void): void => {
+        if (!callback) {
             console.error('Request for service status failed. This is due to a missing callback');
             return;
         }
@@ -347,8 +347,8 @@ export class ServiceConnection {
      *
      * @param callback - Callback to handle the response from the service
      */
-    requestConfigFile = (callback: (detail: ConfigState) => void): void => {
-        if (callback === null) {
+    requestConfigFile = (callback?: (detail: ConfigState) => void): void => {
+        if (!callback) {
             console.error('Request for config file failed. This is due to a missing callback');
             return;
         }
@@ -372,8 +372,8 @@ export class ServiceConnection {
      */
     quickSetupRequest = (
         atTopTarget: boolean,
-        callback: (detail: WebSocketResponse) => void,
-        configurationCallback: (detail: ConfigState) => void
+        callback?: (detail: WebSocketResponse) => void,
+        configurationCallback?: (detail: ConfigState) => void
     ): void => {
         const position = atTopTarget ? 'Top' : 'Bottom';
         const guid = uuidgen();
@@ -385,11 +385,11 @@ export class ServiceConnection {
         const wrapper = new CommunicationWrapper(ActionCode.QUICK_SETUP, request);
         const message = JSON.stringify(wrapper);
 
-        if (callback !== null) {
+        if (callback) {
             ConnectionManager.messageReceiver.responseCallbacks[guid] = new ResponseCallback(Date.now(), callback);
         }
 
-        if (configurationCallback !== null) {
+        if (configurationCallback) {
             ConnectionManager.messageReceiver.configStateCallbacks[guid] = new ConfigStateCallback(
                 Date.now(),
                 configurationCallback
@@ -404,7 +404,7 @@ export class ServiceConnection {
      *
      * @param callback - Callback to handle the response from the service
      */
-    requestTrackingState = (callback: (detail: TrackingStateResponse) => void) => {
+    requestTrackingState = (callback?: (detail: TrackingStateResponse) => void) => {
         if (!callback) {
             console.error('Request for tracking state failed. This is due to a missing callback');
             return;
@@ -428,10 +428,7 @@ export class ServiceConnection {
      * @param state - State change to request. Undefined props are not sent
      * @param callback - Callback to handle the response from the service
      */
-    requestTrackingChange = (
-        state: Partial<TrackingState>,
-        callback: ((detail: TrackingStateResponse) => void) | null
-    ) => {
+    requestTrackingChange = (state: Partial<TrackingState>, callback?: (detail: TrackingStateResponse) => void) => {
         const requestID = uuidgen();
         const requestContent: Partial<TrackingStateRequest> = {
             requestID,
@@ -458,7 +455,7 @@ export class ServiceConnection {
         >(ActionCode.SET_TRACKING_STATE, requestContent);
         const message = JSON.stringify(wrapper);
 
-        if (callback !== null) {
+        if (callback) {
             ConnectionManager.messageReceiver.trackingStateCallbacks[requestID] = new TrackingStateCallback(
                 Date.now(),
                 callback

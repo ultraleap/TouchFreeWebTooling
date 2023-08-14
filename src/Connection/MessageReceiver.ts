@@ -277,8 +277,11 @@ export class MessageReceiver {
         return 'NoCallbacksFound';
     }
 
-    // Function: checkQueue
-    // Gets the next response in a given queue and handles the callback if present.
+    /**
+     * Gets the next response in a given queue and handles the callback if present.
+     * @param queue - The queue to get the response from
+     * @param callbacks - The callback list to check against
+     */
     private checkQueue<T extends WebSocketResponse | TrackingStateResponse>(
         queue: T[],
         callbacks: CallbackList<T>

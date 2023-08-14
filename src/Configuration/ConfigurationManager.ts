@@ -27,13 +27,13 @@ export class ConfigurationManager {
     public static requestConfigChange(
         interaction: Partial<InteractionConfig> | null,
         physical: Partial<PhysicalConfig> | null,
-        callback: (detail: WebSocketResponse) => void
+        callback?: (detail: WebSocketResponse) => void
     ): void {
         ConfigurationManager.baseConfigChangeRequest(
             interaction,
             physical,
-            callback,
-            ActionCode.SET_CONFIGURATION_STATE
+            ActionCode.SET_CONFIGURATION_STATE,
+            callback
         );
     }
 
@@ -41,8 +41,8 @@ export class ConfigurationManager {
      * Request active configuration state of the TouchFree Service
      * @param callback - Callback with the requested {@link ConfigState}
      */
-    public static requestConfigState(callback: (detail: ConfigState) => void): void {
-        if (callback === null) {
+    public static requestConfigState(callback?: (detail: ConfigState) => void): void {
+        if (!callback) {
             console.error('Config state request failed. This call requires a callback.');
             return;
         }
@@ -65,13 +65,13 @@ export class ConfigurationManager {
     public static requestConfigFileChange(
         interaction: Partial<InteractionConfig> | null,
         physical: Partial<PhysicalConfig> | null,
-        callback: (detail: WebSocketResponse) => void | null
+        callback?: (detail: WebSocketResponse) => void
     ): void {
         ConfigurationManager.baseConfigChangeRequest(
             interaction,
             physical,
-            callback,
-            ActionCode.SET_CONFIGURATION_FILE
+            ActionCode.SET_CONFIGURATION_FILE,
+            callback
         );
     }
 
@@ -85,15 +85,15 @@ export class ConfigurationManager {
      * disregarding current active config state.
      * @param callback - callback containing the new {@link ConfigState}
      */
-    public static resetInteractionConfigFileToDefault(callback: (newState: ConfigState) => void): void {
+    public static resetInteractionConfigFileToDefault(callback?: (newState: ConfigState) => void): void {
         ConnectionManager.serviceConnection()?.resetInteractionConfigFile(callback);
     }
 
     private static baseConfigChangeRequest(
         interaction: Partial<InteractionConfig> | null,
         physical: Partial<PhysicalConfig> | null,
-        callback: (detail: WebSocketResponse) => void | null,
-        action: ActionCode
+        action: ActionCode,
+        callback?: (detail: WebSocketResponse) => void
     ): void {
         const requestID = uuidgen();
 
@@ -109,8 +109,8 @@ export class ConfigurationManager {
      * Request configuration state of the services config files.
      * @param callback - Callback with the requested {@link ConfigState}
      */
-    public static requestConfigFileState(callback: (detail: ConfigState) => void): void {
-        if (callback === null) {
+    public static requestConfigFileState(callback?: (detail: ConfigState) => void): void {
+        if (!callback) {
             console.error('Config file state request failed. This call requires a callback.');
             return;
         }
