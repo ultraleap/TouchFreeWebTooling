@@ -23,15 +23,10 @@ export class SnappingPlugin extends InputActionPlugin {
             y: inputAction.CursorPosition[1],
         };
 
-        // Build a list of snappable elements
-        let elements: SnappableElement[] = [...document.getElementsByClassName('snappable')].map((value: Element) => {
-            return SnappableElement.compute(value, Vector2.fromTuple(cursorPos));
-        });
-
-        // Sort them by distance
-        elements = elements.sort((a: SnappableElement, b: SnappableElement) => {
-            return a.distance - b.distance;
-        });
+        // Build a list of snappable elements and sort them by distance
+        const elements = [...document.getElementsByClassName('snappable')]
+            .map((value: Element) => SnappableElement.compute(value, Vector2.fromTuple(cursorPos)))
+            .sort((a: SnappableElement, b: SnappableElement) => a.distance - b.distance);
 
         // Let's snap if there is snappable elements
         if (elements.length > 0) {
