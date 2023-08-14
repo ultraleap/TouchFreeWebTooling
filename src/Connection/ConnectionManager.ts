@@ -64,12 +64,12 @@ export class ConnectionManager extends EventTarget {
     /**
      * Private reference to the current hand presence state
      */
-    private static currentHandPresence: HandPresenceState = HandPresenceState.HANDS_LOST;
+    private static currentHandPresence = HandPresenceState.HANDS_LOST;
 
     /**
      * Private reference to the current interaction zone state
      */
-    private static currentInteractionZoneState: InteractionZoneState = InteractionZoneState.HAND_EXITED;
+    private static currentInteractionZoneState = InteractionZoneState.HAND_EXITED;
 
     /**
      * Creates global {@link MessageReceiver} and {@link ConnectionManager} instance

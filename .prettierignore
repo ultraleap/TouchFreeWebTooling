@@ -4,3 +4,4 @@
 *_Example.html
 coverage/
 .gitlab-ci.yml
+/docs*

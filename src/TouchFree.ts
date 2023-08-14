@@ -41,10 +41,29 @@ export interface TfInitParams {
     address?: Address;
 }
 
+/**
+ * @returns The Cursor currently used by TouchFree
+ * @public
+ */
 export const getCurrentCursor = () => currentCursor;
+
+/**
+ * Sets the cursor to be used by TouchFree
+ * @param cursor - The cursor to be used. Can be `undefined` to unset.
+ * @public
+ */
 export const setCurrentCursor = (cursor?: TouchlessCursor) => (currentCursor = cursor);
+
+/**
+ * @returns The current inputController
+ * @public
+ */
 export const getInputController = () => inputController;
 
+/**
+ * @returns `true` if there is an active analytics session, `false` otherwise
+ * @public
+ */
 export const isAnalyticsActive = () => currentSessionId !== undefined;
 
 /**
@@ -53,7 +72,7 @@ export const isAnalyticsActive = () => currentSessionId !== undefined;
  * @param tfInitParams - Optional extra initialization parameters
  * @public
  */
-export const init = (tfInitParams?: TfInitParams): void => {
+export function init(tfInitParams?: TfInitParams): void {
     ConnectionManager.init({ address: tfInitParams?.address });
 
     inputController = new WebInputController();
@@ -65,7 +84,7 @@ export const init = (tfInitParams?: TfInitParams): void => {
             currentCursor = new SVGCursor();
         }
     }
-};
+}
 
 const analyticEvents: { [key in AnalyticEventKey]?: (e: Event) => void } = {};
 
@@ -244,11 +263,11 @@ export interface EventHandle {
  * @param callback - The callback to wrap
  * @returns EventListener with the wrapper callback
  */
-const makeCustomEventWrapper = <T>(callback: (arg: T) => void): EventListener => {
+function makeCustomEventWrapper<T>(callback: (arg: T) => void): EventListener {
     return ((evt: CustomEvent<T>) => {
         callback(evt.detail);
     }) as EventListener;
-};
+}
 
 /**
  * Signature required for RegisterEvent functions
@@ -294,8 +313,8 @@ let eventImplementationsBackingField: EventImpls | undefined;
  *
  * @returns A function that returns all event implementations
  */
-const eventImplementations: () => EventImpls = () =>
-    (eventImplementationsBackingField ??= {
+function eventImplementations(): EventImpls {
+    return (eventImplementationsBackingField ??= {
         onConnected: {
             target: ConnectionManager.instance,
             withCallback: (callback) => ({
@@ -389,6 +408,7 @@ const eventImplementations: () => EventImpls = () =>
             }),
         },
     });
+}
 
 /**
  * Registers a callback function to be called when a specific event occurs
@@ -400,16 +420,16 @@ const eventImplementations: () => EventImpls = () =>
  *
  * @public
  */
-export const registerEventCallback = <TEvent extends TouchFreeEvent>(
+export function registerEventCallback<TEvent extends TouchFreeEvent>(
     event: TEvent,
     callback: TouchFreeEventSignatures[TEvent]
-): EventHandle => {
+): EventHandle {
     const eventImpl = eventImplementations()[event];
     const target = eventImpl.target;
     const callbackImpl = eventImpl.withCallback(callback);
     const listener = callbackImpl.listener;
     return callbackImpl.registerEventFunc(target, event, listener);
-};
+}
 
 /**
  * Dispatches an event of the specific type with arguments if the event requires any.
@@ -422,10 +442,10 @@ export const registerEventCallback = <TEvent extends TouchFreeEvent>(
  *
  * @public
  */
-export const dispatchEvent = <TEvent extends TouchFreeEvent>(
+export function dispatchEvent<TEvent extends TouchFreeEvent>(
     eventType: TEvent,
     ...args: Parameters<TouchFreeEventSignatures[TEvent]>
-) => {
+) {
     let event: Event;
     if (args.length === 0) {
         event = new Event(eventType);
@@ -435,4 +455,4 @@ export const dispatchEvent = <TEvent extends TouchFreeEvent>(
 
     const target = eventImplementations()[eventType].target;
     target.dispatchEvent(event);
-};
+}
