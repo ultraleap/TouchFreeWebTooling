@@ -5,3 +5,4 @@
 coverage/
 .gitlab-ci.yml
 /docs*
+/.github*
