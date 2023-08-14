@@ -20,7 +20,7 @@ describe('Analytics', () => {
         expect(testFn).toBeCalledTimes(0);
     });
 
-    describe('Start/stopAnalyticsSession', () => {
+    describe('start/stopAnalyticsSession', () => {
         let serviceConnection: ServiceConnection | null = null;
         const applicationName = 'testApplication';
         let updateSessionEventsMock: jest.SpyInstance;
@@ -332,11 +332,11 @@ describe('Analytics', () => {
             document.dispatchEvent(tfEvent);
             expect(TouchFree.getAnalyticSessionEvents()).toEqual({ pointerdown: 6, keypress: 3 });
         });
-        it('should not increment when an un-registered event is trigger', () => {
+        it('should not increment when an un-registered event is triggered', () => {
             TouchFree.unregisterAnalyticEvents(['pointerdown']);
             document.dispatchEvent(pointerDownEvent);
             document.dispatchEvent(keypressEvent);
-            expect(TouchFree.getAnalyticSessionEvents()).toEqual({ pointerdown: 5, keypress: 4 });
+            expect(TouchFree.getAnalyticSessionEvents()).toEqual({ pointerdown: 6, keypress: 4 });
         });
     });
 });
