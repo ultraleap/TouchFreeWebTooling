@@ -10,7 +10,7 @@ export enum SnapMode {
 
 export class SnappingPlugin extends InputActionPlugin {
     private snapDistance = 50;
-    private snapMode: SnapMode = SnapMode.MAGNET;
+    private snapMode = SnapMode.MAGNET;
 
     public static MAX_SOFTNESS = 1;
     public static MIN_SOFTNESS = 0;

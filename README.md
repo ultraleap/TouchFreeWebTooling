@@ -1,5 +1,4 @@
 <!--links-->
-
 [discord]: https://discord.com/invite/3VCndThqxS 'Discord Server'
 [touchfree]: https://developer.leapmotion.com/touchfree 'TouchFree Download'
 [web]: https://developer.leapmotion.com/touchfree-tooling-for-web 'TouchFree Web Tooling'
@@ -10,7 +9,6 @@
 [examples]: https://github.com/ultraleap/TouchFree-Tooling-Examples/tree/develop/Examples-Web 'Ultraleap TouchFree Tooling Web Examples'
 
 <!--content-->
-
 # Ultraleap TouchFree Web Tooling
 
 [![touchfree](https://img.shields.io/badge/TouchFree-00cf75)][touchfree]

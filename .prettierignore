@@ -6,3 +6,4 @@ coverage/
 .gitlab-ci.yml
 /docs*
 /.github*
+README.md
