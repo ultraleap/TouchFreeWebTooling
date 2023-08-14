@@ -200,8 +200,8 @@ export class HandPresenceEvent {
     /** Type of the current event. See {@link HandPresenceState} */
     state: HandPresenceState;
 
-    constructor(_state: HandPresenceState) {
-        this.state = _state;
+    constructor(state: HandPresenceState) {
+        this.state = state;
     }
 }
 
@@ -227,9 +227,9 @@ export abstract class TouchFreeRequestCallback<T> {
     /** The callback the request should call */
     callback: (detail: T) => void;
 
-    constructor(_timestamp: number, _callback: (detail: T) => void) {
-        this.timestamp = _timestamp;
-        this.callback = _callback;
+    constructor(timestamp: number, callback: (detail: T) => void) {
+        this.timestamp = timestamp;
+        this.callback = callback;
     }
 }
 
@@ -241,8 +241,8 @@ export abstract class TouchFreeRequestCallback<T> {
 export abstract class TouchFreeRequest {
     /** Request ID */
     requestID: string;
-    constructor(_requestID: string) {
-        this.requestID = _requestID;
+    constructor(requestID: string) {
+        this.requestID = requestID;
     }
 }
 
@@ -259,14 +259,10 @@ export class PartialConfigState extends TouchFreeRequest {
     /** Optional {@link PhysicalConfig} */
     physical: Partial<PhysicalConfig> | null;
 
-    constructor(
-        _id: string,
-        _interaction: Partial<InteractionConfig> | null,
-        _physical: Partial<PhysicalConfig> | null
-    ) {
-        super(_id);
-        this.interaction = _interaction;
-        this.physical = _physical;
+    constructor(id: string, interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null) {
+        super(id);
+        this.interaction = interaction;
+        this.physical = physical;
     }
 }
 
@@ -280,10 +276,10 @@ export class ConfigState extends TouchFreeRequest {
     /** See {@link PhysicalConfig} */
     physical: PhysicalConfig;
 
-    constructor(_id: string, _interaction: InteractionConfigFull, _physical: PhysicalConfig) {
-        super(_id);
-        this.interaction = _interaction;
-        this.physical = _physical;
+    constructor(id: string, interaction: InteractionConfigFull, physical: PhysicalConfig) {
+        super(id);
+        this.interaction = interaction;
+        this.physical = physical;
     }
 }
 
@@ -315,8 +311,8 @@ export class HandRenderDataStateRequest extends TouchFreeRequest {
     /** Lens */
     lens: string;
 
-    constructor(_id: string, enabled: boolean, lens: string) {
-        super(_id);
+    constructor(id: string, enabled: boolean, lens: string) {
+        super(id);
         this.enabled = enabled;
         this.lens = lens;
     }
@@ -341,21 +337,21 @@ export class ServiceStatus extends TouchFreeRequest {
     cameraFirmwareVersion: string;
 
     constructor(
-        _id: string,
-        _trackingServiceState: TrackingServiceState,
-        _configurationState: ConfigurationState,
-        _serviceVersion: string,
-        _trackingVersion: string,
-        _cameraSerial: string,
-        _cameraFirmwareVersion: string
+        id: string,
+        trackingServiceState: TrackingServiceState,
+        configurationState: ConfigurationState,
+        serviceVersion: string,
+        trackingVersion: string,
+        cameraSerial: string,
+        cameraFirmwareVersion: string
     ) {
-        super(_id);
-        this.trackingServiceState = _trackingServiceState;
-        this.configurationState = _configurationState;
-        this.serviceVersion = _serviceVersion;
-        this.trackingVersion = _trackingVersion;
-        this.cameraSerial = _cameraSerial;
-        this.cameraFirmwareVersion = _cameraFirmwareVersion;
+        super(id);
+        this.trackingServiceState = trackingServiceState;
+        this.configurationState = configurationState;
+        this.serviceVersion = serviceVersion;
+        this.trackingVersion = trackingVersion;
+        this.cameraSerial = cameraSerial;
+        this.cameraFirmwareVersion = cameraFirmwareVersion;
     }
 }
 
@@ -386,11 +382,11 @@ export class WebSocketResponse extends TouchFreeRequest {
      */
     originalRequest: string;
 
-    constructor(_id: string, _status: string, _msg: string, _request: string) {
-        super(_id);
-        this.status = _status;
-        this.message = _msg;
-        this.originalRequest = _request;
+    constructor(id: string, status: string, msg: string, request: string) {
+        super(id);
+        this.status = status;
+        this.message = msg;
+        this.originalRequest = request;
     }
 }
 
@@ -405,16 +401,16 @@ export class VersionHandshakeResponse extends WebSocketResponse {
     apiVersion: string;
 
     constructor(
-        _id: string,
-        _status: string,
-        _msg: string,
-        _request: string,
-        _touchFreeVersion: string,
-        _apiVersion: string
+        id: string,
+        status: string,
+        msg: string,
+        request: string,
+        touchFreeVersion: string,
+        apiVersion: string
     ) {
-        super(_id, _status, _msg, _request);
-        this.touchFreeVersion = _touchFreeVersion;
-        this.apiVersion = _apiVersion;
+        super(id, status, msg, request);
+        this.touchFreeVersion = touchFreeVersion;
+        this.apiVersion = apiVersion;
     }
 }
 
@@ -437,9 +433,9 @@ export class CommunicationWrapper<T> {
     /** Wrapped content */
     content: T;
 
-    constructor(_actionCode: ActionCode, _content: T) {
-        this.action = _actionCode;
-        this.content = _content;
+    constructor(actionCode: ActionCode, content: T) {
+        this.action = actionCode;
+        this.content = content;
     }
 }
 
@@ -491,12 +487,12 @@ export class TrackingStateRequest {
     /** Analytics enabled */
     analyticsEnabled: boolean;
 
-    constructor(_id: string, _mask: Mask, _cameraReversed: boolean, _allowImages: boolean, _analyticsEnabled: boolean) {
-        this.requestID = _id;
-        this.mask = _mask;
-        this.cameraReversed = _cameraReversed;
-        this.allowImages = _allowImages;
-        this.analyticsEnabled = _analyticsEnabled;
+    constructor(id: string, mask: Mask, cameraReversed: boolean, allowImages: boolean, analyticsEnabled: boolean) {
+        this.requestID = id;
+        this.mask = mask;
+        this.cameraReversed = cameraReversed;
+        this.allowImages = allowImages;
+        this.analyticsEnabled = analyticsEnabled;
     }
 }
 
@@ -510,8 +506,8 @@ export class SimpleRequest {
     /** Request ID */
     requestID: string;
 
-    constructor(_id: string) {
-        this.requestID = _id;
+    constructor(id: string) {
+        this.requestID = id;
     }
 }
 
@@ -554,9 +550,9 @@ export class TrackingStateCallback {
     /** Callback */
     callback: (detail: TrackingStateResponse) => void;
 
-    constructor(_timestamp: number, _callback: (detail: TrackingStateResponse) => void) {
-        this.timestamp = _timestamp;
-        this.callback = _callback;
+    constructor(timestamp: number, callback: (detail: TrackingStateResponse) => void) {
+        this.timestamp = timestamp;
+        this.callback = callback;
     }
 }
 

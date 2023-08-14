@@ -1,4 +1,4 @@
-import { DispatchEvent } from '../TouchFree';
+import { dispatchEvent } from '../TouchFree';
 import { TouchFreeInputAction, InputType } from '../TouchFreeToolingTypes';
 import { BaseInputController } from './BaseInputController';
 
@@ -34,7 +34,7 @@ export class WebInputController extends BaseInputController {
      *  Any element with this class name in its css class list will be ignored when trying to find
      * the correct element for the WebInputController to scroll
      */
-    private readonly noScrollClassName: string = 'touchfree-no-scroll';
+    private readonly NO_SCROLL_CLASS_NAME: string = 'touchfree-no-scroll';
 
     /**
      * Sets up the basic event properties for all events transmitted from this InputController.
@@ -58,37 +58,37 @@ export class WebInputController extends BaseInputController {
 
     /**
      * Handles the transmission of "pointerout"/"pointerover"/"pointermove" events to appropriate
-     * elements, based on the {@link _element} being hovered over this frame, and the element
+     * elements, based on the {@link element} being hovered over this frame, and the element
      * hovered last frame.
      * Will also optionally send "pointerenter"/"pointerleave" events if enabled via
      * {@link enterLeaveEnabled}
-     * @param _element - The DOM element under the cursor this frame
+     * @param element - The DOM element under the cursor this frame
      * @internal
      */
-    HandleMove(_element: Element | null): void {
-        if (_element !== this.lastHoveredElement) {
+    handleMove(element: Element | null): void {
+        if (element !== this.lastHoveredElement) {
             // Handle sending pointerover/pointerout to the individual elements
             // These events bubble, so we only have to dispatch them to the element directly under
             // the cursor
             if (this.lastHoveredElement !== null) {
-                const outEvent: PointerEvent = new PointerEvent('pointerout', this.activeEventProps);
+                const outEvent = new PointerEvent('pointerout', this.activeEventProps);
                 this.lastHoveredElement.dispatchEvent(outEvent);
             }
 
-            if (_element !== null) {
-                const overEvent: PointerEvent = new PointerEvent('pointerover', this.activeEventProps);
-                _element.dispatchEvent(overEvent);
+            if (element !== null) {
+                const overEvent = new PointerEvent('pointerover', this.activeEventProps);
+                element.dispatchEvent(overEvent);
             }
 
             if (this.enterLeaveEnabled) {
-                this.HandleEnterLeaveBehaviour(_element);
+                this.handleEnterLeaveBehaviour(element);
             }
         }
 
-        const moveEvent: PointerEvent = new PointerEvent('pointermove', this.activeEventProps);
-        _element?.dispatchEvent(moveEvent);
+        const moveEvent = new PointerEvent('pointermove', this.activeEventProps);
+        element?.dispatchEvent(moveEvent);
 
-        this.lastHoveredElement = _element;
+        this.lastHoveredElement = element;
     }
 
     /**
@@ -106,27 +106,27 @@ export class WebInputController extends BaseInputController {
      *     - pointerout
      *     - pointerenter
      *     - pointerleave
-     * @param _inputData - The latest {@link TouchFreeInputAction} from the Service
+     * @param inputData - The latest {@link TouchFreeInputAction} from the Service
      * @internal
      */
-    protected override HandleInputAction(_inputData: TouchFreeInputAction): void {
-        super.HandleInputAction(_inputData);
+    protected override handleInputAction(inputData: TouchFreeInputAction): void {
+        super.handleInputAction(inputData);
 
-        const elementsAtPoint = document.elementsFromPoint(_inputData.CursorPosition[0], _inputData.CursorPosition[1]);
-        const elementAtPos: Element | null = this.GetTopNonCursorElement(elementsAtPoint);
+        const elementsAtPoint = document.elementsFromPoint(inputData.CursorPosition[0], inputData.CursorPosition[1]);
+        const elementAtPos = this.getTopNonCursorElement(elementsAtPoint);
 
-        this.activeEventProps.clientX = _inputData.CursorPosition[0];
-        this.activeEventProps.clientY = _inputData.CursorPosition[1];
+        this.activeEventProps.clientX = inputData.CursorPosition[0];
+        this.activeEventProps.clientY = inputData.CursorPosition[1];
 
         if (elementAtPos !== null) {
-            DispatchEvent('InputAction', _inputData);
+            dispatchEvent('inputAction', inputData);
         }
 
-        switch (_inputData.InputType) {
+        switch (inputData.InputType) {
             case InputType.CANCEL: {
-                this.ResetScrollData();
-                const cancelEvent: PointerEvent = new PointerEvent('pointercancel', this.activeEventProps);
-                const outEvent: PointerEvent = new PointerEvent('pointerout', this.activeEventProps);
+                this.resetScrollData();
+                const cancelEvent = new PointerEvent('pointercancel', this.activeEventProps);
+                const outEvent = new PointerEvent('pointerout', this.activeEventProps);
 
                 if (this.lastHoveredElement !== null) {
                     this.lastHoveredElement.dispatchEvent(cancelEvent);
@@ -135,14 +135,14 @@ export class WebInputController extends BaseInputController {
                     this.lastHoveredElement = null;
                 }
 
-                const elementOnDown = this.GetTopNonCursorElement(this.elementsOnDown);
+                const elementOnDown = this.getTopNonCursorElement(this.elementsOnDown);
                 if (elementOnDown) {
                     elementOnDown.dispatchEvent(cancelEvent);
                     elementOnDown.dispatchEvent(outEvent);
                 }
 
                 if (elementAtPos !== null) {
-                    const parentTree = this.GetOrderedParents(elementAtPos);
+                    const parentTree = this.getOrderedParents(elementAtPos);
 
                     parentTree.forEach((parent: Node | null) => {
                         if (parent !== null) {
@@ -155,22 +155,22 @@ export class WebInputController extends BaseInputController {
             }
 
             case InputType.MOVE:
-                this.HandleMove(elementAtPos);
+                this.handleMove(elementAtPos);
 
-                this.HandleScroll(_inputData.CursorPosition);
+                this.handleScroll(inputData.CursorPosition);
                 break;
 
             case InputType.DOWN: {
-                this.ResetScrollData();
+                this.resetScrollData();
                 this.elementsOnDown = this.clickableElementsAtPosition(elementsAtPoint);
                 this.scrollElementsOnDown = this.elementsOnDown.filter(
-                    (e) => !e.classList.contains(this.noScrollClassName)
+                    (e) => !e.classList.contains(this.NO_SCROLL_CLASS_NAME)
                 );
 
-                this.lastPosition = _inputData.CursorPosition;
+                this.lastPosition = inputData.CursorPosition;
 
-                const downEvent: PointerEvent = new PointerEvent('pointerdown', this.activeEventProps);
-                this.DispatchToTarget(downEvent, elementAtPos);
+                const downEvent = new PointerEvent('pointerdown', this.activeEventProps);
+                this.dispatchToTarget(downEvent, elementAtPos);
                 break;
             }
 
@@ -187,10 +187,10 @@ export class WebInputController extends BaseInputController {
                     }
                 }
 
-                this.ResetScrollData();
+                this.resetScrollData();
 
-                const upEvent: PointerEvent = new PointerEvent('pointerup', this.activeEventProps);
-                this.DispatchToTarget(upEvent, elementAtPos);
+                const upEvent = new PointerEvent('pointerup', this.activeEventProps);
+                this.dispatchToTarget(upEvent, elementAtPos);
                 break;
             }
         }
@@ -203,33 +203,33 @@ export class WebInputController extends BaseInputController {
     }
 
     /** Clears information about the current scroll */
-    private ResetScrollData(): void {
+    private resetScrollData(): void {
         this.scrollElementsOnDown = null;
         this.scrollDirection = undefined;
         this.elementToScroll = undefined;
     }
 
     /** Applies scrolling to any elements that should be scrolled */
-    private HandleScroll(_position: Array<number>): void {
+    private handleScroll(position: Array<number>): void {
         if (this.scrollElementsOnDown && this.lastPosition) {
-            const changeInPositionX = this.lastPosition[0] - _position[0];
-            const changeInPositionY = this.lastPosition[1] - _position[1];
+            const changeInPositionX = this.lastPosition[0] - position[0];
+            const changeInPositionY = this.lastPosition[1] - position[1];
 
             if (!this.scrollDirection && (Math.abs(changeInPositionX) > 5 || Math.abs(changeInPositionY) > 5)) {
                 if (Math.abs(changeInPositionX) > Math.abs(changeInPositionY)) {
-                    this.scrollDirection = changeInPositionX > 0 ? ScrollDirection.Right : ScrollDirection.Left;
+                    this.scrollDirection = changeInPositionX > 0 ? ScrollDirection.RIGHT : ScrollDirection.LEFT;
                 } else {
-                    this.scrollDirection = changeInPositionY > 0 ? ScrollDirection.Down : ScrollDirection.Up;
+                    this.scrollDirection = changeInPositionY > 0 ? ScrollDirection.DOWN : ScrollDirection.UP;
                 }
             }
 
-            this.lastPosition = _position;
+            this.lastPosition = position;
 
             if (
                 changeInPositionY > 0 &&
-                (this.scrollDirection === undefined || this.scrollDirection === ScrollDirection.Down)
+                (this.scrollDirection === undefined || this.scrollDirection === ScrollDirection.DOWN)
             ) {
-                const element = this.GetElementToScroll(
+                const element = this.getElementToScroll(
                     (e: HTMLElement) =>
                         e.scrollHeight > e.clientHeight && e.scrollTop + e.clientHeight < e.scrollHeight - 1,
                     (e: HTMLElement, p: HTMLElement) =>
@@ -247,9 +247,9 @@ export class WebInputController extends BaseInputController {
 
             if (
                 changeInPositionY < 0 &&
-                (this.scrollDirection === undefined || this.scrollDirection === ScrollDirection.Up)
+                (this.scrollDirection === undefined || this.scrollDirection === ScrollDirection.UP)
             ) {
-                const element = this.GetElementToScroll(
+                const element = this.getElementToScroll(
                     (e: HTMLElement) => e.scrollHeight > e.clientHeight && e.scrollTop > 0,
                     (e: HTMLElement, p: HTMLElement) =>
                         e.offsetHeight === p.offsetHeight && e.scrollHeight === p.scrollHeight
@@ -263,9 +263,9 @@ export class WebInputController extends BaseInputController {
 
             if (
                 changeInPositionX > 0 &&
-                (this.scrollDirection === undefined || this.scrollDirection === ScrollDirection.Right)
+                (this.scrollDirection === undefined || this.scrollDirection === ScrollDirection.RIGHT)
             ) {
-                const element = this.GetElementToScroll(
+                const element = this.getElementToScroll(
                     (e: HTMLElement) => e.scrollWidth > e.clientWidth && e.scrollLeft + e.clientWidth < e.scrollWidth,
                     (e: HTMLElement, p: HTMLElement) =>
                         e.offsetWidth === p.offsetWidth && e.scrollWidth === p.scrollWidth
@@ -282,9 +282,9 @@ export class WebInputController extends BaseInputController {
 
             if (
                 changeInPositionX < 0 &&
-                (this.scrollDirection === undefined || this.scrollDirection === ScrollDirection.Left)
+                (this.scrollDirection === undefined || this.scrollDirection === ScrollDirection.LEFT)
             ) {
-                const element = this.GetElementToScroll(
+                const element = this.getElementToScroll(
                     (e: HTMLElement) => e.scrollWidth > e.clientWidth && e.scrollLeft > 0,
                     (e: HTMLElement, p: HTMLElement) =>
                         e.offsetWidth === p.offsetWidth && e.scrollWidth === p.scrollWidth
@@ -305,7 +305,7 @@ export class WebInputController extends BaseInputController {
      * Any elements with the {@link noScrollClassName} class applied will be ignored when
      * finding which element to scroll
      */
-    private GetElementToScroll = (
+    private getElementToScroll = (
         scrollValidation: (element: HTMLElement) => boolean,
         parentScrollValidation: (element: HTMLElement, parentElement: HTMLElement) => boolean
     ): HTMLElement | undefined => {
@@ -319,8 +319,8 @@ export class WebInputController extends BaseInputController {
             let parentSelected = false;
             let parentAsHtmlElement = elementToCheckScroll.parentElement as HTMLElement;
             while (parentAsHtmlElement) {
-                const parentIsNoScroll = parentAsHtmlElement.classList.contains(this.noScrollClassName);
-                const elementIsNoScroll = elementToCheckScroll.classList.contains(this.noScrollClassName);
+                const parentIsNoScroll = parentAsHtmlElement.classList.contains(this.NO_SCROLL_CLASS_NAME);
+                const elementIsNoScroll = elementToCheckScroll.classList.contains(this.NO_SCROLL_CLASS_NAME);
                 const parentScrollValid = parentScrollValidation(elementToCheckScroll, parentAsHtmlElement);
 
                 if (!parentIsNoScroll && !elementIsNoScroll && !parentScrollValid) {
@@ -348,7 +348,7 @@ export class WebInputController extends BaseInputController {
      * @param elementsAtPos - Elements at the position to check
      * @returns First non-cursor element or null if none found
      */
-    private GetTopNonCursorElement(elementsAtPos: Element[] | null): Element | null {
+    private getTopNonCursorElement(elementsAtPos: Element[] | null): Element | null {
         let elementAtPos: Element | null = null;
 
         if (elementsAtPos !== null) {
@@ -370,13 +370,13 @@ export class WebInputController extends BaseInputController {
      * Handle sending pointerleave/pointerenter events to the parent stacks.
      * These events do not bubble, in order to deliver expected behaviour we must consider
      * the entire stack of elements above our current target in the document tree
-     * @param _element - Element to handle
+     * @param element - Element to handle
      */
-    private HandleEnterLeaveBehaviour(_element: Element | null) {
-        const oldParents: Array<Node | null> = this.GetOrderedParents(this.lastHoveredElement);
-        const newParents: Array<Node | null> = this.GetOrderedParents(_element);
+    private handleEnterLeaveBehaviour(element: Element | null) {
+        const oldParents: Array<Node | null> = this.getOrderedParents(this.lastHoveredElement);
+        const newParents: Array<Node | null> = this.getOrderedParents(element);
 
-        const highestCommonIndex: number | null = this.GetCommonAncestorIndex(oldParents, newParents);
+        const highestCommonIndex: number | null = this.getCommonAncestorIndex(oldParents, newParents);
 
         const leaveEvent = new PointerEvent('pointerleave', this.activeEventProps);
         const enterEvent = new PointerEvent('pointerenter', this.activeEventProps);
@@ -403,14 +403,14 @@ export class WebInputController extends BaseInputController {
     /**
      * Collects the stack of parent nodes, ordered from highest (document body) to lowest
      * (the node provided)
-     * @param _node - Lowest node in the stack
+     * @param node - Lowest node in the stack
      * @returns Parent nodes until the provided node
      */
-    private GetOrderedParents(_node: Node | null): Array<Node | null> {
-        const parentStack: Array<Node | null> = [_node];
+    private getOrderedParents(node: Node | null): Array<Node | null> {
+        const parentStack: Array<Node | null> = [node];
 
-        for (; _node; _node = _node.parentNode) {
-            parentStack.unshift(_node);
+        for (; node; node = node.parentNode) {
+            parentStack.unshift(node);
         }
 
         return parentStack;
@@ -418,12 +418,12 @@ export class WebInputController extends BaseInputController {
 
     /**
      * Takes two ordered arrays of Nodes (as produced by {@link GetOrderedParents}) and identifies the
-     * lowest common ancestor of the two sets. Used in {@link HandleMove} for identifying the events to send
+     * lowest common ancestor of the two sets. Used in {@link handleMove} for identifying the events to send
      * @param oldParents - First stack of parents
      * @param newParents - Second stack of parents
      * @returns Index of lowest common ancestor between the two stacks
      */
-    private GetCommonAncestorIndex(oldParents: Array<Node | null>, newParents: Array<Node | null>): number | null {
+    private getCommonAncestorIndex(oldParents: Array<Node | null>, newParents: Array<Node | null>): number | null {
         if (oldParents[0] !== newParents[0]) {
             return null;
         }
@@ -443,7 +443,7 @@ export class WebInputController extends BaseInputController {
      * @param event - Event to dispatch
      * @param target - Element to dispatch event on if not null
      */
-    private DispatchToTarget(event: PointerEvent, target: Element | null) {
+    private dispatchToTarget(event: PointerEvent, target: Element | null) {
         if (target !== null) {
             target.dispatchEvent(event);
         } else {
@@ -457,8 +457,8 @@ export class WebInputController extends BaseInputController {
  * @internal
  */
 enum ScrollDirection {
-    Up = 0,
-    Down = 1,
-    Left = 2,
-    Right = 3,
+    UP = 0,
+    DOWN = 1,
+    LEFT = 2,
+    RIGHT = 3,
 }

@@ -1,6 +1,6 @@
 import { HandDataManager } from '../../Plugins/HandDataManager';
-import TouchFree, { EventHandle } from '../../TouchFree';
-import { BitmaskFlags, ConvertInputAction, WebsocketInputAction } from '../../TouchFreeToolingTypes';
+import * as TouchFree from '../../TouchFree';
+import { BitmaskFlags, WebsocketInputAction, convertInputAction } from '../../TouchFreeToolingTypes';
 import { intervalTest } from '../../tests/testUtils';
 import { ConnectionManager } from '../ConnectionManager';
 import { ServiceConnection } from '../ServiceConnection';
@@ -27,7 +27,7 @@ describe('MessageReceiver', () => {
             message: 'Successful Test',
             ...content,
         };
-        serviceConnection?.OnMessage(
+        serviceConnection?.onMessage(
             new MessageEvent('message', {
                 data: JSON.stringify({
                     action: actionCode,
@@ -43,7 +43,7 @@ describe('MessageReceiver', () => {
     const mockHandshake = (consoleProperty: string) => {
         const testFn = jest.spyOn(console, consoleProperty as 'Console').mockImplementation();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        jest.spyOn(serviceConnection as any, 'RequestHandshake').mockImplementation();
+        jest.spyOn(serviceConnection as any, 'requestHandshake').mockImplementation();
         ConnectionManager.messageReceiver.handshakeCallbacks['handshake-guid'] = {
             timestamp: Date.now(),
             callback: () => {},
@@ -65,16 +65,16 @@ describe('MessageReceiver', () => {
         );
     };
 
-    let handler: EventHandle;
+    let handler: TouchFree.EventHandle;
 
     afterEach(() => {
         if (!handler) return;
-        handler.UnregisterEventCallback();
+        handler.unregisterEventCallback();
     });
 
     beforeEach(() => {
         // Reset service after each test to completely reset mocks
-        TouchFree.Init();
+        TouchFree.init();
         serviceConnection = ConnectionManager.serviceConnection();
         jest.restoreAllMocks();
         if (serviceConnection) {
@@ -127,7 +127,7 @@ describe('MessageReceiver', () => {
         const testFn = jest.fn();
         mockOpen();
         const guid = uuidgen();
-        serviceConnection?.SendMessage('test', guid, testFn);
+        serviceConnection?.sendMessage('test', guid, testFn);
 
         onMessage(ActionCode.SERVICE_STATUS_RESPONSE, undefined, guid);
 
@@ -150,7 +150,7 @@ describe('MessageReceiver', () => {
     it('should correctly check for a config state with a callback', async () => {
         const testFn = jest.fn();
         mockOpen();
-        serviceConnection?.RequestConfigState(testFn);
+        serviceConnection?.requestConfigState(testFn);
 
         onMessage(ActionCode.CONFIGURATION_STATE, undefined, JSON.parse(message).guid);
 
@@ -172,7 +172,7 @@ describe('MessageReceiver', () => {
     it('should correctly check for the service status with a callback', async () => {
         mockOpen();
         const testFn = jest.fn();
-        serviceConnection?.RequestServiceStatus(testFn);
+        serviceConnection?.requestServiceStatus(testFn);
 
         onMessage(ActionCode.SERVICE_STATUS, undefined, JSON.parse(message).guid);
 
@@ -182,7 +182,7 @@ describe('MessageReceiver', () => {
     it('should correctly check for the service status without a callback', async () => {
         mockOpen();
         const testFn = jest.fn();
-        TouchFree.RegisterEventCallback('OnServiceStatusChange', testFn);
+        TouchFree.registerEventCallback('onServiceStatusChange', testFn);
 
         onMessage(ActionCode.SERVICE_STATUS);
 
@@ -192,7 +192,7 @@ describe('MessageReceiver', () => {
     it('should correctly check for the tracking state response', async () => {
         const testFn = jest.fn();
         mockOpen();
-        serviceConnection?.RequestTrackingState(testFn);
+        serviceConnection?.requestTrackingState(testFn);
 
         onMessage(ActionCode.TRACKING_STATE, undefined, JSON.parse(message).guid);
 
@@ -202,7 +202,7 @@ describe('MessageReceiver', () => {
     it('should correctly check for the session state change response', async () => {
         const testFn = jest.fn();
         mockOpen();
-        serviceConnection?.AnalyticsSessionRequest('START', 'test', testFn);
+        serviceConnection?.analyticsSessionRequest('START', 'test', testFn);
 
         onMessage(ActionCode.ANALYTICS_SESSION_REQUEST, undefined, JSON.parse(message).guid);
 
@@ -210,7 +210,7 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for a hand presence event', async () => {
-        const testFn = jest.spyOn(ConnectionManager, 'HandleHandPresenceEvent');
+        const testFn = jest.spyOn(ConnectionManager, 'handleHandPresenceEvent');
         testFn.mockImplementation(() => {});
         mockOpen();
 
@@ -220,7 +220,7 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for an interaction zone event', async () => {
-        const testFn = jest.spyOn(ConnectionManager, 'HandleInteractionZoneEvent').mockImplementation();
+        const testFn = jest.spyOn(ConnectionManager, 'handleInteractionZoneEvent').mockImplementation();
         mockOpen();
 
         onMessage(ActionCode.INTERACTION_ZONE_EVENT, { state: InteractionZoneState.HAND_ENTERED });
@@ -230,7 +230,7 @@ describe('MessageReceiver', () => {
 
     it('should correctly check for an input action', async () => {
         const testFn = jest.fn();
-        handler = TouchFree.RegisterEventCallback('TransmitInputAction', testFn);
+        handler = TouchFree.registerEventCallback('transmitInputAction', testFn);
         mockOpen();
 
         const action = new WebsocketInputAction(
@@ -252,10 +252,10 @@ describe('MessageReceiver', () => {
         const moveAction = createInputAction();
         const upAction = createInputAction(BitmaskFlags.UP, { x: 30, y: 30 });
 
-        const { CursorPosition } = ConvertInputAction(moveAction);
+        const { CursorPosition } = convertInputAction(moveAction);
 
         const testFn = jest.fn((action) => action.CursorPosition);
-        handler = TouchFree.RegisterEventCallback('TransmitInputAction', testFn);
+        handler = TouchFree.registerEventCallback('transmitInputAction', testFn);
 
         onMessage(ActionCode.INPUT_ACTION, { ...moveAction });
         onMessage(ActionCode.INPUT_ACTION, { ...upAction });
@@ -268,7 +268,7 @@ describe('MessageReceiver', () => {
 
     it('should correctly cull all excess non-key actions', async () => {
         const testFn = jest.fn();
-        handler = TouchFree.RegisterEventCallback('TransmitInputAction', testFn);
+        handler = TouchFree.registerEventCallback('transmitInputAction', testFn);
         mockOpen();
 
         const moveAction = createInputAction();
@@ -286,7 +286,7 @@ describe('MessageReceiver', () => {
 
     it('should correctly not cull the key actions', async () => {
         const testFn = jest.fn();
-        handler = TouchFree.RegisterEventCallback('TransmitInputAction', testFn);
+        handler = TouchFree.registerEventCallback('transmitInputAction', testFn);
         mockOpen();
 
         const moveAction = createInputAction();
@@ -306,10 +306,10 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for hand data', async () => {
-        const testFn = jest.spyOn(HandDataManager, 'HandleHandFrame').mockImplementation();
+        const testFn = jest.spyOn(HandDataManager, 'handleHandFrame').mockImplementation();
         mockOpen();
 
-        serviceConnection?.OnMessage(new MessageEvent('message', { data: [1, 0, 0, 0] }));
+        serviceConnection?.onMessage(new MessageEvent('message', { data: [1, 0, 0, 0] }));
 
         await intervalTest(() => expect(testFn).toBeCalledTimes(1));
     });

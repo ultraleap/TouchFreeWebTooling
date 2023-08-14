@@ -1,11 +1,11 @@
-import TouchFree from '../../TouchFree';
+import * as TouchFree from '../../TouchFree';
 import { InputType } from '../../TouchFreeToolingTypes';
 import { intervalTest, mockTfInputAction } from '../../tests/testUtils';
 import { DotCursor } from '../DotCursor';
 
 const CURSOR_SIZE = 75;
 
-TouchFree.Init({ initialiseCursor: false });
+TouchFree.init({ initialiseCursor: false });
 let dotCursor: DotCursor;
 let cursor: HTMLImageElement;
 let cursorRing: HTMLImageElement;
@@ -81,7 +81,7 @@ describe('Dot Cursor', () => {
     });
 
     test('HideCursor should prevent the cursor from being displayed', async () => {
-        dotCursor.HideCursor();
+        dotCursor.hideCursor();
         await testCursorStyle('opacity', '0');
         // Carry out TouchFree actions as these have an effect on the opacity of the cursor
         mockTfInputAction({ InputType: InputType.MOVE, CursorPosition: [100, 100] });
@@ -93,9 +93,9 @@ describe('Dot Cursor', () => {
     });
 
     test('ShowCursor should make the cursor visible when enabled', async () => {
-        dotCursor.HideCursor();
+        dotCursor.hideCursor();
         await testCursorStyle('opacity', '0');
-        dotCursor.ShowCursor();
+        dotCursor.showCursor();
         await testCursorStyle('opacity', '1');
         // Carry out TouchFree actions as these have an effect on the opacity of the cursor
         mockTfInputAction({ InputType: InputType.MOVE, CursorPosition: [100, 100] });
@@ -107,23 +107,23 @@ describe('Dot Cursor', () => {
     });
 
     test('DisableCursor should ensure the cursor cannot be visible', async () => {
-        dotCursor.DisableCursor();
+        dotCursor.disableCursor();
         await testCursorStyle('opacity', '0');
-        dotCursor.ShowCursor();
+        dotCursor.showCursor();
         await testCursorStyle('opacity', '0');
     });
 
     test('EnableCursor allows cursor to be shown again', async () => {
-        dotCursor.DisableCursor();
-        dotCursor.EnableCursor();
-        dotCursor.ShowCursor();
+        dotCursor.disableCursor();
+        dotCursor.enableCursor();
+        dotCursor.showCursor();
         await testCursorStyle('opacity', '1');
     });
 
     test('SetCursorOpacity sets the cursors opacity correctly', () => {
         for (let i = 0; i < 5; i++) {
             const randomNumber = Math.random();
-            dotCursor.SetCursorOpacity(randomNumber);
+            dotCursor.setCursorOpacity(randomNumber);
             expect(cursor.style.opacity).toBe(randomNumber.toString());
         }
     });

@@ -1,4 +1,4 @@
-import TouchFree from '../../TouchFree';
+import * as TouchFree from '../../TouchFree';
 import { HandChirality, HandType, InputType, InteractionType, TouchFreeInputAction } from '../../TouchFreeToolingTypes';
 import {
     createInputAction,
@@ -18,24 +18,24 @@ describe('InputActionManager', () => {
         let pluginCallCount = 0;
 
         class MockPlugin extends InputActionPlugin {
-            override RunPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+            override runPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 expect(inputAction).toStrictEqual(currentInputAction);
-                const modifiedInputAction = super.RunPlugin(inputAction);
+                const modifiedInputAction = super.runPlugin(inputAction);
                 expect(modifiedInputAction).toStrictEqual(currentModifiedAction);
                 pluginCallCount++;
                 return modifiedInputAction;
             }
 
-            override ModifyInputAction(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+            override modifyInputAction(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 currentModifiedAction = { ...inputAction, Timestamp: Date.now() };
                 return currentModifiedAction;
             }
 
-            override TransmitInputAction(inputAction: TouchFreeInputAction): void {
+            override transmitInputAction(inputAction: TouchFreeInputAction): void {
                 expect(inputAction).toStrictEqual(currentModifiedAction);
             }
         }
-        InputActionManager.SetPlugins([new MockPlugin()]);
+        InputActionManager.setPlugins([new MockPlugin()]);
         expect(pluginCallCount).toBe(0);
         currentInputAction = createInputAction();
         mockTfPluginInputAction(currentInputAction);
@@ -66,14 +66,14 @@ describe('InputActionManager', () => {
                 this.orderNumber = orderNumber;
             }
 
-            override RunPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+            override runPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 expect(pluginCallCount).toBe(this.orderNumber);
                 pluginCallCount++;
                 return inputAction;
             }
         }
 
-        InputActionManager.SetPlugins([
+        InputActionManager.setPlugins([
             new MockOrderPlugin(0),
             new MockOrderPlugin(1),
             new MockOrderPlugin(2),
@@ -89,28 +89,28 @@ describe('InputActionManager', () => {
         let passed = false;
 
         class MockCallSuperPlugin extends InputActionPlugin {
-            override RunPlugin(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+            override runPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 callCount++;
-                const copy = copyInputAction(_inputAction);
-                const returnedInputAction = super.RunPlugin(copy);
-                checkTwoInputActionsAreSame(_inputAction, returnedInputAction);
+                const copy = copyInputAction(inputAction);
+                const returnedInputAction = super.runPlugin(copy);
+                checkTwoInputActionsAreSame(inputAction, returnedInputAction);
 
                 return returnedInputAction;
             }
 
-            override ModifyInputAction(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+            override modifyInputAction(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 callCount++;
-                const copy = copyInputAction(_inputAction);
-                const returnInputAction = super.ModifyInputAction(copy);
+                const copy = copyInputAction(inputAction);
+                const returnInputAction = super.modifyInputAction(copy);
 
-                checkTwoInputActionsAreSame(_inputAction, returnInputAction);
+                checkTwoInputActionsAreSame(inputAction, returnInputAction);
 
-                return _inputAction;
+                return inputAction;
             }
 
-            override TransmitInputAction(_inputAction: TouchFreeInputAction): void {
+            override transmitInputAction(inputAction: TouchFreeInputAction): void {
                 callCount++;
-                this.addEventListener('InputActionOutput', (event) => {
+                this.addEventListener('inputActionOutput', (event) => {
                     const actionEvent = event as CustomEvent<TouchFreeInputAction>;
                     const action = actionEvent.detail;
 
@@ -119,12 +119,12 @@ describe('InputActionManager', () => {
                     }
                 });
 
-                const copy = copyInputAction(_inputAction);
-                super.TransmitInputAction(copy);
+                const copy = copyInputAction(inputAction);
+                super.transmitInputAction(copy);
             }
         }
 
-        InputActionManager.SetPlugins([new MockCallSuperPlugin()]);
+        InputActionManager.setPlugins([new MockCallSuperPlugin()]);
         expect(callCount).toBe(0);
         const currentInputAction = createInputAction();
         mockTfPluginInputAction(currentInputAction);
@@ -139,7 +139,7 @@ describe('InputActionManager', () => {
         let nulledInputAction: TouchFreeInputAction;
 
         class MockNullPlugin extends InputActionPlugin {
-            override RunPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+            override runPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
                 // Store the nulled input action to check against later
                 nulledInputAction = inputAction;
                 pluginCallCount++;
@@ -147,10 +147,10 @@ describe('InputActionManager', () => {
             }
         }
 
-        InputActionManager.SetPlugins([new MockNullPlugin()]);
+        InputActionManager.setPlugins([new MockNullPlugin()]);
 
         let failed = false;
-        TouchFree.RegisterEventCallback('TransmitInputAction', (inputAction) => {
+        TouchFree.registerEventCallback('transmitInputAction', (inputAction) => {
             // Fail if we receive the nulled input action
             failed = inputAction === nulledInputAction;
         });

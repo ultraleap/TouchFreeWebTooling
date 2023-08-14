@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Quick Start Example</title>
     <!-- This line includes the TouchFree tooling bundle - note the relative path to the tooling source. If copying this file, make sure the path to source is still correct. -->
-    <script name="TouchFree_Tooling" type="text/javascript" src="../build/TouchFree_Tooling.js"></script>
+    <script name="TouchFree_Tooling" type="text/javascript" src="../dist/TouchFree_Tooling.js"></script>
     <style>
         body{
             background-color: white;
@@ -95,7 +95,7 @@
 
     <script>
         // This is the only call required to initialise TouchFree tooling, getting a default cursor
-        TouchFree.Init();
+        TouchFree.init();
 
         var changeText = function (content) {
             var textToChange = document.getElementById("Text to change");

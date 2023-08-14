@@ -1,9 +1,9 @@
-import TouchFree from '../../TouchFree';
+import * as TouchFree from '../../TouchFree';
 import { InputType } from '../../TouchFreeToolingTypes';
 import { mockTfInputAction } from '../../tests/testUtils';
 import { CursorPart, SVGCursor } from '../SvgCursor';
 
-TouchFree.Init({ initialiseCursor: false });
+TouchFree.init({ initialiseCursor: false });
 let svgCursor = new SVGCursor();
 let cursor = document.getElementById('svg-cursor');
 let cursorRing = document.getElementById('svg-cursor-ring');
@@ -17,9 +17,9 @@ const checkDefaultCursorColors = (isDarkCursor = false) => {
 };
 
 const setNonDefaultCursorColors = () => {
-    svgCursor.SetColor(CursorPart.CENTER_FILL, 'red');
-    svgCursor.SetColor(CursorPart.RING_FILL, 'blue');
-    svgCursor.SetColor(CursorPart.CENTER_BORDER, 'green');
+    svgCursor.setColor(CursorPart.CENTER_FILL, 'red');
+    svgCursor.setColor(CursorPart.RING_FILL, 'blue');
+    svgCursor.setColor(CursorPart.CENTER_BORDER, 'green');
     expect(cursorDot?.getAttribute('fill')).toBe('red');
     expect(cursorDot?.getAttribute('stroke')).toBe('green');
     expect(cursorRing?.getAttribute('stroke')).toBe('blue');
@@ -30,9 +30,9 @@ describe('SVG Cursor', () => {
         // Set cursor to known state before each test
         mockTfInputAction();
         mockTfInputAction({ InputType: InputType.UP });
-        svgCursor.EnableCursor();
-        svgCursor.ShowCursor();
-        svgCursor.ResetToDefaultColors();
+        svgCursor.enableCursor();
+        svgCursor.showCursor();
+        svgCursor.resetToDefaultColors();
     });
 
     test('Creates a cursor in the document body', () => {
@@ -76,7 +76,7 @@ describe('SVG Cursor', () => {
     });
 
     test('HideCursor should prevent the cursor from being displayed', () => {
-        svgCursor.HideCursor();
+        svgCursor.hideCursor();
         expect(cursor?.style.opacity).toBe('0');
         // Carry out TouchFree actions as these have an effect on the opacity of the cursor
         mockTfInputAction({ InputType: InputType.MOVE, CursorPosition: [100, 100] });
@@ -90,14 +90,14 @@ describe('SVG Cursor', () => {
     test('HideCursor should return the scale of the cursor dot to 1', () => {
         mockTfInputAction({ InputType: InputType.DOWN });
         expect(cursorDot?.style.transform).toBe('scale(0.5)');
-        svgCursor.HideCursor();
+        svgCursor.hideCursor();
         expect(cursorDot?.style.transform).toBe('scale(1)');
     });
 
     test('ShowCursor should make the cursor visible', () => {
-        svgCursor.HideCursor();
+        svgCursor.hideCursor();
         expect(cursor?.style.opacity).toBe('0');
-        svgCursor.ShowCursor();
+        svgCursor.showCursor();
         expect(cursor?.style.opacity).toBe('1');
         // Carry out TouchFree actions as these have an effect on the opacity of the cursor
         mockTfInputAction({ InputType: InputType.MOVE, CursorPosition: [100, 100] });
@@ -109,43 +109,43 @@ describe('SVG Cursor', () => {
     });
 
     test('DisableCursor should ensure the cursor cannot be visible', () => {
-        svgCursor.DisableCursor();
+        svgCursor.disableCursor();
         expect(cursor?.style.opacity).toBe('0');
-        svgCursor.ShowCursor();
+        svgCursor.showCursor();
         expect(cursor?.style.opacity).toBe('0');
     });
 
     test('EnableCursor allows cursor to be shown again', () => {
-        svgCursor.DisableCursor();
-        svgCursor.EnableCursor();
+        svgCursor.disableCursor();
+        svgCursor.enableCursor();
         expect(cursor?.style.opacity).toBe('1');
     });
 
     test('SetCursorOpacity sets the cursors opacity correctly', () => {
         for (let i = 0; i < 5; i++) {
             const randomNumber = Math.random();
-            svgCursor.SetCursorOpacity(randomNumber);
+            svgCursor.setCursorOpacity(randomNumber);
             expect(cursor?.style.opacity).toBe(randomNumber.toString());
         }
     });
 
     test('ShowCursor should set opacity to the same as before hands lost', () => {
-        svgCursor.SetCursorOpacity(0.4);
-        svgCursor.HideCursor();
+        svgCursor.setCursorOpacity(0.4);
+        svgCursor.hideCursor();
         expect(cursor?.style.opacity).toBe('0');
-        svgCursor.ShowCursor();
+        svgCursor.showCursor();
         expect(cursor?.style.opacity).toBe('0.4');
     });
 
     test('SetRingThicknessScale should set the correct ring thickness scale', () => {
         const thickness = Number(cursorRing?.getAttribute('stroke-width'));
-        svgCursor.SetRingThicknessScale(2);
+        svgCursor.setRingThicknessScale(2);
         expect(cursorRing?.getAttribute('stroke-width')).toBe((thickness * 2).toString());
 
-        svgCursor.SetRingThicknessScale(10);
+        svgCursor.setRingThicknessScale(10);
         expect(cursorRing?.getAttribute('stroke-width')).toBe((thickness * 10).toString());
 
-        svgCursor.SetRingThicknessScale(1);
+        svgCursor.setRingThicknessScale(1);
         expect(cursorRing?.getAttribute('stroke-width')).toBe(thickness.toString());
     });
 
@@ -153,15 +153,15 @@ describe('SVG Cursor', () => {
         const cursorSize = Number(cursorDot?.getAttribute('r'));
         const borderSize = Number(cursorDot?.getAttribute('stroke-width'));
 
-        svgCursor.SetCursorScale(2);
+        svgCursor.setCursorScale(2);
         expect(cursorDot?.getAttribute('r')).toBe((cursorSize * 2).toString());
         expect(cursorDot?.getAttribute('stroke-width')).toBe((borderSize * 2).toString());
 
-        svgCursor.SetCursorScale(7);
+        svgCursor.setCursorScale(7);
         expect(cursorDot?.getAttribute('r')).toBe((cursorSize * 7).toString());
         expect(cursorDot?.getAttribute('stroke-width')).toBe((borderSize * 7).toString());
 
-        svgCursor.SetCursorScale(1);
+        svgCursor.setCursorScale(1);
         expect(cursorDot?.getAttribute('r')).toBe(cursorSize.toString());
         expect(cursorDot?.getAttribute('stroke-width')).toBe(borderSize.toString());
     });
@@ -171,13 +171,13 @@ describe('SVG Cursor', () => {
         const borderSize = cursorDot?.getAttribute('stroke-width');
         const thickness = cursorRing?.getAttribute('stroke-width');
 
-        svgCursor.SetCursorScale(2);
-        svgCursor.SetRingThicknessScale(2);
+        svgCursor.setCursorScale(2);
+        svgCursor.setRingThicknessScale(2);
         expect(cursorDot?.getAttribute('r')).not.toBe(cursorSize);
         expect(cursorDot?.getAttribute('stroke-width')).not.toBe(borderSize);
         expect(cursorRing?.getAttribute('stroke-width')).not.toBe(thickness);
 
-        svgCursor.ResetToDefaultScale();
+        svgCursor.resetToDefaultScale();
         expect(cursorDot?.getAttribute('r')).toBe(cursorSize);
         expect(cursorDot?.getAttribute('stroke-width')).toBe(borderSize);
         expect(cursorRing?.getAttribute('stroke-width')).toBe(thickness);
@@ -187,17 +187,17 @@ describe('SVG Cursor', () => {
         checkDefaultCursorColors();
         expect(cursorDot?.getAttribute('stroke-width')).toBe('2');
 
-        svgCursor.SetColor(CursorPart.CENTER_FILL, 'red');
+        svgCursor.setColor(CursorPart.CENTER_FILL, 'red');
         expect(cursorDot?.getAttribute('fill')).toBe('red');
         expect(cursorDot?.getAttribute('stroke')).toBe(null);
         expect(cursorRing?.getAttribute('stroke')).toBe('white');
 
-        svgCursor.SetColor(CursorPart.RING_FILL, 'blue');
+        svgCursor.setColor(CursorPart.RING_FILL, 'blue');
         expect(cursorDot?.getAttribute('fill')).toBe('red');
         expect(cursorDot?.getAttribute('stroke')).toBe(null);
         expect(cursorRing?.getAttribute('stroke')).toBe('blue');
 
-        svgCursor.SetColor(CursorPart.CENTER_BORDER, 'green');
+        svgCursor.setColor(CursorPart.CENTER_BORDER, 'green');
         expect(cursorDot?.getAttribute('fill')).toBe('red');
         expect(cursorDot?.getAttribute('stroke')).toBe('green');
         expect(cursorRing?.getAttribute('stroke')).toBe('blue');
@@ -207,7 +207,7 @@ describe('SVG Cursor', () => {
         checkDefaultCursorColors();
         setNonDefaultCursorColors();
 
-        svgCursor.ResetToDefaultColors();
+        svgCursor.resetToDefaultColors();
         checkDefaultCursorColors();
     });
 
@@ -231,7 +231,7 @@ describe('SVG Cursor', () => {
             checkDefaultCursorColors(true);
             setNonDefaultCursorColors();
 
-            svgCursor.ResetToDefaultColors();
+            svgCursor.resetToDefaultColors();
             checkDefaultCursorColors(true);
         });
     });
@@ -239,10 +239,10 @@ describe('SVG Cursor', () => {
     test('SetCursorOptimise correctly sets the attribute correctly', () => {
         expect(cursor?.getAttribute('shape-rendering')).toBe(null);
 
-        svgCursor.SetCursorOptimise(true);
+        svgCursor.setCursorOptimise(true);
         expect(cursor?.getAttribute('shape-rendering')).toBe('optimizeSpeed');
 
-        svgCursor.SetCursorOptimise(false);
+        svgCursor.setCursorOptimise(false);
         expect(cursor?.getAttribute('shape-rendering')).toBe('auto');
     });
 });

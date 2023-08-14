@@ -10,55 +10,55 @@ export class TrackingManager {
     /**
      * Request a {@link TrackingStateResponse} representing the current state of the tracking software
      * @remarks
-     * Use {@link ConvertResponseToState} on the response to get TrackingState in a more helpful form
-     * @param _callback - Callback to call with {@link TrackingStateResponse}
+     * Use {@link convertResponseToState} on the response to get TrackingState in a more helpful form
+     * @param callback - Callback to call with {@link TrackingStateResponse}
      */
-    public static RequestTrackingState(_callback: (detail: TrackingStateResponse) => void) {
-        if (!_callback) {
+    public static requestTrackingState(callback?: (detail: TrackingStateResponse) => void) {
+        if (!callback) {
             console.error('Config file state request failed. This call requires a callback.');
             return;
         }
 
-        ConnectionManager.serviceConnection()?.RequestTrackingState(_callback);
+        ConnectionManager.serviceConnection()?.requestTrackingState(callback);
     }
 
     /**
      * Requests a modification to the tracking software's settings.
-     * @param _state - State to request. Options not provided within the object will not be modified.
-     * @param _callback - Optional callback if you require confirmation that settings were changed correctly.
+     * @param state - State to request. Options not provided within the object will not be modified.
+     * @param callback - Optional callback if you require confirmation that settings were changed correctly.
      */
-    public static RequestTrackingChange(
-        _state: Partial<TrackingState>,
-        _callback: ((detail: TrackingStateResponse) => void) | null = null
+    public static requestTrackingChange(
+        state: Partial<TrackingState>,
+        callback?: (detail: TrackingStateResponse) => void
     ): void {
-        ConnectionManager.serviceConnection()?.RequestTrackingChange(_state, _callback);
+        ConnectionManager.serviceConnection()?.requestTrackingChange(state, callback);
     }
 
     /**
      * Converts a {@link TrackingStateResponse} to a partial {@link TrackingState} to make the
      * response easier to consume.
-     * @param _response - Response to convert
+     * @param response - Response to convert
      * @returns Converted Partial {@link TrackingState}
      */
-    public static ConvertResponseToState(_response: TrackingStateResponse): Partial<TrackingState> {
-        const response: Partial<TrackingState> = {};
+    public static convertResponseToState(response: TrackingStateResponse): Partial<TrackingState> {
+        const newResponse: Partial<TrackingState> = {};
 
-        if (_response.mask !== undefined && _response.mask !== null) {
-            response.mask = _response.mask.content;
+        if (response.mask !== undefined && response.mask !== null) {
+            newResponse.mask = response.mask.content;
         }
 
-        if (_response.cameraReversed !== undefined && _response.cameraReversed !== null) {
-            response.cameraReversed = _response.cameraReversed.content;
+        if (response.cameraReversed !== undefined && response.cameraReversed !== null) {
+            newResponse.cameraReversed = response.cameraReversed.content;
         }
 
-        if (_response.allowImages !== undefined && _response.allowImages !== null) {
-            response.allowImages = _response.allowImages.content;
+        if (response.allowImages !== undefined && response.allowImages !== null) {
+            newResponse.allowImages = response.allowImages.content;
         }
 
-        if (_response.analyticsEnabled !== undefined && _response.analyticsEnabled !== null) {
-            response.analyticsEnabled = _response.analyticsEnabled.content;
+        if (response.analyticsEnabled !== undefined && response.analyticsEnabled !== null) {
+            newResponse.analyticsEnabled = response.analyticsEnabled.content;
         }
 
-        return response;
+        return newResponse;
     }
 }

@@ -4,22 +4,22 @@ import { TouchFreeInputAction } from '../TouchFreeToolingTypes';
  * Base class for input action plugins
  * @remarks
  * The `InputActionManager` runs each plugin upon receiving a message
- * from the service before dispatching an InputAction event.
- * Input action plugins invoke a `"InputActionOutput"` event on themselves
+ * from the service before dispatching an inputAction event.
+ * Input action plugins invoke a `"inputActionOutput"` event on themselves
  * for subscribers to listen to if the results of a specific plugin is required.
  * @public
  */
 export abstract class InputActionPlugin extends EventTarget {
     /**
-     * Run this plugin, modifying the `InputAction` and dispatching an `"InputActionOutput"` event from this plugin
-     * @param _inputAction - Input action input
+     * Run this plugin, modifying the `inputAction` and dispatching an `"inputActionOutput"` event from this plugin
+     * @param inputAction - Input action input
      * @returns Modified input action
      */
-    RunPlugin(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
-        const modifiedInputAction = this.ModifyInputAction(_inputAction);
+    runPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+        const modifiedInputAction = this.modifyInputAction(inputAction);
 
         if (modifiedInputAction != null) {
-            this.TransmitInputAction(modifiedInputAction);
+            this.transmitInputAction(modifiedInputAction);
         }
 
         return modifiedInputAction;
@@ -27,24 +27,21 @@ export abstract class InputActionPlugin extends EventTarget {
 
     /**
      * Proxy function for derived classes to modify input actions before they are dispatched.
-     * 
+     *
      * @internal
      */
-    ModifyInputAction(_inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
-        return _inputAction;
+    modifyInputAction(inputAction: TouchFreeInputAction): TouchFreeInputAction | null {
+        return inputAction;
     }
 
     /**
-     * For derived classes to invoke the `InputActionOutput` event.
-     * @param _inputAction - InputAction state to dispatch event with
-     * 
+     * For derived classes to invoke the `inputActionOutput` event.
+     * @param inputAction - inputAction state to dispatch event with
+     *
      * @internal
      */
-    TransmitInputAction(_inputAction: TouchFreeInputAction): void {
-        const InputActionEvent: CustomEvent<TouchFreeInputAction> = new CustomEvent<TouchFreeInputAction>(
-            'InputActionOutput',
-            { detail: _inputAction }
-        );
-        this.dispatchEvent(InputActionEvent);
+    transmitInputAction(inputAction: TouchFreeInputAction): void {
+        const inputActionEvent = new CustomEvent<TouchFreeInputAction>('inputActionOutput', { detail: inputAction });
+        this.dispatchEvent(inputActionEvent);
     }
 }
