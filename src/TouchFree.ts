@@ -67,25 +67,31 @@ const Init = (tfInitParams?: TfInitParams): void => {
     }
 };
 
-const analyticEvents: { [key in AnalyticEventKey]?: () => void } = {};
-// Function: GetRegisteredAnalyticEvents
-// Returns a list of registered analytic event keys
+const analyticEvents: { [key in AnalyticEventKey]?: (e: Event) => void } = {};
+
+/** Returns the list of registered analytic event keys */
 const GetRegisteredAnalyticEventKeys = (): string[] => Object.keys(analyticEvents);
 
 let sessionEvents: AnalyticSessionEvents = {};
-// Function: GetRegisteredAnalyticEvents
-// Returns a copy of an indexed object detailing how many times each analytics event has been trigger
+
+/** Returns a copy of an indexed object detailing how many times each analytics event has been triggered */
 const GetAnalyticSessionEvents = (): AnalyticSessionEvents => Object.assign({}, sessionEvents);
 
-const defaultAnalyticEvents: AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
+const defaultAnalyticEvents: readonly AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
 
-// Function: RegisterAnalyticEvents
-// Registers a given list of event for the TouchFree service to record.
-// If no list of events is provided then the default set of events will be recorded.
-const RegisterAnalyticEvents = (eventsIn: AnalyticEventKey[] = defaultAnalyticEvents) => {
+const isTFPointerEvent = (e: Event): boolean => 'pointerType' in e && e.pointerType === 'pen' && !e.isTrusted;
+
+/**
+ * Registers a given list of event for the TouchFree service to record.
+ * @param eventsIn Events to register. If none are provided then default set of events will be recorded.
+ *
+ * @public
+ */
+const RegisterAnalyticEvents = (eventsIn: readonly AnalyticEventKey[] = defaultAnalyticEvents) => {
     eventsIn.forEach((evt) => {
         if (analyticEvents[evt]) return;
-        const onEvent = () => {
+        const onEvent = (e: Event) => {
+            if (isTFPointerEvent(e)) return;
             const eventCount = sessionEvents[evt];
             sessionEvents[evt] = eventCount === undefined ? 1 : eventCount + 1;
         };
@@ -94,9 +100,12 @@ const RegisterAnalyticEvents = (eventsIn: AnalyticEventKey[] = defaultAnalyticEv
     });
 };
 
-// Function: UnregisterAnalyticEvents
-// Unregister any registered analytic events.
-// If no list of events is provided then all registered analytic events will be unregistered.
+/**
+ * Unregisters a given list of event for the TouchFree service to record.
+ * @param eventsIn Events to unregister. If none are provided then all events will be unregistered.
+ *
+ * @public
+ */
 const UnregisterAnalyticEvents = (eventsIn?: AnalyticEventKey[]) => {
     const events: AnalyticEventKey[] = eventsIn ?? (Object.keys(analyticEvents) as AnalyticEventKey[]);
 
@@ -121,8 +130,15 @@ let analyticsHeartbeat: number;
 
 type WebSocketCallback = (detail: WebSocketResponse) => void;
 
-// Function: ControlAnalyticsSession
-// Used to start or stop an analytics session.
+/**
+ * Used to start or stop an analytics session
+ *
+ * @param requestType START or STOP session. See {@link AnalyticsSessionRequestType}
+ * @param application Name of application
+ * @param callback Optional callback to handle Service's response
+ *
+ * @internal
+ */
 const ControlAnalyticsSession = (
     requestType: AnalyticsSessionRequestType,
     application: string,
@@ -168,23 +184,35 @@ const ControlAnalyticsSession = (
     }
 };
 
+/** Options to use with {@link StopAnalyticsSession} */
 interface StopAnalyticsSessionOptions {
     callback?: WebSocketCallback;
 }
 
-// Function StopAnalyticsSession
-// Used to stop an analytics session with an optional callback
+/**
+ * Used to stop an analytics session with an optional callback
+ * @param applicationName Name of application
+ * @param options See {@link StopAnalyticsSessionOptions}
+ *
+ * @public
+ */
 const StopAnalyticsSession = (applicationName: string, options?: StopAnalyticsSessionOptions) => {
     ControlAnalyticsSession('STOP', applicationName, options?.callback);
 };
 
+/** Options to use with {@link StartAnalyticsSession} */
 interface StartAnalyticsSessionOptions {
     callback?: WebSocketCallback;
     stopCurrentSession?: boolean;
 }
 
-// Function StartAnalyticsSession
-// Used to start an analytics session with an optional callback and flag to stop the currently running session
+/**
+ * Used to stop an analytics session with an optional callback
+ * @param applicationName Name of application
+ * @param options See {@link StartAnalyticsSessionOptions}
+ *
+ * @public
+ */
 const StartAnalyticsSession = (applicationName: string, options?: StartAnalyticsSessionOptions) => {
     if (options?.stopCurrentSession && CurrentSessionId) {
         ControlAnalyticsSession('STOP', applicationName, (detail) => {
