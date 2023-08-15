@@ -37,9 +37,15 @@ export class TouchFreeInputAction {
     Chirality: HandChirality;
     /** Type of input. See {@link InputType} */
     InputType: InputType;
-    /** Position of cursor in [x,y] */
+    /**
+     * Position of cursor in [x,y].
+     * Given in Pixels.
+     */
     CursorPosition: Array<number>;
-    /** Distance the hand is from screen in M */
+    /**
+     * Distance the hand is from screen
+     * Measured in Metres.
+     */
     DistanceFromScreen: number;
     /** How close the action is to triggering a click between 0 (no click) and 1 (click) */
     ProgressToClick: number;
@@ -302,15 +308,21 @@ export type TouchFreeEvent = Extract<keyof TouchFreeEventSignatures, string>;
  * @internal
  */
 export class WebsocketInputAction {
-    /** Timestamp */
+    /** Timestamp of action */
     Timestamp: number;
     /** InteractionFlags */
     InteractionFlags: BitmaskFlags;
-    /** CursorPosition */
+    /**
+     * Position of cursor.
+     * Given in Pixels.
+     */
     CursorPosition: Vector2;
-    /** DistanceFromScreen */
+    /**
+     * Distance the hand is from screen
+     * Measured in Metres.
+     */
     DistanceFromScreen: number;
-    /** ProgressToClick between 0 and 1 */
+    /** How close the action is to triggering a click between 0 (no click) and 1 (click) */
     ProgressToClick: number;
 
     constructor(
