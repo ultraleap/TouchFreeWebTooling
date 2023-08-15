@@ -313,7 +313,7 @@ export class WebsocketInputAction {
     /** InteractionFlags */
     InteractionFlags: BitmaskFlags;
     /**
-     * Position of cursor in [x,y].
+     * Position of cursor.
      * Given in Pixels.
      */
     CursorPosition: Vector2;
