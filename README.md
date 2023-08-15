@@ -1,14 +1,17 @@
 <!--links-->
+
 [discord]: https://discord.com/invite/3VCndThqxS 'Discord Server'
 [touchfree]: https://developer.leapmotion.com/touchfree 'TouchFree Download'
 [web]: https://developer.leapmotion.com/touchfree-tooling-for-web 'TouchFree Web Tooling'
 [unity]: https://developer.leapmotion.com/touchfree-tooling-unity 'TouchFree Unity Tooling'
 [download]: https://developer.leapmotion.com/touchfree-tooling-for-web 'Ultraleap TouchFree Web Tooling Bundle Download'
+[install]: https://www.npmjs.com/package/touchfree 'Ultraleap TouchFree Web Tooling'
 [documentation]: https://docs.ultraleap.com/touchfree-user-manual/tooling-for-web.html 'Ultraleap TouchFree Web Tooling Documentation'
 [setup]: https://docs.ultraleap.com/touchfree-user-manual/tooling-for-web.html#setup 'Ultraleap TouchFree Web Tooling Setup Documentation'
 [examples]: https://github.com/ultraleap/TouchFree-Tooling-Examples/tree/develop/Examples-Web 'Ultraleap TouchFree Tooling Web Examples'
 
 <!--content-->
+
 # Ultraleap TouchFree Web Tooling
 
 [![touchfree](https://img.shields.io/badge/TouchFree-00cf75)][touchfree]
@@ -24,7 +27,15 @@ TouchFree Web Tooling empowers developers to build touchless Web applications us
 
 ## Getting Started
 
-Download the [TouchFree Web Tooling Bundle][download] and follow the [setup steps here][setup] to include TouchFree Web Tooling in your project.
+Install from [NPM][install]:
+
+```
+npm i touchfree
+```
+
+Follow the [setup steps here][setup] to get started with TouchFree Web Tooling.
+
+> NPM is the recommended way to consume this package. However, if you can't use NPM, we also offer a JavaScript bundle which can be found [here][download].
 
 ## Examples
 
