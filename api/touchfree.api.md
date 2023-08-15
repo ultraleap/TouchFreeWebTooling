@@ -133,11 +133,11 @@ export { Configuration }
 
 // @public
 class ConfigurationManager {
-    static requestConfigChange(interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null, callback: (detail: WebSocketResponse) => void): void;
-    static requestConfigFileChange(interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null, callback: (detail: WebSocketResponse) => void | null): void;
-    static requestConfigFileState(callback: (detail: ConfigState) => void): void;
-    static requestConfigState(callback: (detail: ConfigState) => void): void;
-    static resetInteractionConfigFileToDefault(callback: (newState: ConfigState) => void): void;
+    static requestConfigChange(interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null, callback?: (detail: WebSocketResponse) => void): void;
+    static requestConfigFileChange(interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null, callback?: (detail: WebSocketResponse) => void): void;
+    static requestConfigFileState(callback?: (detail: ConfigState) => void): void;
+    static requestConfigState(callback?: (detail: ConfigState) => void): void;
+    static resetInteractionConfigFileToDefault(callback?: (newState: ConfigState) => void): void;
 }
 
 // @public
@@ -210,7 +210,7 @@ class ConnectionManager extends EventTarget {
     // @internal
     static messageReceiver: MessageReceiver;
     static port: string;
-    static requestServiceStatus(callback: (detail: ServiceStatus) => void): void;
+    static requestServiceStatus(callback?: (detail: ServiceStatus) => void): void;
     // @internal
     static serviceConnection(): ServiceConnection | null;
     // Warning: (ae-forgotten-export) The symbol "Address" needs to be exported by the entry point index.d.ts
@@ -286,8 +286,8 @@ export class FlagUtilities {
 
 // Warning: (ae-incompatible-release-tags) The symbol "getAnalyticSessionEvents" is marked as @public, but its signature references "AnalyticSessionEvents" which is marked as @internal
 //
-// @public (undocumented)
-export function getAnalyticSessionEvents(): AnalyticSessionEvents;
+// @public
+export const getAnalyticSessionEvents: () => AnalyticSessionEvents;
 
 // @public (undocumented)
 export const getCurrentCursor: () => TouchlessCursor | undefined;
@@ -295,7 +295,7 @@ export const getCurrentCursor: () => TouchlessCursor | undefined;
 // @public (undocumented)
 export const getInputController: () => WebInputController | undefined;
 
-// @public (undocumented)
+// @public
 export function getRegisteredAnalyticEventKeys(): string[];
 
 // @public
@@ -539,8 +539,8 @@ export class RawHand {
 
 // Warning: (ae-incompatible-release-tags) The symbol "registerAnalyticEvents" is marked as @public, but its signature references "AnalyticEventKey" which is marked as @internal
 //
-// @public (undocumented)
-export function registerAnalyticEvents(eventsIn?: AnalyticEventKey[]): void;
+// @public
+export function registerAnalyticEvents(eventsIn?: readonly AnalyticEventKey[]): void;
 
 // @public
 export function registerEventCallback<TEvent extends TouchFreeEvent>(event: TEvent, callback: TouchFreeEventSignatures[TEvent]): EventHandle;
@@ -560,14 +560,14 @@ class ServiceConnection {
     disconnect: () => void;
     get handshakeComplete(): boolean;
     onMessage: (message: MessageEvent) => void;
-    quickSetupRequest: (atTopTarget: boolean, callback: (detail: WebSocketResponse) => void, configurationCallback: (detail: ConfigState) => void) => void;
-    requestConfigFile: (callback: (detail: ConfigState) => void) => void;
-    requestConfigState: (callback: (detail: ConfigState) => void) => void;
-    requestServiceStatus: (callback: (detail: ServiceStatus) => void) => void;
-    requestTrackingChange: (state: Partial<TrackingState>, callback: ((detail: TrackingStateResponse) => void) | null) => void;
-    requestTrackingState: (callback: (detail: TrackingStateResponse) => void) => void;
-    resetInteractionConfigFile: (callback: (defaultConfig: ConfigState) => void) => void;
-    sendMessage: <T extends WebSocketResponse>(message: string, requestID: string, callback: ((detail: WebSocketResponse | T) => void) | null) => void;
+    quickSetupRequest: (atTopTarget: boolean, callback?: ((detail: WebSocketResponse) => void) | undefined, configurationCallback?: ((detail: ConfigState) => void) | undefined) => void;
+    requestConfigFile: (callback?: ((detail: ConfigState) => void) | undefined) => void;
+    requestConfigState: (callback?: ((detail: ConfigState) => void) | undefined) => void;
+    requestServiceStatus: (callback?: ((detail: ServiceStatus) => void) | undefined) => void;
+    requestTrackingChange: (state: Partial<TrackingState>, callback?: ((detail: TrackingStateResponse) => void) | undefined) => void;
+    requestTrackingState: (callback?: ((detail: TrackingStateResponse) => void) | undefined) => void;
+    resetInteractionConfigFile: (callback?: ((defaultConfig: ConfigState) => void) | undefined) => void;
+    sendMessage: <T extends WebSocketResponse>(message: string, requestID: string, callback?: ((detail: T | WebSocketResponse) => void) | undefined) => void;
     get touchFreeVersion(): string;
     updateAnalyticSessionEvents: (sessionID: string, callback?: ((detail: WebSocketResponse) => void) | undefined) => void;
     webSocket: WebSocket;
@@ -601,10 +601,10 @@ class SimpleRequest {
     requestID: string;
 }
 
-// @public (undocumented)
+// @public
 export function startAnalyticsSession(applicationName: string, options?: StartAnalyticsSessionOptions): void;
 
-// @public (undocumented)
+// @public
 export interface StartAnalyticsSessionOptions {
     // Warning: (ae-forgotten-export) The symbol "WebSocketCallback" needs to be exported by the entry point index.d.ts
     //
@@ -614,10 +614,10 @@ export interface StartAnalyticsSessionOptions {
     stopCurrentSession?: boolean;
 }
 
-// @public (undocumented)
+// @public
 export function stopAnalyticsSession(applicationName: string, options?: StopAnalyticsSessionOptions): void;
 
-// @public (undocumented)
+// @public
 export interface StopAnalyticsSessionOptions {
     // (undocumented)
     callback?: WebSocketCallback;
@@ -744,8 +744,8 @@ export { Tracking }
 // @public
 class TrackingManager {
     static convertResponseToState(response: TrackingStateResponse): Partial<TrackingState>;
-    static requestTrackingChange(state: Partial<TrackingState>, callback?: ((detail: TrackingStateResponse) => void) | null): void;
-    static requestTrackingState(callback: (detail: TrackingStateResponse) => void): void;
+    static requestTrackingChange(state: Partial<TrackingState>, callback?: (detail: TrackingStateResponse) => void): void;
+    static requestTrackingState(callback?: (detail: TrackingStateResponse) => void): void;
 }
 
 // @public
@@ -792,7 +792,7 @@ interface TrackingStateResponse {
 
 // Warning: (ae-incompatible-release-tags) The symbol "unregisterAnalyticEvents" is marked as @public, but its signature references "AnalyticEventKey" which is marked as @internal
 //
-// @public (undocumented)
+// @public
 export function unregisterAnalyticEvents(eventsIn?: AnalyticEventKey[]): void;
 
 // @internal

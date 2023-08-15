@@ -38,16 +38,23 @@ export interface InteractionConfig {
      * All interactions use a small deadzone to stabilise the position of the cursor, to prevent
      * small user movements from making the cursor shake in place. This setting controls the
      * radius of that deadzone.
+     * Measured in Metres.
      */
     DeadzoneRadius: number;
 
     /** Changes whether the Interaction Zone values will be used */
     InteractionZoneEnabled: boolean;
 
-    /** The minimum distance from the screen that users can interact within */
+    /**
+     * The minimum distance from the screen that users can interact within.
+     * Measured in Centimetres.
+     */
     InteractionMinDistanceCm: number;
 
-    /** The maximum distance from the screen that users can interact within */
+    /**
+     * The maximum distance from the screen that users can interact within.
+     * Measured in Centimetres.
+     */
     InteractionMaxDistanceCm: number;
 
     /** This represents the type of interaction currently selected */
@@ -95,16 +102,23 @@ export interface InteractionConfigFull {
      * All interactions use a small deadzone to stabilise the position of the cursor, to prevent
      * small user movements from making the cursor shake in place. This setting controls the
      * radius of that deadzone.
+     * Measured in Metres.
      */
     DeadzoneRadius: number;
 
     /** Changes whether the Interaction Zone values will be used */
     InteractionZoneEnabled: boolean;
 
-    /** The minimum distance from the screen that users can interact within */
+    /**
+     * The minimum distance from the screen that users can interact within.
+     * Measured in Centimetres.
+     */
     InteractionMinDistanceCm: number;
 
-    /** The maximum distance from the screen that users can interact within */
+    /**
+     * The maximum distance from the screen that users can interact within.
+     * Measured in Centimetres.
+     */
     InteractionMaxDistanceCm: number;
 
     /** This represents the type of interaction currently selected */
@@ -136,16 +150,18 @@ export interface InteractionConfigFull {
  */
 export interface HoverAndHoldInteractionSettings {
     /**
-     * This determines how long (in seconds) the user must hold their hand in place before the
+     * This determines how long the user must hold their hand in place before the
      * interaction will begin. If the hand remains in place until the interaction completes,
      * a click event will be sent.
+     * Measured in Seconds.
      */
     HoverStartTimeS: number;
 
     /**
-     * This determines how long (in seconds) the user must hold their hand in place after the
+     * This determines how long the user must hold their hand in place after the
      * interaction has begun before the interaction will complete, and a click event will be
      * sent.
+     * Measured in Seconds.
      */
     HoverCompleteTimeS: number;
 }
@@ -165,8 +181,9 @@ export interface HoverAndHoldInteractionSettings {
  */
 export interface TouchPlaneInteractionSettings {
     /**
-     * This determines how far (in cm) the TouchPlane is from the screen surface. This
+     * This determines how far the TouchPlane is from the screen surface. This
      * represents the plane that the user must pass to begin and end a click event.
+     * Measured in Centimetres.
      */
     TouchPlaneActivationDistanceCm: number;
 
@@ -191,26 +208,51 @@ export interface TouchPlaneInteractionSettings {
  * @internal
  */
 export interface VelocitySwipeSettings {
-    /** Minimum horizontal scroll velocity (mmps) to trigger a swipe */
+    /**
+     * Minimum horizontal scroll velocity to trigger a swipe.
+     * Measured in Millimetres per Second.
+     */
     MinScrollVelocity_mmps: number;
-    /** The amount the minimum velocity is decreased when moving in an upwards direction */
+    /**
+     * The amount the minimum velocity is decreased when moving in an upwards direction.
+     * Measured in Millimetres per Second.
+     */
     UpwardsMinVelocityDecrease_mmps: number;
-    /** The amount the minimum velocity is increased when moving in a downwards direction */
+    /**
+     * The amount the minimum velocity is increased when moving in a downwards direction
+     * Measured in Millimetres per Second.
+     */
     DownwardsMinVelocityIncrease_mmps: number;
-    /** The maximum velocity for releasing a swipe */
+    /**
+     * The maximum velocity for releasing a swipe.
+     * Measured in Millimetres per Second.
+     */
     MaxReleaseVelocity_mmps: number;
-    /** The maximum allowed velocity perpendicular to the swipe direction during swipe triggering */
+    /**
+     * The maximum allowed velocity perpendicular to the swipe direction during swipe triggering.
+     * Measured in Millimetres per Second.
+     */
     MaxLateralVelocity_mmps: number;
     /**
      * If a user is over this velocity in the direction opposite to the previous swipe when the scroll delay
-     * expires then they are required to go below this velocity before they are able to swipe again
+     * expires then they are required to go below this velocity before they are able to swipe again.
+     * Measured in Millimetres per Second.
      */
     MaxOpposingVelocity_mmps: number;
-    /** The minimum amount of time before the user can swipe again */
+    /**
+     * The minimum amount of time before the user can swipe again.
+     * Measured in Milliseconds.
+     */
     ScrollDelayMs: number;
-    /** Minimum distance to trigger a swipe */
+    /**
+     * Minimum distance to trigger a swipe
+     * Measured in Millimetres.
+     */
     MinSwipeLength: number;
-    /** Travelling perpendicular to the swipe further than this will cancel the swipe. See {@link SwipeWidthScaling} */
+    /**
+     * Travelling perpendicular to the swipe further than this will cancel the swipe. See {@link SwipeWidthScaling}.
+     * Measured in Millimetres.
+     */
     MaxSwipeWidth: number;
     /** Increases the MaxSwipeWidth by `distance travelled * this value` to allow greater tolerance */
     SwipeWidthScaling: number;
@@ -239,12 +281,14 @@ export interface PhysicalConfig {
     /**
      * The height of the screen in meters. This is needed in order to determine the relationship
      * between hand location in the real world and pixel locations on screen.
+     * Measured in Metres.
      */
     ScreenHeightM: number;
 
     /**
      * The position (in meters) in 3d space of the camera relative to the
      * center of the bottom edge of the screen.
+     * Measured in Metres.
      *
      * @remarks
      * This uses a left handed coordinate system where:
@@ -255,22 +299,26 @@ export interface PhysicalConfig {
     LeapPositionRelativeToScreenBottomM: Vector;
 
     /**
-     * The rotation (in degrees) of the camera relative to world space
+     * The rotation of the camera relative to world space.
+     * Measured in Degrees.
      */
     LeapRotationD: Vector;
 
     /**
-     * The rotation (in degrees) of the physical screen relative to world space
+     * The rotation of the physical screen relative to world space.
+     * Measured in Degrees.
      */
     ScreenRotationD: number;
 
     /**
-     * The width (in pixels) of the screen
+     * The width (in pixels) of the screen.
+     * Measured in Pixels.
      */
     ScreenWidthPX: number;
 
     /**
-     * The height (in pixels) of the screen
+     * The height (in pixels) of the screen.
+     * Measured in Pixels.
      */
     ScreenHeightPX: number;
 }
