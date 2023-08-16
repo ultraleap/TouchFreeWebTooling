@@ -133,7 +133,8 @@ package:
 #   stage: deploy
 #   when: manual
 #   tags:
-#     - docker
+#     - docker-windows
+#   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
 #   only:
 #     - release
 #   script:
@@ -145,8 +146,8 @@ npm::pack:
     - docker-windows
   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
   when: always
-  # only:
-  #   - release
+  only:
+    - release
   script:
     - npm pack
   artifacts:
