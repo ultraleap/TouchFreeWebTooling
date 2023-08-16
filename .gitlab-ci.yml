@@ -146,8 +146,8 @@ npm::pack:
     - docker-windows
   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
   when: always
-  only:
-    - release
+  # only:
+  #   - release
   script:
     - npm pack
   artifacts:
