@@ -129,16 +129,16 @@ package:
   tags:
     - docker
 
-# npm::publish:
-#   stage: deploy
-#   when: manual
-#   tags:
-#     - docker-windows
-#   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
-#   only:
-#     - release
-#   script:
-#     - npm publish
+npm::publish:
+  stage: deploy
+  when: manual
+  tags:
+    - docker-windows
+  image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
+  only:
+    - release
+  script:
+    - npm publish
 
 npm::pack:
   stage: build
