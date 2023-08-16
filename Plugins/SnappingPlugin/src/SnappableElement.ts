@@ -4,44 +4,44 @@ import { Vector2 } from './Vector2';
 export class SnappableElement {
     public element: Element;
     public distance: number;
-    public closest_point: Vector2;
+    public closestPoint: Vector2;
     public center: Vector2;
-    public center_distance: number;
+    public centerDistance: number;
     public hovered: boolean;
 
     constructor(
         element: Element,
         distance: number,
-        closest_point: Vector2,
+        closestPoint: Vector2,
         center: Vector2,
-        center_distance: number,
+        centerDistance: number,
         hovered: boolean
     ) {
         this.element = element;
         this.distance = distance;
-        this.closest_point = closest_point;
+        this.closestPoint = closestPoint;
         this.center = center;
-        this.center_distance = center_distance;
+        this.centerDistance = centerDistance;
         this.hovered = hovered;
     }
 
-    public static Compute(element: Element, distant_point: Vector2): SnappableElement {
+    public static compute(element: Element, distantPoint: Vector2): SnappableElement {
         const rect: DOMRect = element.getBoundingClientRect();
         const center: Vector2 = new Vector2(rect.x + rect.width / 2, rect.y + rect.height / 2);
-        const center_distance: number = Math.sqrt(
-            Math.pow(distant_point.x - center.x, 2) + Math.pow(distant_point.y - center.y, 2)
+        const centerDistance: number = Math.sqrt(
+            Math.pow(distantPoint.x - center.x, 2) + Math.pow(distantPoint.y - center.y, 2)
         );
 
-        const closest_point: Vector2 = Ray.Cast(distant_point, center, element);
+        const closestPoint: Vector2 = Ray.cast(distantPoint, center, element);
         let distance: number = Math.sqrt(
-            Math.pow(distant_point.x - closest_point.x, 2) + Math.pow(distant_point.y - closest_point.y, 2)
+            Math.pow(distantPoint.x - closestPoint.x, 2) + Math.pow(distantPoint.y - closestPoint.y, 2)
         );
 
-        const hovered: boolean = Ray.Hit(distant_point, element.getBoundingClientRect());
+        const hovered: boolean = Ray.hit(distantPoint, element.getBoundingClientRect());
         if (hovered) {
             distance = -distance;
         }
 
-        return new SnappableElement(element, distance, closest_point, center, center_distance, hovered);
+        return new SnappableElement(element, distance, closestPoint, center, centerDistance, hovered);
     }
 }

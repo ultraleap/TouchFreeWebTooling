@@ -1,10 +1,10 @@
 import { Vector2 } from './Vector2';
 
 export class Ray {
-    public static Cast(start: Vector2, end: Vector2, element: Element): Vector2 {
+    public static cast(start: Vector2, end: Vector2, element: Element): Vector2 {
         const pos: Vector2 = new Vector2(start.x, start.y);
 
-        let hasSnap: boolean = Ray.Hit(pos, element.getBoundingClientRect());
+        let hasSnap: boolean = Ray.hit(pos, element.getBoundingClientRect());
         let hadSnap: boolean = hasSnap;
 
         // Store the current segment
@@ -56,7 +56,7 @@ export class Ray {
         pos.y = pos.y + vector.y / 2;
 
         while (distance > 1) {
-            hasSnap = Ray.Hit(pos, element.getBoundingClientRect());
+            hasSnap = Ray.hit(pos, element.getBoundingClientRect());
 
             // If we changed state, we reverse the direction
             if ((hasSnap && !hadSnap) || (!hasSnap && hadSnap)) {
@@ -85,7 +85,7 @@ export class Ray {
         return pos;
     }
 
-    public static Hit(position: Vector2, rect: DOMRect): boolean {
+    public static hit(position: Vector2, rect: DOMRect): boolean {
         // Is position inside the rect?
         return position.x < rect.right && position.x > rect.left && position.y < rect.bottom && position.y > rect.top;
     }

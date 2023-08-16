@@ -20,34 +20,34 @@ export class ConfigurationManager {
      * @remarks
      * WARNING! If a user changes ANY values via the TouchFree Service Settings UI,
      * all values set from the Tooling via this function will be discarded.
-     * @param _interaction - Optional interaction config modifications to send
-     * @param _physical - Optional physical config modifications to send
-     * @param _callback - Optional callback confirming a response from the service
+     * @param interaction - Optional interaction config modifications to send
+     * @param physical - Optional physical config modifications to send
+     * @param callback - Optional callback confirming a response from the service
      */
-    public static RequestConfigChange(
-        _interaction: Partial<InteractionConfig> | null,
-        _physical: Partial<PhysicalConfig> | null,
-        _callback: (detail: WebSocketResponse) => void
+    public static requestConfigChange(
+        interaction: Partial<InteractionConfig> | null,
+        physical: Partial<PhysicalConfig> | null,
+        callback?: (detail: WebSocketResponse) => void
     ): void {
-        ConfigurationManager.BaseConfigChangeRequest(
-            _interaction,
-            _physical,
-            _callback,
-            ActionCode.SET_CONFIGURATION_STATE
+        ConfigurationManager.baseConfigChangeRequest(
+            interaction,
+            physical,
+            ActionCode.SET_CONFIGURATION_STATE,
+            callback
         );
     }
 
     /**
      * Request active configuration state of the TouchFree Service
-     * @param _callback - Callback with the requested {@link ConfigState}
+     * @param callback - Callback with the requested {@link ConfigState}
      */
-    public static RequestConfigState(_callback: (detail: ConfigState) => void): void {
-        if (_callback === null) {
+    public static requestConfigState(callback?: (detail: ConfigState) => void): void {
+        if (!callback) {
             console.error('Config state request failed. This call requires a callback.');
             return;
         }
 
-        ConnectionManager.serviceConnection()?.RequestConfigState(_callback);
+        ConnectionManager.serviceConnection()?.requestConfigState(callback);
     }
 
     /**
@@ -58,20 +58,20 @@ export class ConfigurationManager {
      * by *any* connected client will be lost when changing these files.
      * The change will be applied **to the current config files directly**,
      * disregarding current active config state.
-     * @param _interaction - Optional interaction config modifications to send
-     * @param _physical - Optional physical config modifications to send
-     * @param _callback - Optional callback confirming a response from the service
+     * @param interaction - Optional interaction config modifications to send
+     * @param physical - Optional physical config modifications to send
+     * @param callback - Optional callback confirming a response from the service
      */
-    public static RequestConfigFileChange(
-        _interaction: Partial<InteractionConfig> | null,
-        _physical: Partial<PhysicalConfig> | null,
-        _callback: (detail: WebSocketResponse) => void | null
+    public static requestConfigFileChange(
+        interaction: Partial<InteractionConfig> | null,
+        physical: Partial<PhysicalConfig> | null,
+        callback?: (detail: WebSocketResponse) => void
     ): void {
-        ConfigurationManager.BaseConfigChangeRequest(
-            _interaction,
-            _physical,
-            _callback,
-            ActionCode.SET_CONFIGURATION_FILE
+        ConfigurationManager.baseConfigChangeRequest(
+            interaction,
+            physical,
+            ActionCode.SET_CONFIGURATION_FILE,
+            callback
         );
     }
 
@@ -83,38 +83,38 @@ export class ConfigurationManager {
      * by *any* connected client will be lost when changing these files.
      * The change will be applied **to the current config files directly**,
      * disregarding current active config state.
-     * @param _callback - callback containing the new {@link ConfigState}
+     * @param callback - callback containing the new {@link ConfigState}
      */
-    public static ResetInteractionConfigFileToDefault(_callback: (newState: ConfigState) => void): void {
-        ConnectionManager.serviceConnection()?.ResetInteractionConfigFile(_callback);
+    public static resetInteractionConfigFileToDefault(callback?: (newState: ConfigState) => void): void {
+        ConnectionManager.serviceConnection()?.resetInteractionConfigFile(callback);
     }
 
-    private static BaseConfigChangeRequest(
-        _interaction: Partial<InteractionConfig> | null,
-        _physical: Partial<PhysicalConfig> | null,
-        _callback: (detail: WebSocketResponse) => void | null,
-        action: ActionCode
+    private static baseConfigChangeRequest(
+        interaction: Partial<InteractionConfig> | null,
+        physical: Partial<PhysicalConfig> | null,
+        action: ActionCode,
+        callback?: (detail: WebSocketResponse) => void
     ): void {
         const requestID = uuidgen();
 
-        const content = new PartialConfigState(requestID, _interaction, _physical);
+        const content = new PartialConfigState(requestID, interaction, physical);
         const request = new CommunicationWrapper(action, content);
 
         const jsonContent = JSON.stringify(request);
 
-        ConnectionManager.serviceConnection()?.SendMessage(jsonContent, requestID, _callback);
+        ConnectionManager.serviceConnection()?.sendMessage(jsonContent, requestID, callback);
     }
 
     /**
      * Request configuration state of the services config files.
-     * @param _callback - Callback with the requested {@link ConfigState}
+     * @param callback - Callback with the requested {@link ConfigState}
      */
-    public static RequestConfigFileState(_callback: (detail: ConfigState) => void): void {
-        if (_callback === null) {
+    public static requestConfigFileState(callback?: (detail: ConfigState) => void): void {
+        if (!callback) {
             console.error('Config file state request failed. This call requires a callback.');
             return;
         }
 
-        ConnectionManager.serviceConnection()?.RequestConfigFile(_callback);
+        ConnectionManager.serviceConnection()?.requestConfigFile(callback);
     }
 }

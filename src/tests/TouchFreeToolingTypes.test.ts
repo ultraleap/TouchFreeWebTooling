@@ -70,7 +70,7 @@ describe('BitmaskFlag', () => {
     const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation((msg: string) => errors.push(msg));
 
     it('should combine the same as before', () => {
-        expect(FlagUtilities.GetInteractionFlags).toVerifyAllCombinations(
+        expect(FlagUtilities.getInteractionFlags).toVerifyAllCombinations(
             interactionTypes,
             handTypes,
             handChiralities,
@@ -79,19 +79,19 @@ describe('BitmaskFlag', () => {
     });
 
     it('should deserialize hand chirality the same as before', () => {
-        expect(FlagUtilities.GetChiralityFromFlags).toVerifyAllCombinations(bitmaskFlagParams);
+        expect(FlagUtilities.getChiralityFromFlags).toVerifyAllCombinations(bitmaskFlagParams);
     });
 
     it('should deserialize hand type the same as before', () => {
-        expect(FlagUtilities.GetHandTypeFromFlags).toVerifyAllCombinations(bitmaskFlagParams);
+        expect(FlagUtilities.getHandTypeFromFlags).toVerifyAllCombinations(bitmaskFlagParams);
     });
 
     it('should deserialize input type the same as before', () => {
-        expect(FlagUtilities.GetInputTypeFromFlags).toVerifyAllCombinations(bitmaskFlagParams);
+        expect(FlagUtilities.getInputTypeFromFlags).toVerifyAllCombinations(bitmaskFlagParams);
     });
 
     it('should deserialize interaction type the same as before', () => {
-        expect(FlagUtilities.GetInteractionTypeFromFlags).toVerifyAllCombinations(bitmaskFlagParams);
+        expect(FlagUtilities.getInteractionTypeFromFlags).toVerifyAllCombinations(bitmaskFlagParams);
     });
 
     afterAll(() => {

@@ -1,20 +1,20 @@
-import TouchFree, { EventHandle } from '../TouchFree';
+import * as TouchFree from '../TouchFree';
 import { TouchFreeInputAction, InputType } from '../TouchFreeToolingTypes';
 
 /**
  * Converts {@link TouchFreeInputAction | TouchFreeInputActions} into inputs for specific environments.
  *
  * @remarks
- * This base class handles subscribing to the TouchFree `'TransmitInputAction'` event.
- * Override {@link HandleInputAction} in subclasses to implement specific behaviour.
+ * This base class handles subscribing to the TouchFree `'transmitInputAction'` event.
+ * Override {@link handleInputAction} in subclasses to implement specific behaviour.
  * @public
  */
 export abstract class BaseInputController {
-    private static Instantiated = false;
-    private HandleInputActionCallback: EventHandle | undefined;
+    private static instantiated = false;
+    private handleInputActionCallback: TouchFree.EventHandle | undefined;
 
     /**
-     * Subscribes to the TouchFree `'TransmitInputAction'` event, invoke {@link HandleInputAction}
+     * Subscribes to the TouchFree `'transmitInputAction'` event, invoke {@link handleInputAction}
      * with {@link TouchFreeInputAction | TouchFreeInputActions} as they are received.
      *
      * @remarks
@@ -22,11 +22,11 @@ export abstract class BaseInputController {
      * is a no-op - only one `InputController` can be initialized at one time.
      */
     constructor() {
-        if (!BaseInputController.Instantiated) {
-            BaseInputController.Instantiated = true;
-            this.HandleInputActionCallback = TouchFree.RegisterEventCallback(
-                'TransmitInputAction',
-                this.HandleInputAction.bind(this)
+        if (!BaseInputController.instantiated) {
+            BaseInputController.instantiated = true;
+            this.handleInputActionCallback = TouchFree.registerEventCallback(
+                'transmitInputAction',
+                this.handleInputAction.bind(this)
             );
         }
     }
@@ -34,10 +34,10 @@ export abstract class BaseInputController {
     /**
      * Override to implement {@link TouchFree.InputController} specific behaviour for
      * {@link TouchFreeInputAction  | TouchFreeInputActions}
-     * @param _inputData - The latest input action received from TouchFree Service.
+     * @param inputData - The latest input action received from TouchFree Service.
      */
-    protected HandleInputAction(_inputData: TouchFreeInputAction): void {
-        switch (_inputData.InputType) {
+    protected handleInputAction(inputData: TouchFreeInputAction): void {
+        switch (inputData.InputType) {
             case InputType.MOVE:
                 break;
 
@@ -60,7 +60,7 @@ export abstract class BaseInputController {
      * switching. Only one can be active at a time.
      */
     disconnect() {
-        this.HandleInputActionCallback?.UnregisterEventCallback();
-        BaseInputController.Instantiated = false;
+        this.handleInputActionCallback?.unregisterEventCallback();
+        BaseInputController.instantiated = false;
     }
 }

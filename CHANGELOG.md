@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `TouchFree.IsAnalyticsActive()` that allows users to determine if there is an active session.
 - Updated documentation to TSDocs and generate a markdown file detailing the public API
 
+### Changed
+
+- Updated syntax throughout the library to follow [Google's TS styleguide](https://google.github.io/styleguide/tsguide.html)
+
 ## [1.4.0] - 2023-04-06
 
 ### Added

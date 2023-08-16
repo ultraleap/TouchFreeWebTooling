@@ -22,64 +22,58 @@
     }
   },
   "plugins": ["@typescript-eslint", "spellcheck", "eslint-plugin-tsdoc"],
-  "ignorePatterns": ["/dist*", "/release", "build/*", "*_Example.html", "coverage/", "docs/*"],
+  "ignorePatterns": ["/dist*", "/release", "build/*", "*_Example.html", "coverage/"],
   "rules": {
     "indent": "off",
     "linebreak-style": "off",
     "quotes": ["error", "single", "avoid-escape"],
     "semi": ["error", "always"],
     "max-len": ["error", { "code": 120 }],
+    "tsdoc/syntax": "warn",
     "spellcheck/spell-checker": [
       1,
       {
         "lang": "en_GB",
         "skipWords": [
-          "touchfree",
-          "touchfreecursor",
-          "chiralities",
           "bitmask",
-          "umd",
-          "tsx",
-          "chirality",
-          "Ultraleap",
-          "enum",
-          "evt",
-          "plugin",
-          "plugins",
-          "pos",
-          "unregister",
-          "eod",
-          "dist",
-          "errored",
-          "svg",
-          "msg",
-          "guid",
-          "uuidgen",
-          "timeframe",
-          "func",
-          "deadzone",
-          "lerp",
-          "rect",
           "center",
-          "snapforce",
+          "cobertura",
+          "deadzone",
+          "dist",
+          "enum",
+          "eod",
+          "errored",
           "etc",
-          "Impl",
-          "Impls",
-          "ts",
+          "evt",
+          "func",
+          "guid",
           "jsDom",
-          "color",
-          "colors",
-          "colored",
+          "lerp",
           "mmps",
+          "msg",
           "nulled",
-          "vars",
-          "castedKey",
-          "touchstart",
-          "touchmove",
-          "touchend",
-          "cobertura"
+          "pos",
+          "rect",
+          "snapforce",
+          "svg",
+          "timeframe",
+          "Ultraleap",
+          "umd",
+          "uuidgen",
+          "vars"
         ],
-        "skipWordIfMatch": ["^pointer.*$", "(\\S+(32|64)+)"],
+        "skipWordIfMatch": [
+          "^pointer(down|up|enter|leave|out|over|move|cancel)?$",
+          "(\\S+(32|64)+)",
+          "^touch(free|start|move|end|freecursor)?$",
+          "^(p|P)lugin(s)?$",
+          "^(c|C)hiralit(y|ies)$",
+          "^(c|C)olor(s|ed)?$",
+          "^casted(Key)?$",
+          "(un|Un)?register(s)?",
+          "\\.?ts(x)?$",
+          "^Impl(s)?$"
+        ],
         "minLength": 3
       }
     ],
@@ -95,7 +89,36 @@
     "@typescript-eslint/no-empty-interface": "warn",
     "@typescript-eslint/no-unused-vars": ["warn", { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_" }],
     "@typescript-eslint/no-empty-function": "off",
-    "tsdoc/syntax": "warn"
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": ["typeLike"],
+        "format": ["PascalCase"]
+      },
+      {
+        "selector": ["variableLike", "method"],
+        "format": ["camelCase"]
+      },
+      {
+        "selector": ["variableLike"],
+        "modifiers": ["unused"],
+        "leadingUnderscore": "require",
+        "format": ["camelCase"]
+      },
+      {
+        "selector": ["variable"],
+        "format": ["camelCase", "UPPER_CASE"]
+      },
+      {
+        "selector": ["enumMember"],
+        "format": ["UPPER_CASE"]
+      },
+      {
+        "selector": "variable",
+        "modifiers": ["destructured"],
+        "format": null
+      }
+    ]
   },
   "globals": { "TouchFree": "readonly", "SnappingPlugin": "readonly" }
 }
