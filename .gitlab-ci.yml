@@ -17,7 +17,7 @@ stages:
   when: always
   timeout: 10m
 
-TF_Tooling::Web::build:
+build::bundle:
   extends: .Always_Build
   tags:
     - unity
@@ -54,10 +54,8 @@ TF_Tooling::Web::build:
     expire_in: 2 weeks
     when: always
 
-TF_Tooling::Docs::build:
+build::docs:
   extends: .Always_Build
-  dependencies:
-    - TF_Tooling::Web::build
   tags:
     - docker-windows
   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
@@ -72,10 +70,8 @@ TF_Tooling::Docs::build:
     expire_in: 2 weeks
     when: always
 
-TF_Tooling::Web::test:
+test:
   extends: .Always_Test
-  dependencies:
-    - TF_Tooling::Web::build
   tags:
     - docker-windows
   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
@@ -101,7 +97,7 @@ TF_Tooling::Web::test:
 pages:
   stage: deploy
   dependencies:
-    - TF_Tooling::Web::test
+    - test
   script:
     - mkdir .public
     - cp ${CI_PROJECT_DIR}/coverage/* .public
@@ -112,13 +108,13 @@ pages:
   only:
     - develop
 
-TF_Tooling::Web::package:
+package:
   stage: package
   image: alpine:3.13
   dependencies:
-    - TF_Tooling::Web::build
-    - TF_Tooling::Docs::build
-  needs: ['TF_Tooling::Web::build', 'TF_Tooling::Docs::build']
+    - build::bundle
+    - build::docs
+  needs: ['build::bundle', 'build::docs']
   script:
     - mkdir ./Tooling_Package/
     - cp -R ./Tooling_Release/* ./Tooling_Package/
@@ -131,3 +127,29 @@ TF_Tooling::Web::package:
     when: always
   tags:
     - docker
+
+# npm::publish:
+#   stage: deploy
+#   when: manual
+#   tags:
+#     - docker
+#   only:
+#     - release
+#   script:
+#     - npm publish
+
+npm::pack:
+  stage: build
+  tags:
+    - docker
+  when: always
+  # only:
+  #   - release
+  script:
+    - npm pack
+  artifacts:
+    name: 'TouchFree_Tooling_npm_package_${TF_TFW_VERSION}_${CI_COMMIT_SHA}'
+    paths:
+      - touchfree*.tgz
+    expire_in: 2 weeks
+    
