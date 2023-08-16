@@ -24,15 +24,15 @@ export class InteractionZoneMessageReceiver extends BaseMessageReceiver<EventUpd
      */
     constructor() {
         super(false);
-        this.setup(() => this.CheckForState());
+        this.setup(() => this.checkForState());
     }
 
     /**
      * Handles processing the message from the service into a consumable format
      *
-     * @param message The message received from the Service
+     * @param message - The message received from the Service
      */
-    override ReceiveMessage = (message: CommunicationWrapper<unknown>) => {
+    override receiveMessage = (message: CommunicationWrapper<unknown>) => {
         const { state } = message.content as InteractionZoneEvent;
         this.lastItem = { status: 'UNPROCESSED', state: state };
     };
@@ -40,9 +40,9 @@ export class InteractionZoneMessageReceiver extends BaseMessageReceiver<EventUpd
     /**
      * Checks the latest message and processes it if it has not been processed yet
      */
-    CheckForState = () => {
+    checkForState = () => {
         if (this.lastItem?.status === 'UNPROCESSED') {
-            ConnectionManager.HandleInteractionZoneEvent(this.lastItem.state);
+            ConnectionManager.handleInteractionZoneEvent(this.lastItem.state);
             this.lastItem.status = 'PROCESSED';
         }
     };

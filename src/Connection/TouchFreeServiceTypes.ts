@@ -250,11 +250,7 @@ export class PartialConfigState implements TouchFreeRequest {
     // Variable: requestID
     requestID: string;
 
-    constructor(
-        id: string,
-        interaction: Partial<InteractionConfig> | null,
-        physical: Partial<PhysicalConfig> | null
-    ) {
+    constructor(id: string, interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null) {
         this.requestID = id;
         this.interaction = interaction;
         this.physical = physical;

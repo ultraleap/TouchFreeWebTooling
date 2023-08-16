@@ -18,15 +18,15 @@ export class HandPresenceMessageReceiver extends BaseMessageReceiver<{ state: Ha
      */
     constructor() {
         super(false);
-        this.setup(() => this.CheckForState());
+        this.setup(() => this.checkForState());
     }
 
     /**
      * Checks the latest message and processes it if it has not been processed yet
      */
-    CheckForState = () => {
+    checkForState = () => {
         if (this.lastItem?.state !== undefined && this.lastItem?.state !== HandPresenceState.PROCESSED) {
-            ConnectionManager.HandleHandPresenceEvent(this.lastItem.state);
+            ConnectionManager.handleHandPresenceEvent(this.lastItem.state);
             this.lastItem.state = HandPresenceState.PROCESSED;
         }
     };

@@ -48,13 +48,6 @@ type AnalyticSessionEvents = {
 // @internal
 type AnalyticsSessionRequestType = 'START' | 'STOP';
 
-// Warning: (ae-forgotten-export) The symbol "BaseAnalyticsRequest" needs to be exported by the entry point index.d.ts
-//
-// @internal
-interface AnalyticsSessionStateChangeRequest extends BaseAnalyticsRequest {
-    requestType: AnalyticsSessionRequestType;
-}
-
 // @public
 abstract class BaseInputController {
     constructor();
@@ -82,6 +75,19 @@ export enum BitmaskFlags {
 }
 
 // @internal
+class CallbackHandler {
+    constructor();
+    analyticsRequestCallbacks: CallbackList<WebSocketResponse>;
+    callbackClearTimer: number;
+    clearUnresponsivePromises(): void;
+    configStateCallbacks: CallbackList<ConfigState>;
+    handshakeCallbacks: CallbackList<WebSocketResponse>;
+    responseCallbacks: CallbackList<WebSocketResponse>;
+    serviceStatusCallbacks: CallbackList<ServiceStatus>;
+    trackingStateCallbacks: CallbackList<TrackingStateResponse>;
+}
+
+// @internal
 type CallbackList<T> = {
     [id: string]: TouchFreeRequestCallback<T>;
 };
@@ -100,19 +106,13 @@ enum Compatibility {
     TOOLING_OUTDATED = 2
 }
 
-// @internal
-class ConfigChangeRequest extends TouchFreeRequest {
-}
-
 // @public
-class ConfigState extends TouchFreeRequest {
+class ConfigState implements TouchFreeRequest {
     constructor(id: string, interaction: InteractionConfigFull, physical: PhysicalConfig);
     interaction: InteractionConfigFull;
     physical: PhysicalConfig;
-}
-
-// @internal
-class ConfigStateCallback extends TouchFreeRequestCallback<ConfigState> {
+    // (undocumented)
+    requestID: string;
 }
 
 declare namespace Configuration {
@@ -149,8 +149,8 @@ export enum ConfigurationState {
 
 declare namespace Connection {
     export {
+        CallbackHandler,
         ConnectionManager,
-        MessageReceiver,
         ServiceConnection,
         ActionCode,
         AnalyticsSessionRequestType,
@@ -167,24 +167,14 @@ declare namespace Connection {
         TouchFreeRequest,
         PartialConfigState,
         ConfigState,
-        ConfigChangeRequest,
-        ConfigStateCallback,
-        ResetInteractionConfigFileRequest,
         HandRenderDataStateRequest,
         ServiceStatus,
-        ServiceStatusRequest,
-        ServiceStatusCallback,
         WebSocketResponse,
         VersionHandshakeResponse,
-        ResponseCallback,
         CommunicationWrapper,
         SuccessWrapper,
         TrackingStateResponse,
         TrackingStateRequest,
-        SimpleRequest,
-        AnalyticsSessionStateChangeRequest,
-        UpdateAnalyticSessionEventsRequest,
-        TrackingStateCallback,
         CallbackList
     }
 }
@@ -196,6 +186,8 @@ class ConnectionManager extends EventTarget {
     static addConnectionListener(onConnectFunc: () => void): void;
     // @deprecated
     static addServiceStatusListener(serviceStatusFunc: (serviceStatus: TrackingServiceState) => void): void;
+    // @internal
+    static callbackHandler: CallbackHandler;
     static connect(): void;
     static disconnect(): void;
     static getCurrentHandPresence(): HandPresenceState;
@@ -207,8 +199,6 @@ class ConnectionManager extends EventTarget {
     static instance: ConnectionManager;
     static ipAddress: string;
     static get isConnected(): boolean;
-    // @internal
-    static messageReceiver: MessageReceiver;
     static port: string;
     static requestServiceStatus(callback?: (detail: ServiceStatus) => void): void;
     // @internal
@@ -324,10 +314,12 @@ enum HandPresenceState {
 }
 
 // @internal
-class HandRenderDataStateRequest extends TouchFreeRequest {
+class HandRenderDataStateRequest implements TouchFreeRequest {
     constructor(id: string, enabled: boolean, lens: string);
     enabled: boolean;
     lens: string;
+    // (undocumented)
+    requestID: string;
 }
 
 // @public
@@ -446,57 +438,12 @@ interface Mask {
 }
 
 // @internal
-class MessageReceiver {
-    constructor();
-    actionCullToCount: number;
-    actionQueue: Array<WebsocketInputAction>;
-    analyticsRequestCallbacks: CallbackList<WebSocketResponse>;
-    analyticsRequestQueue: WebSocketResponse[];
-    callbackClearTimer: number;
-    checkForAction(): void;
-    checkForConfigState(): void;
-    checkForHandData(): void;
-    checkForHandshakeResponse(): void;
-    checkForResponse(): void;
-    checkForServiceStatus(): void;
-    // @deprecated
-    checkForTrackingStateResponse(): void;
-    clearUnresponsivePromises(): void;
-    configStateCallbacks: {
-        [id: string]: ConfigStateCallback;
-    };
-    configStateQueue: Array<ConfigState>;
-    // @deprecated
-    handleTrackingStateResponse(trackingStateResponse: TrackingStateResponse): void;
-    handshakeCallbacks: {
-        [id: string]: ResponseCallback;
-    };
-    handshakeQueue: Array<WebSocketResponse>;
-    lastInteractionZoneUpdate: EventUpdate<InteractionZoneState>;
-    lastKnownCursorPosition: Array<number>;
-    lastStateUpdate: HandPresenceState;
-    latestHandDataItem?: ArrayBuffer;
-    responseCallbacks: {
-        [id: string]: ResponseCallback;
-    };
-    responseQueue: Array<WebSocketResponse>;
-    serviceStatusCallbacks: {
-        [id: string]: ServiceStatusCallback;
-    };
-    serviceStatusQueue: Array<ServiceStatus>;
-    trackingStateCallbacks: {
-        [id: string]: TrackingStateCallback;
-    };
-    trackingStateQueue: Array<TrackingStateResponse>;
-    update(): void;
-    updateRate: number;
-}
-
-// @internal
-class PartialConfigState extends TouchFreeRequest {
+class PartialConfigState implements TouchFreeRequest {
     constructor(id: string, interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null);
     interaction: Partial<InteractionConfig> | null;
     physical: Partial<PhysicalConfig> | null;
+    // (undocumented)
+    requestID: string;
 }
 
 // @public
@@ -546,16 +493,10 @@ export function registerAnalyticEvents(eventsIn?: readonly AnalyticEventKey[]): 
 export function registerEventCallback<TEvent extends TouchFreeEvent>(event: TEvent, callback: TouchFreeEventSignatures[TEvent]): EventHandle;
 
 // @internal
-class ResetInteractionConfigFileRequest extends TouchFreeRequest {
-}
-
-// @internal
-class ResponseCallback extends TouchFreeRequestCallback<WebSocketResponse> {
-}
-
-// @internal
 class ServiceConnection {
-    constructor(ip?: string, port?: string);
+    // Warning: (ae-forgotten-export) The symbol "IBaseMessageReceiver" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "HandDataHandler" needs to be exported by the entry point index.d.ts
+    constructor(messageReceivers: IBaseMessageReceiver[], handDataHandler: HandDataHandler, ip?: string, port?: string);
     analyticsSessionRequest: (requestType: AnalyticsSessionRequestType, sessionID: string, callback?: ((detail: WebSocketResponse) => void) | undefined) => void;
     disconnect: () => void;
     get handshakeComplete(): boolean;
@@ -567,39 +508,27 @@ class ServiceConnection {
     requestTrackingChange: (state: Partial<TrackingState>, callback?: ((detail: TrackingStateResponse) => void) | undefined) => void;
     requestTrackingState: (callback?: ((detail: TrackingStateResponse) => void) | undefined) => void;
     resetInteractionConfigFile: (callback?: ((defaultConfig: ConfigState) => void) | undefined) => void;
-    sendMessage: <T extends WebSocketResponse>(message: string, requestID: string, callback?: ((detail: T | WebSocketResponse) => void) | undefined) => void;
+    sendMessage: <T extends WebSocketResponse>(message: string, requestID: string, callback?: ((detail: WebSocketResponse | T) => void) | undefined) => void;
     get touchFreeVersion(): string;
     updateAnalyticSessionEvents: (sessionID: string, callback?: ((detail: WebSocketResponse) => void) | undefined) => void;
     webSocket: WebSocket;
 }
 
 // @public
-class ServiceStatus extends TouchFreeRequest {
+class ServiceStatus implements TouchFreeRequest {
     constructor(id: string, trackingServiceState: TrackingServiceState, configurationState: ConfigurationState, serviceVersion: string, trackingVersion: string, cameraSerial: string, cameraFirmwareVersion: string);
     cameraFirmwareVersion: string;
     cameraSerial: string;
     configurationState: ConfigurationState;
+    // (undocumented)
+    requestID: string;
     serviceVersion: string;
     trackingServiceState: TrackingServiceState;
     trackingVersion: string;
 }
 
-// @internal
-class ServiceStatusCallback extends TouchFreeRequestCallback<ServiceStatus> {
-}
-
-// @internal
-class ServiceStatusRequest extends TouchFreeRequest {
-}
-
 // @public
 export const setCurrentCursor: (cursor?: TouchlessCursor) => TouchlessCursor | undefined;
-
-// @internal
-class SimpleRequest {
-    constructor(id: string);
-    requestID: string;
-}
 
 // @public
 export function startAnalyticsSession(applicationName: string, options?: StartAnalyticsSessionOptions): void;
@@ -688,15 +617,13 @@ export class TouchFreeInputAction {
     Timestamp: number;
 }
 
-// @public @virtual
-abstract class TouchFreeRequest {
-    constructor(requestID: string);
+// @public
+interface TouchFreeRequest {
     requestID: string;
 }
 
 // @internal
-abstract class TouchFreeRequestCallback<T> {
-    constructor(timestamp: number, callback: (detail: T) => void);
+interface TouchFreeRequestCallback<T> {
     callback: (detail: T) => void;
     timestamp: number;
 }
@@ -765,14 +692,7 @@ class TrackingState {
 }
 
 // @internal
-class TrackingStateCallback {
-    constructor(timestamp: number, callback: (detail: TrackingStateResponse) => void);
-    callback: (detail: TrackingStateResponse) => void;
-    timestamp: number;
-}
-
-// @internal
-class TrackingStateRequest {
+class TrackingStateRequest implements TouchFreeRequest {
     constructor(id: string, mask: Mask, cameraReversed: boolean, allowImages: boolean, analyticsEnabled: boolean);
     allowImages: boolean;
     analyticsEnabled: boolean;
@@ -782,7 +702,7 @@ class TrackingStateRequest {
 }
 
 // @public
-interface TrackingStateResponse {
+interface TrackingStateResponse extends TouchFreeRequest {
     allowImages: SuccessWrapper<boolean> | null;
     analyticsEnabled: SuccessWrapper<boolean> | null;
     cameraReversed: SuccessWrapper<boolean> | null;
@@ -794,11 +714,6 @@ interface TrackingStateResponse {
 //
 // @public
 export function unregisterAnalyticEvents(eventsIn?: AnalyticEventKey[]): void;
-
-// @internal
-interface UpdateAnalyticSessionEventsRequest extends BaseAnalyticsRequest {
-    sessionEvents: AnalyticSessionEvents;
-}
 
 declare namespace Utilities {
     export {
@@ -871,10 +786,12 @@ export class WebsocketInputAction {
 }
 
 // @public
-class WebSocketResponse extends TouchFreeRequest {
+class WebSocketResponse implements TouchFreeRequest {
     constructor(id: string, status: string, msg: string, request: string);
     message: string;
     originalRequest: string;
+    // (undocumented)
+    requestID: string;
     status: string;
 }
 

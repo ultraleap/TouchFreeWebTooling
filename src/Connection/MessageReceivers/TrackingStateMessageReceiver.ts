@@ -18,6 +18,6 @@ export class TrackingStateMessageReceiver extends BaseMessageReceiver<TrackingSt
      */
     constructor(callbackHandler: CallbackHandler) {
         super(true);
-        this.setup(() => this.CheckQueue(this.queue, callbackHandler.trackingStateCallbacks));
+        this.setup(() => this.checkQueue(this.queue, callbackHandler.trackingStateCallbacks));
     }
 }

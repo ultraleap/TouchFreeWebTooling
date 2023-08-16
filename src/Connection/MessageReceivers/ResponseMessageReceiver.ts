@@ -23,22 +23,22 @@ export class ResponseMessageReceiver extends BaseMessageReceiver<WebSocketRespon
      */
     constructor(callbackHandler: CallbackHandler) {
         super(true);
-        this.setup(() => this.CheckForState(callbackHandler));
+        this.setup(() => this.checkForState(callbackHandler));
     }
 
     /**
      * Used to check the {@link queue} for a {@link WebSocketResponse}.
      * Sends it to {@link HandleCallbackList} with the {@link responseCallbacks} dictionary if there is one.
      */
-    CheckForState = (callbackHandler: CallbackHandler): void => {
+    checkForState = (callbackHandler: CallbackHandler): void => {
         const response: WebSocketResponse | undefined = this.queue.shift();
 
         if (response) {
-            const responseResult = BaseMessageReceiver.HandleCallbackList(response, callbackHandler.responseCallbacks);
+            const responseResult = BaseMessageReceiver.handleCallbackList(response, callbackHandler.responseCallbacks);
 
             switch (responseResult) {
                 case 'NoCallbacksFound':
-                    BaseMessageReceiver.LogNoCallbacksWarning(response);
+                    BaseMessageReceiver.logNoCallbacksWarning(response);
                     break;
                 case 'Success':
                     if (response.message) {

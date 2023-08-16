@@ -22,17 +22,17 @@ export class ConfigStateMessageReceiver extends BaseMessageReceiver<ConfigState>
      */
     constructor(callbackHandler: CallbackHandler) {
         super(true);
-        this.setup(() => this.CheckForState(callbackHandler));
+        this.setup(() => this.checkForState(callbackHandler));
     }
 
     /**
      * Checks {@link queue} for a single {@link configState} and handles it.
      */
-    CheckForState = (callbackHandler: CallbackHandler): void => {
+    checkForState = (callbackHandler: CallbackHandler): void => {
         const configState: ConfigState | undefined = this.queue.shift();
 
         if (configState) {
-            const configResult = BaseMessageReceiver.HandleCallbackList(
+            const configResult = BaseMessageReceiver.handleCallbackList(
                 configState,
                 callbackHandler.configStateCallbacks
             );

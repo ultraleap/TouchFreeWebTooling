@@ -18,21 +18,21 @@ export class VersionHandshakeMessageReceiver extends BaseMessageReceiver<WebSock
      */
     constructor(callbackHandler: CallbackHandler) {
         super(true);
-        this.setup(() => this.CheckForState(callbackHandler));
+        this.setup(() => this.checkForState(callbackHandler));
     }
 
     /**
      * Checks {@link queue} for a single {@link WebSocketResponse} and handles it.
      */
-    CheckForState = (callbackHandler: CallbackHandler): void => {
+    checkForState = (callbackHandler: CallbackHandler): void => {
         const response: WebSocketResponse | undefined = this.queue.shift();
 
         if (response) {
-            const responseResult = BaseMessageReceiver.HandleCallbackList(response, callbackHandler.handshakeCallbacks);
+            const responseResult = BaseMessageReceiver.handleCallbackList(response, callbackHandler.handshakeCallbacks);
 
             switch (responseResult) {
                 case 'NoCallbacksFound':
-                    BaseMessageReceiver.LogNoCallbacksWarning(response);
+                    BaseMessageReceiver.logNoCallbacksWarning(response);
                     break;
                 case 'Success':
                     if (response.message && response.status === 'Success') {

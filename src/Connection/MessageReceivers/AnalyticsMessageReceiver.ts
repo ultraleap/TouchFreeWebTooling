@@ -21,6 +21,6 @@ export class AnalyticsMessageReceiver extends BaseMessageReceiver<WebSocketRespo
      */
     constructor(callbackHandler: CallbackHandler) {
         super(true);
-        this.setup(() => this.CheckQueue(this.queue, callbackHandler.analyticsRequestCallbacks));
+        this.setup(() => this.checkQueue(this.queue, callbackHandler.analyticsRequestCallbacks));
     }
 }

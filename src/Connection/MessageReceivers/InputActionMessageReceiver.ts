@@ -1,10 +1,10 @@
 import { InputActionManager } from '../../Plugins/InputActionManager';
 import {
     BitmaskFlags,
-    ConvertInputAction,
     InputType,
     TouchFreeInputAction,
     WebsocketInputAction,
+    convertInputAction,
 } from '../../TouchFreeToolingTypes';
 import { ActionCode } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
@@ -25,7 +25,7 @@ export class InputActionMessageReceiver extends BaseMessageReceiver<WebsocketInp
      */
     constructor() {
         super(true);
-        this.setup(() => this.CheckForState());
+        this.setup(() => this.checkForState());
     }
 
     /**
@@ -51,7 +51,7 @@ export class InputActionMessageReceiver extends BaseMessageReceiver<WebsocketInp
      * to handle the action. Actions with UP {@link InputType} have their positions set to
      * {@link lastKnownCursorPosition} to ensure input events trigger correctly.
      */
-    CheckForState = (): void => {
+    checkForState = (): void => {
         while (this.queue.length > this.actionCullToCount) {
             if (this.queue[0] !== undefined) {
                 // Stop shrinking the queue if we have a 'key' input event
@@ -71,7 +71,7 @@ export class InputActionMessageReceiver extends BaseMessageReceiver<WebsocketInp
 
         if (action !== undefined) {
             // Parse newly received messages & distribute them
-            const converted: TouchFreeInputAction = ConvertInputAction(action);
+            const converted: TouchFreeInputAction = convertInputAction(action);
 
             //Cache or use the lastKnownCursorPosition. Copy the array to ensure it is not a reference
             if (converted.InputType !== InputType.UP) {
@@ -82,7 +82,7 @@ export class InputActionMessageReceiver extends BaseMessageReceiver<WebsocketInp
 
             // Wrapping the function in a timeout of 0 seconds allows the dispatch to be asynchronous
             setTimeout(() => {
-                InputActionManager.HandleInputAction(converted);
+                InputActionManager.handleInputAction(converted);
             });
         }
     };

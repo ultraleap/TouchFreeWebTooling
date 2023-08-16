@@ -1,5 +1,5 @@
 import * as TouchFree from '../TouchFree';
-import { VersionInfo, WebsocketInputAction } from '../TouchFreeToolingTypes';
+import { VersionInfo } from '../TouchFreeToolingTypes';
 import { TrackingState } from '../Tracking/TrackingTypes';
 import { ConnectionManager } from './ConnectionManager';
 import { HandDataHandler, IBaseMessageReceiver } from './MessageReceivers';
@@ -68,8 +68,8 @@ export class ServiceConnection {
     constructor(
         messageReceivers: IBaseMessageReceiver[],
         handDataHandler: HandDataHandler,
-        _ip = '127.0.0.1',
-        _port = '9739'
+        ip = '127.0.0.1',
+        port = '9739'
     ) {
         this.messageReceivers = messageReceivers;
         this.handDataHandler = handDataHandler;
@@ -164,7 +164,7 @@ export class ServiceConnection {
 
         // Get the first message receiver with a matching action code
         const receiver = this.messageReceivers.find((x) => x.actionCode.find((a) => a === looseData.action));
-        receiver?.ReceiveMessage(looseData);
+        receiver?.receiveMessage(looseData);
     };
 
     /**
@@ -221,7 +221,7 @@ export class ServiceConnection {
      * @param callback - Callback to handle the response from the service
      */
     requestConfigState = (callback?: (detail: ConfigState) => void): void => {
-        this.BaseRequestWithRequiredCallback(
+        this.baseRequestWithRequiredCallback(
             ActionCode.REQUEST_CONFIGURATION_STATE,
             'config state',
             callback,
@@ -234,8 +234,8 @@ export class ServiceConnection {
      *
      * @param callback - Callback to handle the response from the service
      */
-    resetInteractionConfigFile = (callback: (defaultConfig: ConfigState) => void): void => {
-        this.BaseRequestWithRequiredCallback(
+    resetInteractionConfigFile = (callback?: (defaultConfig: ConfigState) => void): void => {
+        this.baseRequestWithRequiredCallback(
             ActionCode.RESET_INTERACTION_CONFIG_FILE,
             'config state',
             callback,
@@ -249,7 +249,7 @@ export class ServiceConnection {
      * @param callback - Callback to handle the response from the service
      */
     requestServiceStatus = (callback?: (detail: ServiceStatus) => void): void => {
-        this.BaseRequestWithRequiredCallback(
+        this.baseRequestWithRequiredCallback(
             ActionCode.REQUEST_SERVICE_STATUS,
             'service status',
             callback,
@@ -263,7 +263,7 @@ export class ServiceConnection {
      * @param callback - Callback to handle the response from the service
      */
     requestConfigFile = (callback?: (detail: ConfigState) => void): void => {
-        this.BaseRequestWithRequiredCallback(
+        this.baseRequestWithRequiredCallback(
             ActionCode.REQUEST_CONFIGURATION_FILE,
             'config file',
             callback,
@@ -283,7 +283,7 @@ export class ServiceConnection {
         callback?: (detail: WebSocketResponse) => void,
         configurationCallback?: (detail: ConfigState) => void
     ): void => {
-        this.BaseRequestWithMultipleCallbacks(
+        this.baseRequestWithMultipleCallbacks(
             {
                 position: atTopTarget ? 'Top' : 'Bottom',
             },
@@ -301,7 +301,7 @@ export class ServiceConnection {
      * @param callback - Callback to handle the response from the service
      */
     requestTrackingState = (callback?: (detail: TrackingStateResponse) => void) => {
-        this.BaseRequestWithRequiredCallback(
+        this.baseRequestWithRequiredCallback(
             ActionCode.GET_TRACKING_STATE,
             'tracking state',
             callback,
@@ -315,10 +315,7 @@ export class ServiceConnection {
      * @param state - State change to request. Undefined props are not sent
      * @param callback - Callback to handle the response from the service
      */
-    requestTrackingChange = (
-        state: Partial<TrackingState>,
-        callback?: ((detail: TrackingStateResponse) => void)
-    ) => {
+    requestTrackingChange = (state: Partial<TrackingState>, callback?: (detail: TrackingStateResponse) => void) => {
         const requestContent: Partial<TrackingStateRequest> = {};
 
         if (state.mask !== undefined) {
@@ -337,7 +334,7 @@ export class ServiceConnection {
             requestContent.analyticsEnabled = state.analyticsEnabled;
         }
 
-        this.BaseRequest(
+        this.baseRequest(
             requestContent,
             ActionCode.SET_TRACKING_STATE,
             ConnectionManager.callbackHandler.trackingStateCallbacks,
@@ -352,18 +349,18 @@ export class ServiceConnection {
      * @param callback - A callback to handle the response from the service.
      * @param callbackList - The list of pending callbacks to add the callback to
      */
-    private BaseRequestWithRequiredCallback = <TResponse>(
+    private baseRequestWithRequiredCallback = <TResponse>(
         actionCode: ActionCode,
         noCallbackError: string,
-        callback: (detail: TResponse) => void,
-        callbackList: CallbackList<TResponse>
+        callback?: (detail: TResponse) => void,
+        callbackList?: CallbackList<TResponse>
     ) => {
-        if (!callback) {
+        if (!callback || !callbackList) {
             console.error(`Request for ${noCallbackError} failed. This is due to a missing callback`);
             return;
         }
 
-        this.BaseRequest({}, actionCode, callbackList, callback);
+        this.baseRequest({}, actionCode, callbackList, callback);
     };
 
     /**
@@ -373,13 +370,13 @@ export class ServiceConnection {
      * @param callbackList - The list of pending callbacks to add the callback to
      * @param callback - Optional callback to handle the response from the service
      */
-    private BaseRequest = <T extends TouchFreeRequest, TResponse>(
+    private baseRequest = <T extends TouchFreeRequest, TResponse>(
         fields: Omit<T, 'requestID'>,
         actionCode: ActionCode,
-        callbackList: CallbackList<TResponse>,
-        callback?: ((detail: TResponse) => void) | null
+        callbackList?: CallbackList<TResponse>,
+        callback?: (detail: TResponse) => void
     ) => {
-        this.BaseRequestWithMultipleCallbacks(fields, actionCode, callbackList, callback);
+        this.baseRequestWithMultipleCallbacks(fields, actionCode, callbackList, callback);
     };
 
     /**
@@ -391,20 +388,20 @@ export class ServiceConnection {
      * @param secondCallbackList - Optional second list of pending callbacks to add the seconds callback to
      * @param secondCallback - Optional second callback to handle the response from the service
      */
-    private BaseRequestWithMultipleCallbacks = <T extends TouchFreeRequest, TResponse, TSecondResponse>(
+    private baseRequestWithMultipleCallbacks = <T extends TouchFreeRequest, TResponse, TSecondResponse>(
         fields: Omit<T, 'requestID'>,
         actionCode: ActionCode,
-        callbackList: CallbackList<TResponse>,
-        callback?: ((detail: TResponse) => void) | null,
+        callbackList?: CallbackList<TResponse>,
+        callback?: (detail: TResponse) => void,
         secondCallbackList?: CallbackList<TSecondResponse>,
-        secondCallback?: ((detail: TSecondResponse) => void) | null
+        secondCallback?: (detail: TSecondResponse) => void
     ) => {
         const requestID = uuidgen();
         const content = { ...fields, requestID } as T;
         const wrapper = new CommunicationWrapper<T>(actionCode, content);
         const message = JSON.stringify(wrapper);
 
-        if (callback) {
+        if (callback && callbackList) {
             callbackList[requestID] = {
                 timestamp: Date.now(),
                 callback,
@@ -433,7 +430,7 @@ export class ServiceConnection {
         sessionID: string,
         callback?: (detail: WebSocketResponse) => void
     ) =>
-        this.BaseRequest(
+        this.baseRequest(
             { sessionID, requestType },
             ActionCode.ANALYTICS_SESSION_REQUEST,
             ConnectionManager.callbackHandler.analyticsRequestCallbacks,
@@ -446,8 +443,8 @@ export class ServiceConnection {
      * @param callback - Optional callback to handle the response from the service
      */
     updateAnalyticSessionEvents = (sessionID: string, callback?: (detail: WebSocketResponse) => void) =>
-        this.BaseRequest(
-            { sessionID, sessionEvents: TouchFree.GetAnalyticSessionEvents() },
+        this.baseRequest(
+            { sessionID, sessionEvents: TouchFree.getAnalyticSessionEvents() },
             ActionCode.ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST,
             ConnectionManager.callbackHandler.analyticsRequestCallbacks,
             callback

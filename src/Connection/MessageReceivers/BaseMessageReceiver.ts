@@ -17,7 +17,7 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
     /**
      * Constructs the class
      *
-     * @param useQueue Whether the message receiver should use a queue or just store the last item
+     * @param useQueue - Whether the message receiver should use a queue or just store the last item
      */
     constructor(useQueue: boolean) {
         this.useQueue = useQueue;
@@ -65,9 +65,9 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
      * and adds it either to a queue or updates the latest item depending on the
      * value of {@link useQueue}
      *
-     * @param message The message received from the Service
+     * @param message - The message received from the Service
      */
-    ReceiveMessage = (message: CommunicationWrapper<unknown>) => {
+    receiveMessage = (message: CommunicationWrapper<unknown>) => {
         const messageContent = message.content as TMessage;
         if (this.useQueue) {
             this.queue.push(messageContent);
@@ -79,12 +79,12 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
     /**
      * Takes an item off a queue and passes it to be handled
      *
-     * @param queue The message queue to process
-     * @param callbacks The callback list to check the response against
+     * @param queue - The message queue to process
+     * @param callbacks - The callback list to check the response against
      */
-    protected CheckQueue = <T extends TouchFreeRequest>(queue: T[], callbacks: CallbackList<T>) => {
+    protected checkQueue = <T extends TouchFreeRequest>(queue: T[], callbacks: CallbackList<T>) => {
         const response = queue.shift();
-        BaseMessageReceiver.HandleCallbackList(response, callbacks);
+        BaseMessageReceiver.handleCallbackList(response, callbacks);
     };
 
     /**
@@ -94,7 +94,7 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
      * @param callbacks - Callback dictionary to check
      * @returns String literal result representing success or what went wrong
      */
-    protected static HandleCallbackList = <T extends TouchFreeRequest>(
+    protected static handleCallbackList = <T extends TouchFreeRequest>(
         callbackResult?: T,
         callbacks?: CallbackList<T>
     ): 'Success' | 'NoCallbacksFound' => {
@@ -110,7 +110,7 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
         return 'NoCallbacksFound';
     };
 
-    protected static LogNoCallbacksWarning = (response: WebSocketResponse): void => {
+    protected static logNoCallbacksWarning = (response: WebSocketResponse): void => {
         console.warn(
             'Received a Handshake Response that did not match a callback.' +
                 'This is the content of the response: \n Response ID: ' +
@@ -124,7 +124,7 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
         );
     };
 
-    protected static ClearUnresponsiveItems = <T>(
+    protected static clearUnresponsiveItems = <T>(
         lastClearTime: number,
         callbacks: { [id: string]: TouchFreeRequestCallback<T> }
     ) => {

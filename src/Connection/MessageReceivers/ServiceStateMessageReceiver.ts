@@ -1,4 +1,4 @@
-import TouchFree from '../../TouchFree';
+import * as TouchFree from '../../TouchFree';
 import { CallbackHandler } from '../CallbackHandler';
 import { ActionCode, ServiceStatus } from '../TouchFreeServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
@@ -19,17 +19,17 @@ export class ServiceStateMessageReceiver extends BaseMessageReceiver<ServiceStat
      */
     constructor(callbackHandler: CallbackHandler) {
         super(true);
-        this.setup(() => this.CheckForState(callbackHandler));
+        this.setup(() => this.checkForState(callbackHandler));
     }
 
     /**
      * Checks {@link queue} for a single {@link ServiceStatus} and handles it.
      */
-    CheckForState = (callbackHandler: CallbackHandler): void => {
+    checkForState = (callbackHandler: CallbackHandler): void => {
         const serviceStatus: ServiceStatus | undefined = this.queue.shift();
 
         if (serviceStatus) {
-            const callbackResult = BaseMessageReceiver.HandleCallbackList(
+            const callbackResult = BaseMessageReceiver.handleCallbackList(
                 serviceStatus,
                 callbackHandler.serviceStatusCallbacks
             );
@@ -42,10 +42,10 @@ export class ServiceStateMessageReceiver extends BaseMessageReceiver<ServiceStat
                 case 'NoCallbacksFound':
                     // If service state is null we didn't get info about it from this message
                     if (serviceStatus.trackingServiceState !== null) {
-                        TouchFree.DispatchEvent('OnTrackingServiceStateChange', serviceStatus.trackingServiceState);
+                        TouchFree.dispatchEvent('onTrackingServiceStateChange', serviceStatus.trackingServiceState);
                     }
 
-                    TouchFree.DispatchEvent('OnServiceStatusChange', serviceStatus);
+                    TouchFree.dispatchEvent('onServiceStatusChange', serviceStatus);
                     break;
                 case 'Success':
                     // no-op
