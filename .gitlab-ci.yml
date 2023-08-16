@@ -17,8 +17,16 @@ stages:
   when: always
   timeout: 10m
 
+.versions:
+  before_script:
+    # Get the TF Tooling for web version
+    - set -Name TF_TOOLING_API_VERSION -Value "$((Select-String -Path ".\src\TouchFreeToolingTypes.ts" "public static readonly API_VERSION. string = '(.*)';" | Select-Object * -First 1).Matches.Groups[1].Value)"
+    - set -Name TF_TFW_VERSION -Value "$((Select-String -Path ".\package.json" "  .version.. .(.*).," | Select-Object * -First 1).Matches.Groups[1].Value)"
+
 build::bundle:
-  extends: .Always_Build
+  extends: 
+    - .Always_Build
+    - .versions
   tags:
     - unity
     - win10
@@ -139,6 +147,7 @@ package:
 #     - npm publish
 
 npm::pack:
+  extends: .versions
   stage: build
   tags:
     - docker-windows
@@ -149,7 +158,7 @@ npm::pack:
   script:
     - npm pack
   artifacts:
-    name: 'TouchFree_Tooling_npm_package_${TF_TFW_VERSION}_${CI_COMMIT_SHA}'
+    name: 'TouchFree_Tooling_npm_package_${TF_TFW_VERSION}_${CI_COMMIT_SHORT_SHA}'
     paths:
       - touchfree*.tgz
     expire_in: 2 weeks
