@@ -141,7 +141,8 @@ package:
 npm::pack:
   stage: build
   tags:
-    - docker
+    - docker-windows
+  image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
   when: always
   # only:
   #   - release
