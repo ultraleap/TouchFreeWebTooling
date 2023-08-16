@@ -111,7 +111,6 @@ class ConfigState implements TouchFreeRequest {
     constructor(id: string, interaction: InteractionConfigFull, physical: PhysicalConfig);
     interaction: InteractionConfigFull;
     physical: PhysicalConfig;
-    // (undocumented)
     requestID: string;
 }
 
@@ -318,7 +317,6 @@ class HandRenderDataStateRequest implements TouchFreeRequest {
     constructor(id: string, enabled: boolean, lens: string);
     enabled: boolean;
     lens: string;
-    // (undocumented)
     requestID: string;
 }
 
@@ -442,7 +440,6 @@ class PartialConfigState implements TouchFreeRequest {
     constructor(id: string, interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null);
     interaction: Partial<InteractionConfig> | null;
     physical: Partial<PhysicalConfig> | null;
-    // (undocumented)
     requestID: string;
 }
 
@@ -520,7 +517,6 @@ class ServiceStatus implements TouchFreeRequest {
     cameraFirmwareVersion: string;
     cameraSerial: string;
     configurationState: ConfigurationState;
-    // (undocumented)
     requestID: string;
     serviceVersion: string;
     trackingServiceState: TrackingServiceState;
@@ -790,7 +786,6 @@ class WebSocketResponse implements TouchFreeRequest {
     constructor(id: string, status: string, msg: string, request: string);
     message: string;
     originalRequest: string;
-    // (undocumented)
     requestID: string;
     status: string;
 }

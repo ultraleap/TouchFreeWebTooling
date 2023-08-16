@@ -247,7 +247,7 @@ export class PartialConfigState implements TouchFreeRequest {
     interaction: Partial<InteractionConfig> | null;
     /** Optional {@link PhysicalConfig} */
     physical: Partial<PhysicalConfig> | null;
-    // Variable: requestID
+    /** Request ID */
     requestID: string;
 
     constructor(id: string, interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null) {
@@ -266,7 +266,7 @@ export class ConfigState implements TouchFreeRequest {
     interaction: InteractionConfigFull;
     /** See {@link PhysicalConfig} */
     physical: PhysicalConfig;
-    // Variable: requestID
+    /** Request ID */
     requestID: string;
 
     constructor(id: string, interaction: InteractionConfigFull, physical: PhysicalConfig) {
@@ -285,7 +285,7 @@ export class HandRenderDataStateRequest implements TouchFreeRequest {
     enabled: boolean;
     /** Lens */
     lens: string;
-    // Variable: requestID
+    /** Request ID */
     requestID: string;
 
     constructor(id: string, enabled: boolean, lens: string) {
@@ -312,7 +312,7 @@ export class ServiceStatus implements TouchFreeRequest {
     cameraSerial: string;
     /** Camera Firmware Version */
     cameraFirmwareVersion: string;
-    // Variable: requestID
+    /** Request ID */
     requestID: string;
 
     constructor(
@@ -347,7 +347,7 @@ export class WebSocketResponse implements TouchFreeRequest {
      * Original request this response is to, included for debugging purposes
      */
     originalRequest: string;
-    // Variable: requestID
+    /** Request ID */
     requestID: string;
 
     constructor(id: string, status: string, msg: string, request: string) {
