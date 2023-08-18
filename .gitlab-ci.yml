@@ -135,10 +135,12 @@ npm::publish:
   tags:
     - docker-windows
   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
-  only:
-    - release
+  # only:
+  #   - release
   script:
-    - npm publish
+    - npm config -L project set //registry.npmjs.org/:username=ul-touchfree
+    - npm config -L project set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+    - npm publish --dry-run
 
 npm::pack:
   stage: package
