@@ -150,13 +150,14 @@ npm::pack:
   tags:
     - docker-windows
   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
-  only:
-    - release
+  # only:
+  #   - release
   script:
+    - npm i
+    - npm run build:tsc
     - npm pack
   artifacts:
     name: 'TouchFree_Tooling_npm_package_${TF_TFW_VERSION}_${CI_COMMIT_SHORT_SHA}'
     paths:
       - touchfree*.tgz
     expire_in: 2 weeks
-    
