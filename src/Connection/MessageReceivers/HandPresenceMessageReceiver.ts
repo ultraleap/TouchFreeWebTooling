@@ -9,7 +9,7 @@ import { BaseMessageReceiver } from './BaseMessageReceiver';
  */
 export class HandPresenceMessageReceiver extends BaseMessageReceiver<{ state: HandPresenceState }> {
     /**
-     * The {@link ActionCode}s that are handled by this message receiver
+     * The {@link ActionCode | ActionCodes } that are handled by this message receiver
      */
     public readonly actionCode: ActionCode[] = [ActionCode.HAND_PRESENCE_EVENT];
 

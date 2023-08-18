@@ -16,7 +16,7 @@ import { BaseMessageReceiver } from './BaseMessageReceiver';
  */
 export class InputActionMessageReceiver extends BaseMessageReceiver<WebsocketInputAction> {
     /**
-     * The {@link ActionCode}s that are handled by this message receiver
+     * The {@link ActionCode | ActionCodes } that are handled by this message receiver
      */
     public readonly actionCode: ActionCode[] = [ActionCode.INPUT_ACTION];
 
@@ -75,9 +75,9 @@ export class InputActionMessageReceiver extends BaseMessageReceiver<WebsocketInp
 
             //Cache or use the lastKnownCursorPosition. Copy the array to ensure it is not a reference
             if (converted.InputType !== InputType.UP) {
-                this.lastKnownCursorPosition = Array.from(converted.CursorPosition);
+                this.lastKnownCursorPosition = [...converted.CursorPosition];
             } else {
-                converted.CursorPosition = Array.from(this.lastKnownCursorPosition);
+                converted.CursorPosition = [...this.lastKnownCursorPosition];
             }
 
             // Wrapping the function in a timeout of 0 seconds allows the dispatch to be asynchronous

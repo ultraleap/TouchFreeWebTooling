@@ -9,7 +9,7 @@ import { BaseMessageReceiver } from './BaseMessageReceiver';
  */
 export class ResponseMessageReceiver extends BaseMessageReceiver<WebSocketResponse> {
     /**
-     * The {@link ActionCode}s that are handled by this message receiver
+     * The {@link ActionCode | ActionCodes } that are handled by this message receiver
      */
     public readonly actionCode: ActionCode[] = [
         ActionCode.CONFIGURATION_RESPONSE,
@@ -33,20 +33,22 @@ export class ResponseMessageReceiver extends BaseMessageReceiver<WebSocketRespon
     checkForState = (callbackHandler: CallbackHandler): void => {
         const response: WebSocketResponse | undefined = this.queue.shift();
 
-        if (response) {
-            const responseResult = BaseMessageReceiver.handleCallbackList(response, callbackHandler.responseCallbacks);
+        if (!response) {
+            return;
+        }
 
-            switch (responseResult) {
-                case 'NoCallbacksFound':
-                    BaseMessageReceiver.logNoCallbacksWarning(response);
-                    break;
-                case 'Success':
-                    if (response.message) {
-                        // This is logged to aid users in debugging
-                        console.log('Successfully received WebSocketResponse from TouchFree:\n' + response.message);
-                    }
-                    break;
-            }
+        const responseResult = BaseMessageReceiver.handleCallbackList(response, callbackHandler.responseCallbacks);
+
+        switch (responseResult) {
+            case 'NoCallbacksFound':
+                BaseMessageReceiver.logNoCallbacksWarning(response);
+                break;
+            case 'Success':
+                if (response.message) {
+                    // This is logged to aid users in debugging
+                    console.log('Successfully received WebSocketResponse from TouchFree:\n' + response.message);
+                }
+                break;
         }
     };
 }

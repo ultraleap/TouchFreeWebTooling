@@ -32,12 +32,14 @@ export class HandDataHandler {
     checkForHandData = () => {
         const handFrame = this.latestHandDataItem;
 
-        if (handFrame) {
-            this.latestHandDataItem = undefined;
-            // Wrapping the function in a timeout of 0 seconds allows the dispatch to be asynchronous
-            setTimeout(() => {
-                HandDataManager.handleHandFrame(handFrame);
-            });
+        if (!handFrame) {
+            return;
         }
+
+        this.latestHandDataItem = undefined;
+        // Wrapping the function in a timeout of 0 seconds allows the dispatch to be asynchronous
+        setTimeout(() => {
+            HandDataManager.handleHandFrame(handFrame);
+        });
     };
 }

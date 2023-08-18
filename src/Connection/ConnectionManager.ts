@@ -87,7 +87,8 @@ export class ConnectionManager extends EventTarget {
     private static currentInteractionZoneState = InteractionZoneState.HAND_EXITED;
 
     /**
-     * Creates global {@link CallbackHandler}, {@link HandDataHandler}, {@link IBaseMessageReceiver}s and
+     * Creates global {@link CallbackHandler}, {@link HandDataHandler},
+     * {@link IBaseMessageReceiver | IBaseMessageReceivers} and
      * {@link ConnectionManager} instances and attempts to connect to the service.
      *
      * @remarks

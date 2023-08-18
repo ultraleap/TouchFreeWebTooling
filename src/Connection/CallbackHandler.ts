@@ -13,7 +13,7 @@ import {
  */
 export class CallbackHandler {
     /**
-     * Starts a regular interval - {@link clearUnresponsivePromises} (at {@link callbackClearTimer})
+     * Starts a regular interval to {@link clearUnresponsivePromises} every {@link callbackClearTimer}
      */
     constructor() {
         setInterval(this.clearUnresponsivePromises, this.callbackClearTimer);

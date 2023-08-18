@@ -10,7 +10,7 @@ import { BaseMessageReceiver } from './BaseMessageReceiver';
  */
 export class ServiceStateMessageReceiver extends BaseMessageReceiver<ServiceStatus> {
     /**
-     * The {@link ActionCode}s that are handled by this message receiver
+     * The {@link ActionCode | ActionCodes } that are handled by this message receiver
      */
     public readonly actionCode: ActionCode[] = [ActionCode.SERVICE_STATUS];
 

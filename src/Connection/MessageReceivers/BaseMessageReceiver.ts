@@ -24,7 +24,7 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
     }
 
     /**
-     * The {@link ActionCode}s that are handled by this message receiver
+     * The {@link ActionCode | ActionCodes } that are handled by this message receiver
      */
     public abstract readonly actionCode: ActionCode[];
 
@@ -51,7 +51,7 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
     };
 
     /**
-     * A queue of {@link TMessage}s that have been received from the Service.
+     * A queue of {@link TMessage | TMessages} that have been received from the Service.
      */
     protected queue: TMessage[] = [];
 
