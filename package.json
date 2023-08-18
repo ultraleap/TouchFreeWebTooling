@@ -1,7 +1,13 @@
 {
   "name": "touchfree",
   "version": "1.4.0",
-  "description": "",
+  "description": "The web tooling library for Ultraleap's TouchFree solution.",
+  "keywords": [
+    "touchfree",
+    "ultraleap",
+    "leapmotion",
+    "hand tracking"
+  ],
   "main": "build/index.js",
   "typings": "build/index.d.ts",
   "scripts": {
@@ -16,7 +22,8 @@
     "prettyLint": "prettier --write . && eslint --fix .",
     "lintCheck": "conc \"prettier -c .\" \"eslint .\" \"tsc --noEmit\""
   },
-  "homepage": "https://github.com/ultraleap/TouchFreeWebTooling",
+  "homepage": "https://developer.leapmotion.com/touchfree/",
+  "repository": "https://github.com/ultraleap/TouchFreeWebTooling",
   "author": {
     "name": "Ultraleap",
     "email": "contact@ultraleap.com",
