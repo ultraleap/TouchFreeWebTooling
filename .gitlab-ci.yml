@@ -142,7 +142,7 @@ npm::publish:
     - npm config -L project set //registry.npmjs.org/:_authToken=$NPM_TOKEN
     - npm i
     - npm run build:tsc
-    - npm publish --dry-run
+    - npm publish
 
 npm::pack:
   stage: package
