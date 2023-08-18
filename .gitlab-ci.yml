@@ -140,6 +140,7 @@ npm::publish:
   script:
     - npm config -L project set //registry.npmjs.org/:username=ul-touchfree
     - npm config -L project set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+    - npm run build:tsc
     - npm publish --dry-run
 
 npm::pack:
