@@ -16,7 +16,7 @@ import { BaseMessageReceiver } from './BaseMessageReceiver';
  */
 export class InputActionMessageReceiver extends BaseMessageReceiver<WebsocketInputAction> {
     /**
-     * The {@link ActionCode | ActionCodes } that are handled by this message receiver
+     * The {@link ActionCode | ActionCodes} that are handled by this message receiver
      */
     public readonly actionCode: ActionCode[] = [ActionCode.INPUT_ACTION];
 

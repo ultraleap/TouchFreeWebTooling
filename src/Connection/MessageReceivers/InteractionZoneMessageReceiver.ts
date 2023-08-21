@@ -15,7 +15,7 @@ import { BaseMessageReceiver } from './BaseMessageReceiver';
  */
 export class InteractionZoneMessageReceiver extends BaseMessageReceiver<EventUpdate<InteractionZoneState>> {
     /**
-     * The {@link ActionCode | ActionCodes } that are handled by this message receiver
+     * The {@link ActionCode | ActionCodes} that are handled by this message receiver
      */
     public readonly actionCode: ActionCode[] = [ActionCode.INTERACTION_ZONE_EVENT];
 

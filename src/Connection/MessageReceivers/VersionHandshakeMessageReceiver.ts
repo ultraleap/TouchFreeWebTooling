@@ -9,7 +9,7 @@ import { BaseMessageReceiver } from './BaseMessageReceiver';
  */
 export class VersionHandshakeMessageReceiver extends BaseMessageReceiver<WebSocketResponse> {
     /**
-     * The {@link ActionCode | ActionCodes } that are handled by this message receiver
+     * The {@link ActionCode | ActionCodes} that are handled by this message receiver
      */
     public readonly actionCode: ActionCode[] = [ActionCode.VERSION_HANDSHAKE_RESPONSE];
 

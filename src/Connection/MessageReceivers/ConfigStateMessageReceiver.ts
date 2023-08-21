@@ -9,7 +9,7 @@ import { BaseMessageReceiver } from './BaseMessageReceiver';
  */
 export class ConfigStateMessageReceiver extends BaseMessageReceiver<ConfigState> {
     /**
-     * The {@link ActionCode | ActionCodes } that are handled by this message receiver
+     * The {@link ActionCode | ActionCodes} that are handled by this message receiver
      */
     public readonly actionCode: ActionCode[] = [
         ActionCode.CONFIGURATION_STATE,

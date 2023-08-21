@@ -24,7 +24,7 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
     }
 
     /**
-     * The {@link ActionCode | ActionCodes } that are handled by this message receiver
+     * The {@link ActionCode | ActionCodes} that are handled by this message receiver
      */
     public abstract readonly actionCode: ActionCode[];
 

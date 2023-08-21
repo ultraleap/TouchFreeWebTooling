@@ -9,7 +9,7 @@ import { BaseMessageReceiver } from './BaseMessageReceiver';
  */
 export class ResponseMessageReceiver extends BaseMessageReceiver<WebSocketResponse> {
     /**
-     * The {@link ActionCode | ActionCodes } that are handled by this message receiver
+     * The {@link ActionCode | ActionCodes} that are handled by this message receiver
      */
     public readonly actionCode: ActionCode[] = [
         ActionCode.CONFIGURATION_RESPONSE,
@@ -33,9 +33,7 @@ export class ResponseMessageReceiver extends BaseMessageReceiver<WebSocketRespon
     checkForState = (callbackHandler: CallbackHandler): void => {
         const response: WebSocketResponse | undefined = this.queue.shift();
 
-        if (!response) {
-            return;
-        }
+        if (!response) return;
 
         const responseResult = BaseMessageReceiver.handleCallbackList(response, callbackHandler.responseCallbacks);
 

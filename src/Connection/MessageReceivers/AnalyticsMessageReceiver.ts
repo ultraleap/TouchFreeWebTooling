@@ -9,7 +9,7 @@ import { BaseMessageReceiver } from './BaseMessageReceiver';
  */
 export class AnalyticsMessageReceiver extends BaseMessageReceiver<WebSocketResponse> {
     /**
-     * The {@link ActionCode | ActionCodes } that are handled by this message receiver
+     * The {@link ActionCode | ActionCodes} that are handled by this message receiver
      */
     public readonly actionCode: ActionCode[] = [
         ActionCode.ANALYTICS_SESSION_REQUEST,
