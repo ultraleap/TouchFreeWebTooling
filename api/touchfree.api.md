@@ -5,7 +5,7 @@
 ```ts
 
 // @internal
-enum ActionCode {
+export enum ActionCode {
     ANALYTICS_SESSION_REQUEST = "ANALYTICS_SESSION_REQUEST",
     ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST = "ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST",
     CONFIGURATION_FILE_CHANGE_RESPONSE = "CONFIGURATION_FILE_CHANGE_RESPONSE",
@@ -38,18 +38,25 @@ enum ActionCode {
 }
 
 // @internal
-type AnalyticEventKey = keyof DocumentEventMap;
+export type AnalyticEventKey = keyof DocumentEventMap;
 
 // @internal
-type AnalyticSessionEvents = {
+export type AnalyticSessionEvents = {
     [key in AnalyticEventKey]?: number;
 };
 
 // @internal
-type AnalyticsSessionRequestType = 'START' | 'STOP';
+export type AnalyticsSessionRequestType = 'START' | 'STOP';
+
+// Warning: (ae-forgotten-export) The symbol "BaseAnalyticsRequest" needs to be exported by the entry point index.d.ts
+//
+// @internal
+export interface AnalyticsSessionStateChangeRequest extends BaseAnalyticsRequest {
+    requestType: AnalyticsSessionRequestType;
+}
 
 // @public
-abstract class BaseInputController {
+export abstract class BaseInputController {
     constructor();
     disconnect(): void;
     protected handleInputAction(inputData: TouchFreeInputAction): void;
@@ -75,63 +82,41 @@ export enum BitmaskFlags {
 }
 
 // @internal
-class CallbackHandler {
-    constructor();
-    analyticsRequestCallbacks: CallbackList<WebSocketResponse>;
-    callbackClearTimer: number;
-    clearUnresponsivePromises(): void;
-    configStateCallbacks: CallbackList<ConfigState>;
-    handshakeCallbacks: CallbackList<WebSocketResponse>;
-    responseCallbacks: CallbackList<WebSocketResponse>;
-    serviceStatusCallbacks: CallbackList<ServiceStatus>;
-    trackingStateCallbacks: CallbackList<TrackingStateResponse>;
-}
-
-// @internal
-type CallbackList<T> = {
+export type CallbackList<T> = {
     [id: string]: TouchFreeRequestCallback<T>;
 };
 
 // @internal
-class CommunicationWrapper<T> {
+export class CommunicationWrapper<T> {
     constructor(actionCode: ActionCode, content: T);
     action: ActionCode;
     content: T;
 }
 
 // @internal @deprecated
-enum Compatibility {
+export enum Compatibility {
     COMPATIBLE = 0,
     SERVICE_OUTDATED = 1,
     TOOLING_OUTDATED = 2
 }
 
+// @internal
+export class ConfigChangeRequest extends TouchFreeRequest {
+}
+
 // @public
-class ConfigState implements TouchFreeRequest {
+export class ConfigState extends TouchFreeRequest {
     constructor(id: string, interaction: InteractionConfigFull, physical: PhysicalConfig);
     interaction: InteractionConfigFull;
     physical: PhysicalConfig;
-    requestID: string;
 }
 
-declare namespace Configuration {
-    export {
-        ConfigurationManager,
-        InteractionConfig,
-        InteractionConfigFull,
-        HoverAndHoldInteractionSettings,
-        TouchPlaneInteractionSettings,
-        VelocitySwipeSettings,
-        PhysicalConfig,
-        Vector,
-        Vector2,
-        TrackedPosition
-    }
+// @internal
+export class ConfigStateCallback extends TouchFreeRequestCallback<ConfigState> {
 }
-export { Configuration }
 
 // @public
-class ConfigurationManager {
+export class ConfigurationManager {
     static requestConfigChange(interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null, callback?: (detail: WebSocketResponse) => void): void;
     static requestConfigFileChange(interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null, callback?: (detail: WebSocketResponse) => void): void;
     static requestConfigFileState(callback?: (detail: ConfigState) => void): void;
@@ -146,47 +131,12 @@ export enum ConfigurationState {
     NOT_LOADED = 0
 }
 
-declare namespace Connection {
-    export {
-        CallbackHandler,
-        ConnectionManager,
-        ServiceConnection,
-        ActionCode,
-        AnalyticsSessionRequestType,
-        EventStatus,
-        AnalyticEventKey,
-        AnalyticSessionEvents,
-        HandPresenceState,
-        InteractionZoneState,
-        EventUpdate,
-        Compatibility,
-        HandPresenceEvent,
-        InteractionZoneEvent,
-        TouchFreeRequestCallback,
-        TouchFreeRequest,
-        PartialConfigState,
-        ConfigState,
-        HandRenderDataStateRequest,
-        ServiceStatus,
-        WebSocketResponse,
-        VersionHandshakeResponse,
-        CommunicationWrapper,
-        SuccessWrapper,
-        TrackingStateResponse,
-        TrackingStateRequest,
-        CallbackList
-    }
-}
-export { Connection }
-
 // @public
-class ConnectionManager extends EventTarget {
+export class ConnectionManager extends EventTarget {
     // @deprecated
     static addConnectionListener(onConnectFunc: () => void): void;
     // @deprecated
     static addServiceStatusListener(serviceStatusFunc: (serviceStatus: TrackingServiceState) => void): void;
-    // @internal
-    static callbackHandler: CallbackHandler;
     static connect(): void;
     static disconnect(): void;
     static getCurrentHandPresence(): HandPresenceState;
@@ -198,6 +148,8 @@ class ConnectionManager extends EventTarget {
     static instance: ConnectionManager;
     static ipAddress: string;
     static get isConnected(): boolean;
+    // @internal
+    static messageReceiver: MessageReceiver;
     static port: string;
     static requestServiceStatus(callback?: (detail: ServiceStatus) => void): void;
     // @internal
@@ -209,21 +161,12 @@ class ConnectionManager extends EventTarget {
 // @internal
 export function convertInputAction(wsInput: WebsocketInputAction): TouchFreeInputAction;
 
-declare namespace Cursors {
-    export {
-        DotCursor,
-        SVGCursor,
-        TouchlessCursor
-    }
-}
-export { Cursors }
-
 // @public
 function dispatchEvent_2<TEvent extends TouchFreeEvent>(eventType: TEvent, ...args: Parameters<TouchFreeEventSignatures[TEvent]>): void;
 export { dispatchEvent_2 as dispatchEvent }
 
 // @public
-class DotCursor extends TouchlessCursor {
+export class DotCursor extends TouchlessCursor {
     constructor(cursor: HTMLElement, cursorRing: HTMLElement, animationDuration?: number, ringSizeMultiplier?: number);
     readonly animationUpdateDuration: number;
     cursorRing: HTMLElement;
@@ -246,10 +189,10 @@ export interface EventHandle {
 }
 
 // @internal
-type EventStatus = 'PROCESSED' | 'UNPROCESSED';
+export type EventStatus = 'PROCESSED' | 'UNPROCESSED';
 
 // @internal
-interface EventUpdate<T> {
+export interface EventUpdate<T> {
     state: T;
     status: EventStatus;
 }
@@ -299,13 +242,13 @@ export class HandFrame {
 }
 
 // @internal
-class HandPresenceEvent {
+export class HandPresenceEvent {
     constructor(state: HandPresenceState);
     state: HandPresenceState;
 }
 
 // @public
-enum HandPresenceState {
+export enum HandPresenceState {
     HAND_FOUND = 0,
     HANDS_LOST = 1,
     // @internal
@@ -313,11 +256,10 @@ enum HandPresenceState {
 }
 
 // @internal
-class HandRenderDataStateRequest implements TouchFreeRequest {
+export class HandRenderDataStateRequest extends TouchFreeRequest {
     constructor(id: string, enabled: boolean, lens: string);
     enabled: boolean;
     lens: string;
-    requestID: string;
 }
 
 // @public
@@ -327,7 +269,7 @@ export enum HandType {
 }
 
 // @public
-interface HoverAndHoldInteractionSettings {
+export interface HoverAndHoldInteractionSettings {
     HoverCompleteTimeS: number;
     HoverStartTimeS: number;
 }
@@ -336,7 +278,7 @@ interface HoverAndHoldInteractionSettings {
 export function init(tfInitParams?: TfInitParams): void;
 
 // @public
-class InputActionManager extends EventTarget {
+export class InputActionManager extends EventTarget {
     // @internal
     static handleInputAction(action: TouchFreeInputAction): void;
     static get instance(): InputActionManager;
@@ -346,21 +288,13 @@ class InputActionManager extends EventTarget {
 }
 
 // @public
-abstract class InputActionPlugin extends EventTarget {
+export abstract class InputActionPlugin extends EventTarget {
     // @internal
     modifyInputAction(inputAction: TouchFreeInputAction): TouchFreeInputAction | null;
     runPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null;
     // @internal
     transmitInputAction(inputAction: TouchFreeInputAction): void;
 }
-
-declare namespace InputControllers {
-    export {
-        BaseInputController,
-        WebInputController
-    }
-}
-export { InputControllers }
 
 // @public
 export enum InputType {
@@ -372,7 +306,7 @@ export enum InputType {
 }
 
 // @public
-interface InteractionConfig {
+export interface InteractionConfig {
     DeadzoneRadius: number;
     HoverAndHold: Partial<HoverAndHoldInteractionSettings>;
     InteractionMaxDistanceCm: number;
@@ -387,7 +321,7 @@ interface InteractionConfig {
 }
 
 // @public
-interface InteractionConfigFull {
+export interface InteractionConfigFull {
     DeadzoneRadius: number;
     HoverAndHold: HoverAndHoldInteractionSettings;
     InteractionMaxDistanceCm: number;
@@ -411,12 +345,12 @@ export enum InteractionType {
 }
 
 // @internal
-interface InteractionZoneEvent {
+export interface InteractionZoneEvent {
     state: InteractionZoneState;
 }
 
 // @public
-enum InteractionZoneState {
+export enum InteractionZoneState {
     HAND_ENTERED = 0,
     HAND_EXITED = 1
 }
@@ -425,10 +359,10 @@ enum InteractionZoneState {
 export const isAnalyticsActive: () => boolean;
 
 // @public
-function mapRangeToRange(value: number, oldMin: number, oldMax: number, newMin: number, newMax: number): number;
+export function mapRangeToRange(value: number, oldMin: number, oldMax: number, newMin: number, newMax: number): number;
 
 // @public
-interface Mask {
+export interface Mask {
     left: number;
     lower: number;
     right: number;
@@ -436,15 +370,61 @@ interface Mask {
 }
 
 // @internal
-class PartialConfigState implements TouchFreeRequest {
+export class MessageReceiver {
+    constructor();
+    actionCullToCount: number;
+    actionQueue: Array<WebsocketInputAction>;
+    analyticsRequestCallbacks: CallbackList<WebSocketResponse>;
+    analyticsRequestQueue: WebSocketResponse[];
+    callbackClearTimer: number;
+    checkForAction(): void;
+    checkForConfigState(): void;
+    checkForHandData(): void;
+    checkForHandshakeResponse(): void;
+    checkForResponse(): void;
+    checkForServiceStatus(): void;
+    // @deprecated
+    checkForTrackingStateResponse(): void;
+    clearUnresponsivePromises(): void;
+    configStateCallbacks: {
+        [id: string]: ConfigStateCallback;
+    };
+    configStateQueue: Array<ConfigState>;
+    // @deprecated
+    handleTrackingStateResponse(trackingStateResponse: TrackingStateResponse): void;
+    handshakeCallbacks: {
+        [id: string]: ResponseCallback;
+    };
+    handshakeQueue: Array<WebSocketResponse>;
+    lastInteractionZoneUpdate: EventUpdate<InteractionZoneState>;
+    lastKnownCursorPosition: Array<number>;
+    lastStateUpdate: HandPresenceState;
+    latestHandDataItem?: ArrayBuffer;
+    responseCallbacks: {
+        [id: string]: ResponseCallback;
+    };
+    responseQueue: Array<WebSocketResponse>;
+    serviceStatusCallbacks: {
+        [id: string]: ServiceStatusCallback;
+    };
+    serviceStatusQueue: Array<ServiceStatus>;
+    trackingStateCallbacks: {
+        [id: string]: TrackingStateCallback;
+    };
+    trackingStateQueue: Array<TrackingStateResponse>;
+    update(): void;
+    updateRate: number;
+}
+
+// @internal
+export class PartialConfigState extends TouchFreeRequest {
     constructor(id: string, interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null);
     interaction: Partial<InteractionConfig> | null;
     physical: Partial<PhysicalConfig> | null;
-    requestID: string;
 }
 
 // @public
-interface PhysicalConfig {
+export interface PhysicalConfig {
     LeapPositionRelativeToScreenBottomM: Vector;
     LeapRotationD: Vector;
     ScreenHeightM: number;
@@ -452,14 +432,6 @@ interface PhysicalConfig {
     ScreenRotationD: number;
     ScreenWidthPX: number;
 }
-
-declare namespace Plugins {
-    export {
-        InputActionManager,
-        InputActionPlugin
-    }
-}
-export { Plugins }
 
 // @internal
 export class RawBone {
@@ -490,10 +462,16 @@ export function registerAnalyticEvents(eventsIn?: readonly AnalyticEventKey[]): 
 export function registerEventCallback<TEvent extends TouchFreeEvent>(event: TEvent, callback: TouchFreeEventSignatures[TEvent]): EventHandle;
 
 // @internal
-class ServiceConnection {
-    // Warning: (ae-forgotten-export) The symbol "IBaseMessageReceiver" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "HandDataHandler" needs to be exported by the entry point index.d.ts
-    constructor(messageReceivers: IBaseMessageReceiver[], handDataHandler: HandDataHandler, ip?: string, port?: string);
+export class ResetInteractionConfigFileRequest extends TouchFreeRequest {
+}
+
+// @internal
+export class ResponseCallback extends TouchFreeRequestCallback<WebSocketResponse> {
+}
+
+// @internal
+export class ServiceConnection {
+    constructor(ip?: string, port?: string);
     analyticsSessionRequest: (requestType: AnalyticsSessionRequestType, sessionID: string, callback?: ((detail: WebSocketResponse) => void) | undefined) => void;
     disconnect: () => void;
     get handshakeComplete(): boolean;
@@ -512,19 +490,32 @@ class ServiceConnection {
 }
 
 // @public
-class ServiceStatus implements TouchFreeRequest {
+export class ServiceStatus extends TouchFreeRequest {
     constructor(id: string, trackingServiceState: TrackingServiceState, configurationState: ConfigurationState, serviceVersion: string, trackingVersion: string, cameraSerial: string, cameraFirmwareVersion: string);
     cameraFirmwareVersion: string;
     cameraSerial: string;
     configurationState: ConfigurationState;
-    requestID: string;
     serviceVersion: string;
     trackingServiceState: TrackingServiceState;
     trackingVersion: string;
 }
 
+// @internal
+export class ServiceStatusCallback extends TouchFreeRequestCallback<ServiceStatus> {
+}
+
+// @internal
+export class ServiceStatusRequest extends TouchFreeRequest {
+}
+
 // @public
 export const setCurrentCursor: (cursor?: TouchlessCursor) => TouchlessCursor | undefined;
+
+// @internal
+export class SimpleRequest {
+    constructor(id: string);
+    requestID: string;
+}
 
 // @public
 export function startAnalyticsSession(applicationName: string, options?: StartAnalyticsSessionOptions): void;
@@ -549,14 +540,14 @@ export interface StopAnalyticsSessionOptions {
 }
 
 // @public
-interface SuccessWrapper<T> {
+export interface SuccessWrapper<T> {
     content?: T;
     msg: string;
     succeeded: boolean;
 }
 
 // @public
-class SVGCursor extends TouchlessCursor {
+export class SVGCursor extends TouchlessCursor {
     constructor(ringSizeMultiplier?: number, darkCursor?: boolean);
     // @internal
     protected handleInputAction(inputData: TouchFreeInputAction): void;
@@ -613,19 +604,21 @@ export class TouchFreeInputAction {
     Timestamp: number;
 }
 
-// @public
-interface TouchFreeRequest {
+// @public @virtual
+export abstract class TouchFreeRequest {
+    constructor(requestID: string);
     requestID: string;
 }
 
 // @internal
-interface TouchFreeRequestCallback<T> {
+export abstract class TouchFreeRequestCallback<T> {
+    constructor(timestamp: number, callback: (detail: T) => void);
     callback: (detail: T) => void;
     timestamp: number;
 }
 
 // @public
-abstract class TouchlessCursor {
+export abstract class TouchlessCursor {
     constructor(cursor: HTMLElement | SVGElement | undefined);
     cursor: HTMLElement | SVGElement | undefined;
     disableCursor(): void;
@@ -642,30 +635,21 @@ abstract class TouchlessCursor {
 }
 
 // @public
-interface TouchPlaneInteractionSettings {
+export interface TouchPlaneInteractionSettings {
     TouchPlaneActivationDistanceCm: number;
     TouchPlaneTrackedPosition: TrackedPosition;
 }
 
 // @public
-enum TrackedPosition {
+export enum TrackedPosition {
     INDEX_STABLE = 0,
     INDEX_TIP = 1,
     NEAREST = 3,
     WRIST = 2
 }
 
-declare namespace Tracking {
-    export {
-        TrackingManager,
-        Mask,
-        TrackingState
-    }
-}
-export { Tracking }
-
 // @public
-class TrackingManager {
+export class TrackingManager {
     static convertResponseToState(response: TrackingStateResponse): Partial<TrackingState>;
     static requestTrackingChange(state: Partial<TrackingState>, callback?: (detail: TrackingStateResponse) => void): void;
     static requestTrackingState(callback?: (detail: TrackingStateResponse) => void): void;
@@ -679,7 +663,7 @@ export enum TrackingServiceState {
 }
 
 // @public
-class TrackingState {
+export class TrackingState {
     constructor(mask: Mask, cameraReversed: boolean, allowImages: boolean, analyticsEnabled: boolean);
     allowImages: boolean;
     analyticsEnabled: boolean;
@@ -688,7 +672,14 @@ class TrackingState {
 }
 
 // @internal
-class TrackingStateRequest implements TouchFreeRequest {
+export class TrackingStateCallback {
+    constructor(timestamp: number, callback: (detail: TrackingStateResponse) => void);
+    callback: (detail: TrackingStateResponse) => void;
+    timestamp: number;
+}
+
+// @internal
+export class TrackingStateRequest {
     constructor(id: string, mask: Mask, cameraReversed: boolean, allowImages: boolean, analyticsEnabled: boolean);
     allowImages: boolean;
     analyticsEnabled: boolean;
@@ -698,7 +689,7 @@ class TrackingStateRequest implements TouchFreeRequest {
 }
 
 // @public
-interface TrackingStateResponse extends TouchFreeRequest {
+export interface TrackingStateResponse {
     allowImages: SuccessWrapper<boolean> | null;
     analyticsEnabled: SuccessWrapper<boolean> | null;
     cameraReversed: SuccessWrapper<boolean> | null;
@@ -711,28 +702,26 @@ interface TrackingStateResponse extends TouchFreeRequest {
 // @public
 export function unregisterAnalyticEvents(eventsIn?: AnalyticEventKey[]): void;
 
-declare namespace Utilities {
-    export {
-        mapRangeToRange
-    }
+// @internal
+export interface UpdateAnalyticSessionEventsRequest extends BaseAnalyticsRequest {
+    sessionEvents: AnalyticSessionEvents;
 }
-export { Utilities }
 
 // @public
-interface Vector {
+export interface Vector {
     X: number;
     Y: number;
     Z: number;
 }
 
 // @public
-interface Vector2 {
+export interface Vector2 {
     x: number;
     y: number;
 }
 
 // @internal
-interface VelocitySwipeSettings {
+export interface VelocitySwipeSettings {
     AllowBidirectionalScroll: boolean;
     AllowHorizontalScroll: boolean;
     AllowVerticalScroll: boolean;
@@ -749,7 +738,7 @@ interface VelocitySwipeSettings {
 }
 
 // @public
-class VersionHandshakeResponse extends WebSocketResponse {
+export class VersionHandshakeResponse extends WebSocketResponse {
     constructor(id: string, status: string, msg: string, request: string, touchFreeVersion: string, apiVersion: string);
     apiVersion: string;
     touchFreeVersion: string;
@@ -762,7 +751,7 @@ export class VersionInfo {
 }
 
 // @public
-class WebInputController extends BaseInputController {
+export class WebInputController extends BaseInputController {
     constructor();
     enterLeaveEnabled: boolean;
     // @internal
@@ -782,11 +771,10 @@ export class WebsocketInputAction {
 }
 
 // @public
-class WebSocketResponse implements TouchFreeRequest {
+export class WebSocketResponse extends TouchFreeRequest {
     constructor(id: string, status: string, msg: string, request: string);
     message: string;
     originalRequest: string;
-    requestID: string;
     status: string;
 }
 

@@ -1,8 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ConfigState } from '../Connection';
 import { InteractionType } from '../TouchFreeToolingTypes';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ConfigurationManager } from './ConfigurationManager';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ConfigState } from 'Connection';
 
 /**
  * Container for all of the settings related to the interactions being processed by the TouchFree Service.
