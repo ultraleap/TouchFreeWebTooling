@@ -47,6 +47,7 @@
           "evt",
           "func",
           "guid",
+          "jordy",
           "jsDom",
           "lerp",
           "mmps",
@@ -59,8 +60,7 @@
           "timeframe",
           "Ultraleap",
           "umd",
-          "uuidgen",
-          "vars"
+          "uuidgen"
         ],
         "skipWordIfMatch": [
           "^pointer(down|up|enter|leave|out|over|move|cancel)?$",
@@ -72,7 +72,8 @@
           "^casted(Key)?$",
           "(un|Un)?register(s)?",
           "\\.?ts(x)?$",
-          "^Impl(s)?$"
+          "^Impl(s)?$",
+          "var(s)?"
         ],
         "minLength": 3
       }
@@ -120,5 +121,5 @@
       }
     ]
   },
-  "globals": { "TouchFree": "readonly", "SnappingPlugin": "readonly" }
+  "globals": { "touchfree": "readonly", "SnappingPlugin": "readonly" }
 }

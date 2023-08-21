@@ -1,0 +1,131 @@
+:root {
+  --background-color: white;
+  --display-color: var(--background-color);
+  --melon: #ffadadff;
+  --sunset: #ffd6a5ff;
+  --cream: #fdffb6ff;
+  --tea-green: #caffbfff;
+  --electric-blue: #9bf6ffff;
+  --jordy-blue: #a0c4ffff;
+  --periwinkle: #bdb2ffff;
+  --mauve: #ffc6ffff;
+  --baby-powder: #fffffcff;
+  --percent: 80%;
+  --shadow: color-mix(in srgb, var(--background-color) var(--percent), black);
+}
+
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background-color);
+}
+
+.content {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 2vw;
+}
+
+.col__right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2vw;
+}
+
+.title {
+  text-align: center;
+  font-size: 2rem;
+  color: white;
+}
+
+.scroll-container {
+  position: relative;
+  box-shadow: 0 2px 5px 3px var(--shadow);
+  border-radius: 15px;
+}
+
+.scroll-container__vertical {
+  height: 80vh;
+  width: 30vw;
+  overflow-y: scroll;
+}
+
+.scroll-container__horizontal {
+  height: 20vh;
+  width: 60vw;
+  overflow-x: scroll;
+}
+
+* {
+  transition: background-color linear 0.2s;
+}
+
+.text-container {
+  background-color: var(--display-color);
+  box-shadow: 0 2px 5px 1px var(--shadow);
+  border-radius: 15px;
+  height: calc(60vh - 2vw);
+  width: 60vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  text-align: center;
+}
+
+.button-container__vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2vw;
+  margin: 2vw 0;
+}
+
+.button-container__horizontal {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 2vw;
+  margin: 0 2vw;
+}
+
+.button-container button {
+  border: none;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  transition: transform linear 0.1s;
+  cursor: pointer;
+  transform: scale(1);
+}
+
+.button-container__vertical button {
+  height: 15vh;
+  width: 25vw;
+}
+
+.button-container__horizontal button {
+  height: 15vh;
+  width: 15vw;
+}
+
+.button-container button.hovered {
+  transform: scale(1.1);
+}
+
+#dark {
+  position: fixed;
+  top: 2vw;
+  right: 4vw;
+  padding: 1rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
