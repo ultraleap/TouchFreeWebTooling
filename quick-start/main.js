@@ -13,6 +13,7 @@ const COLOR_MAP = [
 ];
 
 let isDark = false;
+let clicked = false;
 
 const dark = document.getElementById('dark');
 const label = document.getElementById('label');
@@ -30,7 +31,9 @@ dark?.addEventListener('pointerup', () => {
     } else {
         root?.style.setProperty('--background-color', '#5c5c5c');
         root?.style.setProperty('--percent', '50%');
-        textArea?.style.setProperty('color', 'white');
+        if (!clicked) {
+            textArea?.style.setProperty('color', 'white');
+        }
         label.textContent = 'Light';
         isDark = true;
     }
@@ -38,6 +41,7 @@ dark?.addEventListener('pointerup', () => {
 
 function onClick(event) {
     if (!textArea) return;
+    clicked = true;
     const button = event.target;
     textArea.textContent = button.textContent;
     textArea.style.backgroundColor = button.style.backgroundColor;
@@ -59,7 +63,7 @@ function onPointerLeave(event) {
 
 function createButton(index, content) {
     const button = document.createElement('button');
-    button.textContent = content === 'APLHA' ? String.fromCharCode(index + 65) : (index + 1).toString();
+    button.textContent = content === 'ALPHA' ? String.fromCharCode(index + 65) : (index + 1).toString();
     button.addEventListener('pointerup', onClick);
     button.addEventListener('pointerenter', onPointerEnter);
     button.addEventListener('pointerleave', onPointerLeave);
