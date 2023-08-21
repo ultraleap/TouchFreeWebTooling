@@ -150,8 +150,8 @@ npm::pack:
   tags:
     - docker-windows
   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
-  only:
-    - release
+  # only:
+  #   - release
   script:
     - npm i
     - npm run build:tsc
