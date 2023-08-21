@@ -8,8 +8,8 @@
     "leapmotion",
     "hand tracking"
   ],
-  "main": "build/index.js",
-  "typings": "build/index.d.ts",
+  "main": "build/src/index.js",
+  "typings": "build/src/index.d.ts",
   "scripts": {
     "jest": "jest",
     "test": "jest --ci --reporters=default --reporters=jest-junit",
@@ -29,6 +29,9 @@
     "email": "contact@ultraleap.com",
     "url": "https://www.ultraleap.com"
   },
+  "files": [
+    "build"
+  ],
   "license": "Apache-2.0",
   "dependencies": {
     "uuid": "^9.0.0"

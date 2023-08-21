@@ -7,26 +7,25 @@
  */
 
 /** Functionality for changing configuration of the TouchFree Service */
-import * as Configuration from './Configuration';
+export * from './Configuration';
 
 /** Functionality for managing a connection and messages sent to/from the TouchFree Service */
-import * as Connection from './Connection';
+export * from './Connection';
 
 /** Functionality to create different kinds of cursors */
-import * as Cursors from './Cursors';
+export * from './Cursors';
 
 /** Functionality for implementing input controllers to respond to TouchFree inputs */
-import * as InputControllers from './InputControllers';
+export * from './InputControllers';
 
 /** Plugins which extend TouchFree's functionality */
-import * as Plugins from './Plugins';
+export * from './Plugins';
 
 /** Functionality for controlling the Ultraleap Tracking Service via TouchFree Service */
-import * as Tracking from './Tracking';
+export * from './Tracking';
 
 /** Utility functionality */
-import * as Utilities from './Utilities';
+export * from './Utilities';
 
-export { Configuration, Connection, Cursors, InputControllers, Plugins, Tracking, Utilities };
 export * from './TouchFreeToolingTypes';
 export * from './TouchFree';
