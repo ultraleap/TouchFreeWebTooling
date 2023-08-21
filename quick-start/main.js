@@ -59,14 +59,7 @@ function onPointerLeave(event) {
 
 function createButton(index, content) {
     const button = document.createElement('button');
-    switch (content) {
-        case 'NUM':
-            button.textContent = (index + 1).toString();
-            break;
-        case 'ALPHA':
-            button.textContent = String.fromCharCode(index + 65);
-            break;
-    }
+    button.textContent = content === 'APLHA' ? String.fromCharCode(index + 65) : (index + 1).toString();
     button.addEventListener('pointerup', onClick);
     button.addEventListener('pointerenter', onPointerEnter);
     button.addEventListener('pointerleave', onPointerLeave);
@@ -96,4 +89,3 @@ touchfree.registerEventCallback('transmitInputAction', (action) => {
     if (!hovered) return;
     hovered.style.transform = `scale(${1.1 - action.ProgressToClick * 0.1})`;
 });
-
