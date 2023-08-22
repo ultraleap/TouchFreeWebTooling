@@ -2,7 +2,7 @@ import * as TouchFree from '../TouchFree';
 import { VersionInfo } from '../TouchFreeToolingTypes';
 import { TrackingState } from '../Tracking/TrackingTypes';
 import { ConnectionManager } from './ConnectionManager';
-import { HandDataHandler, IBaseMessageReceiver } from './MessageReceivers';
+import { HandDataHandler, MessageReceiver } from './MessageReceivers';
 import {
     ActionCode,
     CommunicationWrapper,
@@ -37,7 +37,7 @@ export class ServiceConnection {
 
     private readonly handDataHandler: HandDataHandler;
 
-    private readonly messageReceivers: IBaseMessageReceiver[];
+    private readonly messageReceivers: MessageReceiver[];
 
     /**
      * The version of the connected TouchFree Service
@@ -66,7 +66,7 @@ export class ServiceConnection {
      * @param port - Optional override to default websocket port '9739'
      */
     constructor(
-        messageReceivers: IBaseMessageReceiver[],
+        messageReceivers: MessageReceiver[],
         handDataHandler: HandDataHandler,
         ip = '127.0.0.1',
         port = '9739'

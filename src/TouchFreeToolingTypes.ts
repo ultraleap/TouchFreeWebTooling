@@ -346,7 +346,7 @@ export class WebsocketInputAction {
  */
 export class HandFrame {
     /** Array of {@link RawHand | hand data} */
-    hands: RawHand[] = [];
+    Hands: RawHand[] = [];
 }
 
 /**
@@ -355,13 +355,13 @@ export class HandFrame {
  */
 export class RawHand {
     /** Flag representing if hand is the current primary hand */
-    currentPrimary = false;
+    CurrentPrimary = false;
     /** Array of {@link RawFinger | fingers} */
-    fingers: RawFinger[] = [];
+    Fingers: RawFinger[] = [];
     /** Width of wrist */
-    wristWidth = 0;
+    WristWidth = 0;
     /** Position of wrist */
-    wristPosition: Vector = { X: 0, Y: 0, Z: 0 };
+    WristPosition: Vector = { X: 0, Y: 0, Z: 0 };
 }
 
 /**
@@ -370,9 +370,9 @@ export class RawHand {
  */
 export class RawFinger {
     /** Array of {@link RawBone | Bones}  */
-    bones: RawBone[] = [];
+    Bones: RawBone[] = [];
     /** Type of finger. See {@link FingerType} */
-    type: FingerType = FingerType.TYPE_UNKNOWN;
+    Type: FingerType = FingerType.TYPE_UNKNOWN;
 }
 
 /**
@@ -400,9 +400,9 @@ export enum FingerType {
  */
 export class RawBone {
     /** Start joint position of the finger bone */
-    prevJoint: Vector = { X: 0, Y: 0, Z: 0 };
+    PrevJoint: Vector = { X: 0, Y: 0, Z: 0 };
     /** End joint position of the finger bone */
-    nextJoint: Vector = { X: 0, Y: 0, Z: 0 };
+    NextJoint: Vector = { X: 0, Y: 0, Z: 0 };
 }
 
 /**

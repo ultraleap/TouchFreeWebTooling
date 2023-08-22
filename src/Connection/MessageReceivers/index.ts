@@ -1,9 +1,7 @@
 import { CallbackHandler } from '../CallbackHandler';
 import { AnalyticsMessageReceiver } from './AnalyticsMessageReceiver';
 import { ConfigStateMessageReceiver } from './ConfigStateMessageReceiver';
-import { HandDataHandler } from './HandDataHandler';
 import { HandPresenceMessageReceiver } from './HandPresenceMessageReceiver';
-import type { IBaseMessageReceiver } from './IBaseMessageReceiver';
 import { InputActionMessageReceiver } from './InputActionMessageReceiver';
 import { InteractionZoneMessageReceiver } from './InteractionZoneMessageReceiver';
 import { ResponseMessageReceiver } from './ResponseMessageReceiver';
@@ -11,7 +9,8 @@ import { ServiceStateMessageReceiver } from './ServiceStateMessageReceiver';
 import { TrackingStateMessageReceiver } from './TrackingStateMessageReceiver';
 import { VersionHandshakeMessageReceiver } from './VersionHandshakeMessageReceiver';
 
-export { HandDataHandler, IBaseMessageReceiver };
+export { HandDataHandler } from './HandDataHandler';
+export { MessageReceiver } from './BaseMessageReceiver';
 
 export const createMessageReceivers = (callbackHandler: CallbackHandler) => {
     return [
