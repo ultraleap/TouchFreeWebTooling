@@ -1,22 +1,5 @@
-import { Vector, Vector2 } from './Configuration/ConfigurationTypes';
 import { ServiceStatus } from './Connection/TouchFreeServiceTypes';
-
-/**
- * This class is used when comparing the {@link API_VERSION} of the Tooling and the Service.
- *
- * @internal
- */
-export class VersionInfo {
-    /**
-     * The current version of communication API used between Tooling and the TouchFree Service
-     */
-    public static readonly API_VERSION: string = '1.5.0';
-
-    /**
-     * The name of the header we wish the Service to compare our version with.
-     */
-    public static readonly API_HEADER_NAME: string = 'TfApiVersion';
-}
+import { Vector, Vector2 } from 'Math';
 
 /**
  * A structure representing the Tooling version of an inputAction.

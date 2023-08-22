@@ -1,8 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ConfigState } from '../Connection';
 import { InteractionType } from '../TouchFreeToolingTypes';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ConfigurationManager } from './ConfigurationManager';
+import { Vector } from 'Math';
 
 /**
  * Container for all of the settings related to the interactions being processed by the TouchFree Service.
@@ -13,7 +12,7 @@ import { ConfigurationManager } from './ConfigurationManager';
  * be modified by changing the contained `HoverAndHoldInteractionSettings`.
  *
  * In order to modify the settings of the service, create an instance of this class, make the
- * changes you wish to see, and then send it to the service using the `ConfigurationManager`.
+ * changes you wish to see, and then send it to the service using the Configuration API.
  *
  * Like all of the Settings classes found in this file, all members are optional. If you do
  * not modify a member of this class, its value will not change when sent to the TouchFree Service.
@@ -141,7 +140,7 @@ export interface InteractionConfigFull {
  * @remarks
  * In order to modify these settings of the TouchFree Service, create an `InteractionConfig`,
  * which contains an instance of this class, modify it as required, and then pass to the service
- * using the `ConfigurationManager`.
+ * using the Configuration API.
  *
  * Like all of the Settings classes found in this file, all members are optional. If you do
  * not modify a member of this class, its value will not change when sent to the TouchFree Service.
@@ -172,7 +171,7 @@ export interface HoverAndHoldInteractionSettings {
  * @remarks
  * In order to modify these settings of the TouchFree Service, create an {@link InteractionConfig},
  * which contains an instance of this class, modify it as required, and then pass to the service
- * using the {@link ConfigurationManager}.
+ * using the Configuration API.
  *
  * Like all of the Settings classes found in this file, all members are optional. If you do
  * not modify a member of this class, its value will not change when sent to the TouchFree Service.
@@ -200,7 +199,7 @@ export interface TouchPlaneInteractionSettings {
  * @remarks
  * In order to modify these settings of the TouchFree Service, create an `InteractionConfig`,
  * which contains an instance of this class, modify it as required, and then pass to the service
- * using the `ConfigurationManager`.
+ * using the Configuration API.
  *
  * Like all of the Settings classes found in this file, all members are optional. If you do
  * not modify a member of this class, its value will not change when sent to the TouchFree Service.
@@ -270,7 +269,7 @@ export interface VelocitySwipeSettings {
  *
  * @remarks
  * In order to modify these settings of the TouchFree Service, create an instance of this class,
- * modify it as required, and then send it to the service using the `ConfigurationManager`.
+ * modify it as required, and then send it to the service using the Configuration API.
  *
  * Like all of the Settings classes found in this file, all members are optional. If you do
  * not modify a member of this class, its value will not change when sent to the TouchFree Service.
@@ -321,30 +320,6 @@ export interface PhysicalConfig {
      * Measured in Pixels.
      */
     ScreenHeightPX: number;
-}
-
-/**
- * Simple 3-dimensional vector
- * @public
- */
-export interface Vector {
-    /** The X co-ordinate of the vector */
-    X: number;
-    /** The Y co-ordinate of the vector */
-    Y: number;
-    /** The Z co-ordinate of the vector */
-    Z: number;
-}
-
-/**
- * Simple 2-dimensional vector
- * @public
- */
-export interface Vector2 {
-    /** The X co-ordinate of the vector */
-    x: number;
-    /** The Y co-ordinate of the vector */
-    y: number;
 }
 
 /**

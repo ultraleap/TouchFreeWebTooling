@@ -1,4 +1,4 @@
-import * as TouchFree from '../TouchFree';
+import { EventHandle, registerEventCallback } from '../TouchFree';
 import { TouchFreeInputAction, InputType } from '../TouchFreeToolingTypes';
 
 /**
@@ -11,7 +11,7 @@ import { TouchFreeInputAction, InputType } from '../TouchFreeToolingTypes';
  */
 export abstract class BaseInputController {
     private static instantiated = false;
-    private handleInputActionCallback: TouchFree.EventHandle | undefined;
+    private handleInputActionCallback: EventHandle | undefined;
 
     /**
      * Subscribes to the TouchFree `'transmitInputAction'` event, invoke {@link handleInputAction}
@@ -24,7 +24,7 @@ export abstract class BaseInputController {
     constructor() {
         if (!BaseInputController.instantiated) {
             BaseInputController.instantiated = true;
-            this.handleInputActionCallback = TouchFree.registerEventCallback(
+            this.handleInputActionCallback = registerEventCallback(
                 'transmitInputAction',
                 this.handleInputAction.bind(this)
             );
@@ -32,7 +32,7 @@ export abstract class BaseInputController {
     }
 
     /**
-     * Override to implement {@link TouchFree.InputController} specific behaviour for
+     * Override to implement InputController specific behaviour for
      * {@link TouchFreeInputAction  | TouchFreeInputActions}
      * @param inputData - The latest input action received from TouchFree Service.
      */

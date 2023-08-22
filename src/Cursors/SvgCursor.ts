@@ -1,6 +1,6 @@
-import * as TouchFree from '../TouchFree';
+import { mapRangeToRange } from '../Math/Utilities';
+import { registerEventCallback } from '../TouchFree';
 import { InputType, TouchFreeInputAction } from '../TouchFreeToolingTypes';
-import { mapRangeToRange } from '../Utilities';
 import { TouchlessCursor } from './TouchlessCursor';
 
 export const enum CursorPart {
@@ -94,10 +94,10 @@ export class SVGCursor extends TouchlessCursor {
         this.ringSizeMultiplier = ringSizeMultiplier;
         this.baseRingSizeMultiplier = ringSizeMultiplier;
 
-        TouchFree.registerEventCallback('handFound', this.showCursor.bind(this));
-        TouchFree.registerEventCallback('handsLost', this.hideCursor.bind(this));
-        TouchFree.registerEventCallback('handEntered', this.showCursor.bind(this));
-        TouchFree.registerEventCallback('handExited', this.hideCursor.bind(this));
+        registerEventCallback('handFound', this.showCursor.bind(this));
+        registerEventCallback('handsLost', this.hideCursor.bind(this));
+        registerEventCallback('handEntered', this.showCursor.bind(this));
+        registerEventCallback('handExited', this.hideCursor.bind(this));
     }
 
     /**

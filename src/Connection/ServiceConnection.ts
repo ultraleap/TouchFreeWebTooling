@@ -1,5 +1,4 @@
 import * as TouchFree from '../TouchFree';
-import { VersionInfo } from '../TouchFreeToolingTypes';
 import { TrackingState } from '../Tracking/TrackingTypes';
 import { ConnectionManager } from './ConnectionManager';
 import { HandDataHandler, MessageReceiver } from './MessageReceivers';
@@ -17,6 +16,23 @@ import {
     TouchFreeRequest,
 } from './TouchFreeServiceTypes';
 import { v4 as uuidgen } from 'uuid';
+
+/**
+ * Object with versions for comparing the {@link API_VERSION} of the Tooling and the Service.
+ *
+ * @internal
+ */
+const VERSIONINFO = {
+    /**
+     * The current version of communication API used between Tooling and the TouchFree Service
+     */
+    API_VERSION: '1.5.0',
+
+    /**
+     * The name of the header we wish the Service to compare our version with.
+     */
+    API_HEADER_NAME: 'TfApiVersion',
+};
 
 /**
  * Represents a connection to the TouchFree Service.
@@ -103,7 +119,7 @@ export class ServiceConnection {
                 action: ActionCode.VERSION_HANDSHAKE,
                 content: {
                     requestID: guid,
-                    [VersionInfo.API_HEADER_NAME]: VersionInfo.API_VERSION,
+                    [VERSIONINFO.API_HEADER_NAME]: VERSIONINFO.API_VERSION,
                 },
             };
 

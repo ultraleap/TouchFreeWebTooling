@@ -131,12 +131,6 @@ export type EventStatus = 'PROCESSED' | 'UNPROCESSED';
 export type AnalyticEventKey = keyof DocumentEventMap;
 
 /**
- * Index object of {@link AnalyticEventKey} to number
- * @internal
- */
-export type AnalyticSessionEvents = { [key in AnalyticEventKey]?: number };
-
-/**
  * Hand presence enumeration
  * @public
  */

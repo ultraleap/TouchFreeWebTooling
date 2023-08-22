@@ -1,6 +1,6 @@
-import * as TouchFree from '../TouchFree';
+import { mapRangeToRange } from '../Math/Utilities';
+import { registerEventCallback } from '../TouchFree';
 import { TouchFreeInputAction, InputType } from '../TouchFreeToolingTypes';
-import { mapRangeToRange } from '../Utilities';
 import { TouchlessCursor } from './TouchlessCursor';
 
 /**
@@ -66,10 +66,10 @@ export class DotCursor extends TouchlessCursor {
         this.animationSpeed[0] = this.cursorStartSize[0] / 2 / (animationDuration * 30);
         this.animationSpeed[1] = this.cursorStartSize[1] / 2 / (animationDuration * 30);
 
-        TouchFree.registerEventCallback('handFound', this.showCursor.bind(this));
-        TouchFree.registerEventCallback('handsLost', this.hideCursor.bind(this));
-        TouchFree.registerEventCallback('handEntered', this.showCursor.bind(this));
-        TouchFree.registerEventCallback('handExited', this.hideCursor.bind(this));
+        registerEventCallback('handFound', this.showCursor.bind(this));
+        registerEventCallback('handsLost', this.hideCursor.bind(this));
+        registerEventCallback('handEntered', this.showCursor.bind(this));
+        registerEventCallback('handExited', this.hideCursor.bind(this));
     }
 
     /**

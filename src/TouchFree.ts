@@ -1,10 +1,5 @@
 import { Address, ConnectionManager } from './Connection/ConnectionManager';
-import {
-    AnalyticSessionEvents,
-    AnalyticEventKey,
-    AnalyticsSessionRequestType,
-    WebSocketResponse,
-} from './Connection/TouchFreeServiceTypes';
+import { AnalyticEventKey, AnalyticsSessionRequestType, WebSocketResponse } from './Connection/TouchFreeServiceTypes';
 import { SVGCursor } from './Cursors/SvgCursor';
 import { TouchlessCursor } from './Cursors/TouchlessCursor';
 import { WebInputController } from './InputControllers/WebInputController';
@@ -95,7 +90,16 @@ export function getRegisteredAnalyticEventKeys(): string[] {
 
 let sessionEvents: AnalyticSessionEvents = {};
 
-/** Returns a copy of an indexed object detailing how many times each analytics event has been triggered */
+/**
+ * Index object of {@link AnalyticEventKey} to number
+ * @public
+ */
+export type AnalyticSessionEvents = { [key in AnalyticEventKey]?: number };
+
+/**
+ * Returns a copy of an indexed object detailing how many times each analytics event has been triggered
+ * @public
+ */
 export const getAnalyticSessionEvents = (): AnalyticSessionEvents => Object.assign({}, sessionEvents);
 
 const defaultAnalyticEvents: readonly AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
@@ -205,7 +209,11 @@ function controlAnalyticsSession(
     }
 }
 
-/** Options to use with {@link StopAnalyticsSession} */
+/**
+ * Options to use with {@link StopAnalyticsSession}
+ *
+ * @public
+ */
 export interface StopAnalyticsSessionOptions {
     callback?: WebSocketCallback;
 }
@@ -221,7 +229,11 @@ export function stopAnalyticsSession(applicationName: string, options?: StopAnal
     controlAnalyticsSession('STOP', applicationName, options?.callback);
 }
 
-/** Options to use with {@link StartAnalyticsSession} */
+/**
+ * Options to use with {@link StartAnalyticsSession}
+ *
+ * @public
+ */
 export interface StartAnalyticsSessionOptions {
     callback?: WebSocketCallback;
     stopCurrentSession?: boolean;

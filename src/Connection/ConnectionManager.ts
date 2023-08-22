@@ -1,4 +1,4 @@
-import * as TouchFree from '../TouchFree';
+import { registerEventCallback, dispatchEvent } from '../TouchFree';
 import { TrackingServiceState } from '../TouchFreeToolingTypes';
 import { CallbackHandler } from './CallbackHandler';
 import { HandDataHandler, createMessageReceivers, MessageReceiver } from './MessageReceivers';
@@ -7,6 +7,8 @@ import { HandPresenceState, InteractionZoneState, ServiceStatus } from './TouchF
 
 /**
  * Custom IP and port to connect to Service on
+ *
+ * @public
  */
 export interface Address {
     /** Optional IP Address */
@@ -15,7 +17,12 @@ export interface Address {
     port?: string;
 }
 
-interface InitParams {
+/**
+ * Initialization parameters for ConnectionManager
+ *
+ * @public
+ */
+export interface InitParams {
     address?: Address;
 }
 
@@ -94,6 +101,8 @@ export class ConnectionManager extends EventTarget {
      * @remarks
      * This function is not reentrant - calling it a second time will overwrite
      * the previous global instance and connect again.
+     *
+     * @public
      */
     public static init(initParams?: InitParams) {
         ConnectionManager.callbackHandler = new CallbackHandler();
@@ -116,10 +125,10 @@ export class ConnectionManager extends EventTarget {
      *
      * @param onConnectFunc - Callback function to call when event is triggered
      *
-     * @deprecated Use {@link TouchFree.registerEventCallback} 'whenConnected'
+     * @deprecated Use {@link registerEventCallback} 'whenConnected'
      */
     public static addConnectionListener(onConnectFunc: () => void): void {
-        TouchFree.registerEventCallback('whenConnected', onConnectFunc);
+        registerEventCallback('whenConnected', onConnectFunc);
     }
 
     /**
@@ -138,10 +147,10 @@ export class ConnectionManager extends EventTarget {
      *
      * @param serviceStatusFunc - Callback function to call when event is triggered
      *
-     * @deprecated Use {@link TouchFree.registerEventCallback} 'onTrackingServiceStateChange'
+     * @deprecated Use {@link registerEventCallback} 'onTrackingServiceStateChange'
      */
     public static addServiceStatusListener(serviceStatusFunc: (serviceStatus: TrackingServiceState) => void): void {
-        TouchFree.registerEventCallback('onTrackingServiceStateChange', serviceStatusFunc);
+        registerEventCallback('onTrackingServiceStateChange', serviceStatusFunc);
     }
 
     /**
@@ -166,23 +175,23 @@ export class ConnectionManager extends EventTarget {
         ConnectionManager.currentHandPresence = state;
 
         if (state === HandPresenceState.HAND_FOUND) {
-            TouchFree.dispatchEvent('handFound');
+            dispatchEvent('handFound');
         } else {
-            TouchFree.dispatchEvent('handsLost');
+            dispatchEvent('handsLost');
         }
     }
 
     /**
      * Handle an InteractionZone event by dispatching
-     * `handEntered` and `HandsExited` events on this class
+     * `handEntered` and `handExited` events on this class
      */
     public static handleInteractionZoneEvent(state: InteractionZoneState): void {
         ConnectionManager.currentInteractionZoneState = state;
 
         if (state === InteractionZoneState.HAND_ENTERED) {
-            TouchFree.dispatchEvent('handEntered');
+            dispatchEvent('handEntered');
         } else {
-            TouchFree.dispatchEvent('handExited');
+            dispatchEvent('handExited');
         }
     }
 

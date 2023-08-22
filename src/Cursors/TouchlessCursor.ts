@@ -1,4 +1,4 @@
-import * as TouchFree from '../TouchFree';
+import { registerEventCallback } from '../TouchFree';
 import { TouchFreeInputAction } from '../TouchFreeToolingTypes';
 
 /**
@@ -39,7 +39,7 @@ export abstract class TouchlessCursor {
      * @param cursor - Cursor element
      */
     constructor(cursor: HTMLElement | SVGElement | undefined) {
-        TouchFree.registerEventCallback('transmitInputAction', this.handleInputAction.bind(this));
+        registerEventCallback('transmitInputAction', this.handleInputAction.bind(this));
 
         this.cursor = cursor;
         this.enabled = true;

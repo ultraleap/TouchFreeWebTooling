@@ -24,8 +24,5 @@ export * from './Plugins';
 /** Functionality for controlling the Ultraleap Tracking Service via TouchFree Service */
 export * from './Tracking';
 
-/** Utility functionality */
-export * from './Utilities';
-
 export * from './TouchFreeToolingTypes';
 export * from './TouchFree';
