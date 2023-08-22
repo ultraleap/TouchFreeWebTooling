@@ -1,6 +1,7 @@
 import * as TouchFree from '../TouchFree';
 import { TrackingServiceState } from '../TouchFreeToolingTypes';
-import { MessageReceiver } from './MessageReceiver';
+import { CallbackHandler } from './CallbackHandler';
+import { HandDataHandler, createMessageReceivers, IBaseMessageReceiver } from './MessageReceivers';
 import { ServiceConnection } from './ServiceConnection';
 import { HandPresenceState, InteractionZoneState, ServiceStatus } from './TouchFreeServiceTypes';
 
@@ -40,11 +41,25 @@ export class ConnectionManager extends EventTarget {
     }
 
     /**
-     * Global static reference to message receiver
+     * Global static reference to the callback handler
      *
      * @internal
      */
-    public static messageReceiver: MessageReceiver;
+    public static callbackHandler: CallbackHandler;
+
+    /**
+     * Global static reference to message receivers
+     *
+     * @internal
+     */
+    private static messageReceivers: IBaseMessageReceiver[];
+
+    /**
+     * Global static reference to the hand data handler
+     *
+     * @internal
+     */
+    private static handDataHandler: HandDataHandler;
 
     /**
      * Global static instance of this manager
@@ -72,15 +87,19 @@ export class ConnectionManager extends EventTarget {
     private static currentInteractionZoneState = InteractionZoneState.HAND_EXITED;
 
     /**
-     * Creates global {@link MessageReceiver} and {@link ConnectionManager} instance
-     * and attempts to connect to the service.
+     * Creates global {@link CallbackHandler}, {@link HandDataHandler},
+     * {@link IBaseMessageReceiver | IBaseMessageReceivers} and
+     * {@link ConnectionManager} instances and attempts to connect to the service.
      *
      * @remarks
      * This function is not reentrant - calling it a second time will overwrite
      * the previous global instance and connect again.
      */
     public static init(initParams?: InitParams) {
-        ConnectionManager.messageReceiver = new MessageReceiver();
+        ConnectionManager.callbackHandler = new CallbackHandler();
+        ConnectionManager.handDataHandler = new HandDataHandler();
+        ConnectionManager.messageReceivers = createMessageReceivers(ConnectionManager.callbackHandler);
+
         ConnectionManager.instance = new ConnectionManager();
         if (initParams?.address) {
             ConnectionManager.setAddress(initParams.address);
@@ -131,6 +150,8 @@ export class ConnectionManager extends EventTarget {
      */
     public static connect(): void {
         ConnectionManager.currentServiceConnection = new ServiceConnection(
+            ConnectionManager.messageReceivers,
+            ConnectionManager.handDataHandler,
             ConnectionManager.ipAddress,
             ConnectionManager.port
         );

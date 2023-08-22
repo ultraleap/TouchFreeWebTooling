@@ -1,8 +1,6 @@
 import { InteractionConfigFull, InteractionConfig, PhysicalConfig } from '../Configuration/ConfigurationTypes';
 import { ConfigurationState, TrackingServiceState } from '../TouchFreeToolingTypes';
 import { Mask } from '../Tracking/TrackingTypes';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { MessageReceiver } from './MessageReceiver';
 
 /**
  * Action codes for requests between TouchFree Service and this client
@@ -218,7 +216,7 @@ export interface InteractionZoneEvent {
  * Data structure for request callbacks
  * @internal
  */
-export abstract class TouchFreeRequestCallback<T> {
+export interface TouchFreeRequestCallback<T> {
     /** Timestamp the request was sent
      * @remarks
      * Typically used to clear request callbacks that exceed a timeout
@@ -226,24 +224,15 @@ export abstract class TouchFreeRequestCallback<T> {
     timestamp: number;
     /** The callback the request should call */
     callback: (detail: T) => void;
-
-    constructor(timestamp: number, callback: (detail: T) => void) {
-        this.timestamp = timestamp;
-        this.callback = callback;
-    }
 }
 
 /**
  * Data structure used as a base for sending requests to the TouchFree Service
- * @virtual
  * @public
  */
-export abstract class TouchFreeRequest {
+export interface TouchFreeRequest {
     /** Request ID */
     requestID: string;
-    constructor(requestID: string) {
-        this.requestID = requestID;
-    }
 }
 
 /**
@@ -253,14 +242,16 @@ export abstract class TouchFreeRequest {
  * All properties are optional - configuration not included is not modified
  * @internal
  */
-export class PartialConfigState extends TouchFreeRequest {
+export class PartialConfigState implements TouchFreeRequest {
     /** Optional {@link InteractionConfig} */
     interaction: Partial<InteractionConfig> | null;
     /** Optional {@link PhysicalConfig} */
     physical: Partial<PhysicalConfig> | null;
+    /** Request ID */
+    requestID: string;
 
     constructor(id: string, interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null) {
-        super(id);
+        this.requestID = id;
         this.interaction = interaction;
         this.physical = physical;
     }
@@ -270,49 +261,35 @@ export class PartialConfigState extends TouchFreeRequest {
  * Data structure for all TouchFree configuration
  * @public
  */
-export class ConfigState extends TouchFreeRequest {
+export class ConfigState implements TouchFreeRequest {
     /** See {@link InteractionConfigFull} */
     interaction: InteractionConfigFull;
     /** See {@link PhysicalConfig} */
     physical: PhysicalConfig;
+    /** Request ID */
+    requestID: string;
 
     constructor(id: string, interaction: InteractionConfigFull, physical: PhysicalConfig) {
-        super(id);
+        this.requestID = id;
         this.interaction = interaction;
         this.physical = physical;
     }
 }
 
 /**
- * Request type for {@link ActionCode.REQUEST_CONFIGURATION_STATE} and {@link ActionCode.REQUEST_CONFIGURATION_FILE}
- * @internal
- */
-export class ConfigChangeRequest extends TouchFreeRequest {}
-
-/**
- * Request callback type for receiving configuration state from the Service
- * @internal
- */
-export class ConfigStateCallback extends TouchFreeRequestCallback<ConfigState> {}
-
-/**
- * Request Service to reset the Interaction Config File to it's default state.
- * @internal
- */
-export class ResetInteractionConfigFileRequest extends TouchFreeRequest {}
-
-/**
  * Used to set the state of the Hand Render Data stream.
  * @internal
  */
-export class HandRenderDataStateRequest extends TouchFreeRequest {
+export class HandRenderDataStateRequest implements TouchFreeRequest {
     /** Enabled */
     enabled: boolean;
     /** Lens */
     lens: string;
+    /** Request ID */
+    requestID: string;
 
     constructor(id: string, enabled: boolean, lens: string) {
-        super(id);
+        this.requestID = id;
         this.enabled = enabled;
         this.lens = lens;
     }
@@ -322,7 +299,7 @@ export class HandRenderDataStateRequest extends TouchFreeRequest {
  * Data structure for {@link ActionCode.REQUEST_SERVICE_STATUS} and {@link ActionCode.SERVICE_STATUS} requests
  * @public
  */
-export class ServiceStatus extends TouchFreeRequest {
+export class ServiceStatus implements TouchFreeRequest {
     /** See {@link TrackingServiceState} */
     trackingServiceState: TrackingServiceState;
     /** See {@link ConfigurationState} */
@@ -335,6 +312,8 @@ export class ServiceStatus extends TouchFreeRequest {
     cameraSerial: string;
     /** Camera Firmware Version */
     cameraFirmwareVersion: string;
+    /** Request ID */
+    requestID: string;
 
     constructor(
         id: string,
@@ -345,7 +324,7 @@ export class ServiceStatus extends TouchFreeRequest {
         cameraSerial: string,
         cameraFirmwareVersion: string
     ) {
-        super(id);
+        this.requestID = id;
         this.trackingServiceState = trackingServiceState;
         this.configurationState = configurationState;
         this.serviceVersion = serviceVersion;
@@ -356,23 +335,10 @@ export class ServiceStatus extends TouchFreeRequest {
 }
 
 /**
- * Request type for {@link ActionCode.SERVICE_STATUS}
- * @internal
- */
-export class ServiceStatusRequest extends TouchFreeRequest {}
-
-/**
- * Request callback type for receiving {@link ServiceStatus} from the service
- * via {@link ActionCode.SERVICE_STATUS_RESPONSE}
- * @internal
- */
-export class ServiceStatusCallback extends TouchFreeRequestCallback<ServiceStatus> {}
-
-/**
  * General purpose request response type
  * @public
  */
-export class WebSocketResponse extends TouchFreeRequest {
+export class WebSocketResponse implements TouchFreeRequest {
     /** Response status */
     status: string;
     /** Message included with this response */
@@ -381,9 +347,11 @@ export class WebSocketResponse extends TouchFreeRequest {
      * Original request this response is to, included for debugging purposes
      */
     originalRequest: string;
+    /** Request ID */
+    requestID: string;
 
     constructor(id: string, status: string, msg: string, request: string) {
-        super(id);
+        this.requestID = id;
         this.status = status;
         this.message = msg;
         this.originalRequest = request;
@@ -413,15 +381,6 @@ export class VersionHandshakeResponse extends WebSocketResponse {
         this.apiVersion = apiVersion;
     }
 }
-
-/**
- * General purpose request callback type
- * @remarks
- * Responses can represent success or failure. See {@link WebSocketResponse.status}.
- * Detailed message is available in {@link WebSocketResponse.message}.
- * @internal
- */
-export class ResponseCallback extends TouchFreeRequestCallback<WebSocketResponse> {}
 
 /**
  * Container used to wrap request data structures with an {@link ActionCode}
@@ -458,7 +417,7 @@ export interface SuccessWrapper<T> {
  * @public
  */
 // TODO: Don't expose internal types via this - use another type in public API
-export interface TrackingStateResponse {
+export interface TrackingStateResponse extends TouchFreeRequest {
     /** RequestID */
     requestID: string;
     /** Optional {@link Mask} config state */
@@ -475,7 +434,7 @@ export interface TrackingStateResponse {
  * Request data structure for {@link ActionCode.SET_TRACKING_STATE} request
  * @internal
  */
-export class TrackingStateRequest {
+export class TrackingStateRequest implements TouchFreeRequest {
     /** Request ID */
     requestID: string;
     /** See {@link Mask} */
@@ -493,66 +452,6 @@ export class TrackingStateRequest {
         this.cameraReversed = cameraReversed;
         this.allowImages = allowImages;
         this.analyticsEnabled = analyticsEnabled;
-    }
-}
-
-/**
- * Basic request data structure
- * @remarks
- * Typically used with {@link CommunicationWrapper} to create more complex requests
- * @internal
- */
-export class SimpleRequest {
-    /** Request ID */
-    requestID: string;
-
-    constructor(id: string) {
-        this.requestID = id;
-    }
-}
-
-/**
- * Represents the base information needed for an Analytics related request to the Service
- * @internal
- */
-interface BaseAnalyticsRequest {
-    /** Request ID */
-    requestID: string;
-    /** Session ID */
-    sessionID: string;
-}
-
-/**
- * Represents a request to the service to change the state of an analytics session
- * @internal
- */
-export interface AnalyticsSessionStateChangeRequest extends BaseAnalyticsRequest {
-    /** See {@link AnalyticsSessionRequestType} */
-    requestType: AnalyticsSessionRequestType;
-}
-
-/**
- * Represents a request to the service to update the event counts in the current analytics session
- * @internal
- */
-export interface UpdateAnalyticSessionEventsRequest extends BaseAnalyticsRequest {
-    /** See {@link AnalyticSessionEvents} */
-    sessionEvents: AnalyticSessionEvents;
-}
-
-/**
- * Request callback type for receiving {@link TrackingStateResponse} requests via {@link ActionCode.TRACKING_STATE}
- * @internal
- */
-export class TrackingStateCallback {
-    /** Timestamp */
-    timestamp: number;
-    /** Callback */
-    callback: (detail: TrackingStateResponse) => void;
-
-    constructor(timestamp: number, callback: (detail: TrackingStateResponse) => void) {
-        this.timestamp = timestamp;
-        this.callback = callback;
     }
 }
 
