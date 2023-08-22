@@ -1,7 +1,7 @@
 import * as TouchFree from '../TouchFree';
 import { TrackingServiceState } from '../TouchFreeToolingTypes';
 import { CallbackHandler } from './CallbackHandler';
-import { HandDataHandler, createMessageReceivers, IBaseMessageReceiver } from './MessageReceivers';
+import { HandDataHandler, createMessageReceivers, MessageReceiver } from './MessageReceivers';
 import { ServiceConnection } from './ServiceConnection';
 import { HandPresenceState, InteractionZoneState, ServiceStatus } from './TouchFreeServiceTypes';
 
@@ -52,7 +52,7 @@ export class ConnectionManager extends EventTarget {
      *
      * @internal
      */
-    private static messageReceivers: IBaseMessageReceiver[];
+    private static messageReceivers: MessageReceiver[];
 
     /**
      * Global static reference to the hand data handler
@@ -88,7 +88,7 @@ export class ConnectionManager extends EventTarget {
 
     /**
      * Creates global {@link CallbackHandler}, {@link HandDataHandler},
-     * {@link IBaseMessageReceiver | IBaseMessageReceivers} and
+     * {@link MessageReceiver | MessageReceivers} and
      * {@link ConnectionManager} instances and attempts to connect to the service.
      *
      * @remarks

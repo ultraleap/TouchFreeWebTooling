@@ -6,14 +6,18 @@ import {
     TouchFreeRequestCallback,
     WebSocketResponse,
 } from '../TouchFreeServiceTypes';
-import { IBaseMessageReceiver } from './IBaseMessageReceiver';
+
+export interface MessageReceiver {
+    receiveMessage: (message: CommunicationWrapper<unknown>) => void;
+    actionCode: ActionCode[];
+}
 
 /**
  * Base message receiver class to contain generic message processing functionality
  *
  * @internal
  */
-export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageReceiver {
+export abstract class BaseMessageReceiver<Message> implements MessageReceiver {
     /**
      * Constructs the class
      *
@@ -51,14 +55,14 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
     };
 
     /**
-     * A queue of {@link TMessage | TMessages} that have been received from the Service.
+     * A queue of {@link Message | Messages} that have been received from the Service.
      */
-    protected queue: TMessage[] = [];
+    protected queue: Message[] = [];
 
     /**
-     * The latest {@link TMessage} that has been received from the Service.
+     * The latest {@link Message} that has been received from the Service.
      */
-    protected lastItem: TMessage | undefined;
+    protected lastItem: Message | undefined;
 
     /**
      * Handles processing the message from the service into a consumable format
@@ -68,7 +72,7 @@ export abstract class BaseMessageReceiver<TMessage> implements IBaseMessageRecei
      * @param message - The message received from the Service
      */
     receiveMessage = (message: CommunicationWrapper<unknown>) => {
-        const messageContent = message.content as TMessage;
+        const messageContent = message.content as Message;
         if (this.useQueue) {
             this.queue.push(messageContent);
         } else {
