@@ -30,6 +30,8 @@ export class VersionHandshakeMessageReceiver extends BaseMessageReceiver<WebSock
         if (response) {
             const responseResult = BaseMessageReceiver.handleCallbackList(response, callbackHandler.handshakeCallbacks);
 
+            const configStateError = (response as HandshakeExtraInformation)?.configurationStateError;
+
             switch (responseResult) {
                 case 'NoCallbacksFound':
                     BaseMessageReceiver.logNoCallbacksWarning(response);
@@ -44,8 +46,33 @@ export class VersionHandshakeMessageReceiver extends BaseMessageReceiver<WebSock
                     } else {
                         console.error('Received Handshake Error from TouchFree:\n' + response.message);
                     }
+
+                    if (configStateError) {
+                        if (configStateError === 'ERROR') {
+                            console.error(
+                                'Received Configuration State Error from TouchFree. ' +
+                                    'Error loading configuration files.'
+                            );
+                        } else if (configStateError === 'DEFAULT') {
+                            console.warn(
+                                'Received Configuration State Warning from TouchFree. ' +
+                                    'Configuration is default, perform a setup to resolve'
+                            );
+                        }
+                    }
                     break;
             }
         }
     };
+}
+
+/**
+ * Contains extra information that can be included in a handshake message
+ * @internal
+ */
+interface HandshakeExtraInformation {
+    /**
+     * An optional error than contains information about the configuration state
+     */
+    configurationStateError?: string;
 }
