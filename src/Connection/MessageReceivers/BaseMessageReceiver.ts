@@ -17,7 +17,7 @@ export interface MessageReceiver {
  *
  * @internal
  */
-export abstract class BaseMessageReceiver<Message> implements MessageReceiver {
+export abstract class BaseMessageReceiver<ConvertedMessage> implements MessageReceiver {
     /**
      * Constructs the class
      *
@@ -55,14 +55,14 @@ export abstract class BaseMessageReceiver<Message> implements MessageReceiver {
     };
 
     /**
-     * A queue of {@link Message | Messages} that have been received from the Service.
+     * A queue of {@link ConvertedMessage | Messages} that have been received from the Service.
      */
-    protected queue: Message[] = [];
+    protected queue: ConvertedMessage[] = [];
 
     /**
-     * The latest {@link Message} that has been received from the Service.
+     * The latest {@link ConvertedMessage} that has been received from the Service.
      */
-    protected lastItem: Message | undefined;
+    protected lastItem: ConvertedMessage | undefined;
 
     /**
      * Handles processing the message from the service into a consumable format
@@ -72,7 +72,7 @@ export abstract class BaseMessageReceiver<Message> implements MessageReceiver {
      * @param message - The message received from the Service
      */
     receiveMessage = (message: CommunicationWrapper<unknown>) => {
-        const messageContent = message.content as Message;
+        const messageContent = message.content as ConvertedMessage;
         if (this.useQueue) {
             this.queue.push(messageContent);
         } else {
