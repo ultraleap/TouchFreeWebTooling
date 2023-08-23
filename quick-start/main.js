@@ -71,14 +71,12 @@ function createButton(index, content) {
     return button;
 }
 
-for (let i = 0; i < 8; i++) {
-    const button = createButton(i, 'NUM');
-    document.querySelector('.button-container--vertical').appendChild(button);
-}
+const horizontalContainer = document.querySelector('.button-container--horizontal');
+const verticalContainer = document.querySelector('.button-container--vertical');
 
 for (let i = 0; i < 8; i++) {
-    const button = createButton(i, 'ALPHA');
-    document.querySelector('.button-container--horizontal').appendChild(button);
+    verticalContainer.appendChild(createButton(i, 'NUM'));
+    horizontalContainer.appendChild(createButton(i, 'ALPHA'));
 }
 
 touchfree.registerEventCallback('transmitInputAction', (action) => {
