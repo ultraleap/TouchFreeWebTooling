@@ -71,17 +71,14 @@ function createButton(index, content) {
     return button;
 }
 
-const horizontalContainer = Array.from(document.querySelectorAll('.button-container__horizontal'));
-const verticalContainer = Array.from(document.querySelectorAll('.button-container__vertical'));
-
-verticalContainer.forEach((container) => {
+document.querySelectorAll('.button-container--vertical').forEach((container) => {
     for (let i = 0; i < 8; i++) {
         const button = createButton(i, 'NUM');
         container.appendChild(button);
     }
 });
 
-horizontalContainer.forEach((container) => {
+document.querySelector('.button-container--horizontal').forEach((container) => {
     for (let i = 0; i < 8; i++) {
         const button = createButton(i, 'ALPHA');
         container.appendChild(button);
@@ -89,7 +86,7 @@ horizontalContainer.forEach((container) => {
 });
 
 touchfree.registerEventCallback('transmitInputAction', (action) => {
-    const hovered = document.querySelector('.hovered') | null;
+    const hovered = document.querySelector('.hovered');
     if (!hovered) return;
     hovered.style.transform = `scale(${1.1 - action.ProgressToClick * 0.1})`;
 });
