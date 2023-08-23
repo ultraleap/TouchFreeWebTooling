@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Updated syntax throughout the library to follow [Google's TS styleguide](https://google.github.io/styleguide/tsguide.html)
+- Bundle package name changed from `TouchFree` to `touchfree` to match NPM package name.
 
 ## [1.4.0] - 2023-04-06
 

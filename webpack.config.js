@@ -3,7 +3,7 @@ module.exports = {
         TouchFree_Tooling: {
             import: './src/index.ts',
             library: {
-                name: 'TouchFree',
+                name: 'touchfree',
                 type: 'umd',
             },
             filename: 'dist/TouchFree_Tooling.js',
