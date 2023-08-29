@@ -1,7 +1,4 @@
-import { mapRangeToRange } from '../Math/Utilities';
-import { registerEventCallback } from '../TouchFree';
-import { InputType, TouchFreeInputAction } from '../TouchFreeToolingTypes';
-import { TouchlessCursor } from './TouchlessCursor';
+import { InputType, TouchFreeInputAction, TouchlessCursor, mapRangeToRange, registerEventCallback } from 'TouchFree';
 
 export const enum CursorPart {
     CENTER_FILL,

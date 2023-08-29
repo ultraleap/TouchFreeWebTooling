@@ -1,7 +1,4 @@
-import { mapRangeToRange } from '../Math/Utilities';
-import { registerEventCallback } from '../TouchFree';
-import { TouchFreeInputAction, InputType } from '../TouchFreeToolingTypes';
-import { TouchlessCursor } from './TouchlessCursor';
+import { InputType, TouchFreeInputAction, TouchlessCursor, mapRangeToRange, registerEventCallback } from 'TouchFree';
 
 /**
  * {@link TouchlessCursor} which positions a dot on the screen at the hand location,
@@ -46,15 +43,15 @@ export class DotCursor extends TouchlessCursor {
     /**
      * Constructs a new cursor consisting of a central cursor and a ring.
      * @remarks
-     * If you intend to make use of `WebInputController`, make sure both {@link _cursor} and {@link _cursorRing}
+     * If you intend to make use of `WebInputController`, make sure both {@link cursor} and {@link cursorRing}
      * elements have the `touchfree-cursor` class. This prevents them from blocking other elements from
      * receiving events.
-     * @param _cursor - Cursor HTML element
-     * @param _cursorRing - Cursor ring HTML element
-     * @param _animationDuration -
+     * @param cursor - Cursor HTML element
+     * @param cursorRing - Cursor ring HTML element
+     * @param animationDuration -
      * Optional duration changing the time it takes for 'squeeze'
      * confirmation animation to be performed.
-     * @param _ringSizeMultiplier - Optional multiplier to the size the ring can be relative to the main cursor element.
+     * @param ringSizeMultiplier - Optional multiplier to the size the ring can be relative to the main cursor element.
      */
     constructor(cursor: HTMLElement, cursorRing: HTMLElement, animationDuration = 0.2, ringSizeMultiplier = 2) {
         super(cursor);

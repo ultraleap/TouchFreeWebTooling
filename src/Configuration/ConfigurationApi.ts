@@ -1,12 +1,6 @@
-import { ConnectionManager } from '../Connection';
-import {
-    ActionCode,
-    CommunicationWrapper,
-    ConfigState,
-    PartialConfigState,
-    WebSocketResponse,
-} from '../Connection/TouchFreeServiceTypes';
-import { InteractionConfig, PhysicalConfig } from './ConfigurationTypes';
+import { ConnectionManager, InteractionConfig, PhysicalConfig } from 'TouchFree';
+
+import { WebSocketResponse, ActionCode, ConfigState, PartialConfigState, CommunicationWrapper } from '_internal';
 import { v4 as uuidgen } from 'uuid';
 
 /**
@@ -48,7 +42,7 @@ export function requestConfigState(callback?: (detail: ConfigState) => void): vo
  * Requests a modification to the configuration **files** used by the TouchFree Service.
  *
  * @remarks
- * WARNING! Any changes that have been made using {@link RequestConfigChange}
+ * WARNING! Any changes that have been made using {@link requestConfigChange}
  * by *any* connected client will be lost when changing these files.
  * The change will be applied **to the current config files directly**,
  * disregarding current active config state.
@@ -85,7 +79,7 @@ export function requestConfigFileState(callback?: (detail: ConfigState) => void)
  * Requests service to reset the interaction config file to it's default state
  *
  * @remarks
- * WARNING! Any changes that have been made using {@link RequestConfigChange}
+ * WARNING! Any changes that have been made using {@link requestConfigChange}
  * by *any* connected client will be lost when changing these files.
  * The change will be applied **to the current config files directly**,
  * disregarding current active config state.

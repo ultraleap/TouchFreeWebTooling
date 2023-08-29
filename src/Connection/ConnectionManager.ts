@@ -1,30 +1,29 @@
-import { registerEventCallback, dispatchEvent } from '../TouchFree';
-import { TrackingServiceState } from '../TouchFreeToolingTypes';
-import { CallbackHandler } from './CallbackHandler';
-import { HandDataHandler, createMessageReceivers, MessageReceiver } from './MessageReceivers';
-import { ServiceConnection } from './ServiceConnection';
-import { HandPresenceState, InteractionZoneState, ServiceStatus } from './TouchFreeServiceTypes';
+import {
+    HandPresenceState,
+    InteractionZoneState,
+    InitParams,
+    TrackingServiceState,
+    Address,
+    dispatchEventCallback,
+    registerEventCallback,
+} from 'TouchFree';
+
+import {
+    HandDataHandler,
+    createMessageReceivers,
+    MessageReceiver,
+    CallbackHandler,
+    ServiceConnection,
+    ServiceStatus,
+} from '_internal';
 
 /**
- * Custom IP and port to connect to Service on
+ * Are we connected to the TouchFree service?
  *
+ * @returns Whether connected to TouchFree service or not.
  * @public
  */
-export interface Address {
-    /** Optional IP Address */
-    ip?: string;
-    /** Optional Port */
-    port?: string;
-}
-
-/**
- * Initialization parameters for ConnectionManager
- *
- * @public
- */
-export interface InitParams {
-    address?: Address;
-}
+export const isConnected = (): boolean => ConnectionManager.isConnected;
 
 /**
  * Manages the connection to the Service
@@ -175,9 +174,9 @@ export class ConnectionManager extends EventTarget {
         ConnectionManager.currentHandPresence = state;
 
         if (state === HandPresenceState.HAND_FOUND) {
-            dispatchEvent('handFound');
+            dispatchEventCallback('handFound');
         } else {
-            dispatchEvent('handsLost');
+            dispatchEventCallback('handsLost');
         }
     }
 
@@ -189,9 +188,9 @@ export class ConnectionManager extends EventTarget {
         ConnectionManager.currentInteractionZoneState = state;
 
         if (state === InteractionZoneState.HAND_ENTERED) {
-            dispatchEvent('handEntered');
+            dispatchEventCallback('handEntered');
         } else {
-            dispatchEvent('handExited');
+            dispatchEventCallback('handExited');
         }
     }
 

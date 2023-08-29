@@ -1,6 +1,12 @@
-import { InputActionManager } from '../Plugins/InputActionManager';
-import * as TouchFree from '../TouchFree';
-import { TouchFreeInputAction, InteractionType, HandType, HandChirality, InputType } from '../TouchFreeToolingTypes';
+import {
+    TouchFreeInputAction,
+    InteractionType,
+    HandType,
+    HandChirality,
+    InputType,
+    InputActionManager,
+    dispatchEventCallback,
+} from 'TouchFree';
 
 export const createInputAction = (input?: Partial<TouchFreeInputAction>) =>
     new TouchFreeInputAction(
@@ -15,7 +21,7 @@ export const createInputAction = (input?: Partial<TouchFreeInputAction>) =>
     );
 
 export const mockTfInputAction = (input?: Partial<TouchFreeInputAction>) =>
-    TouchFree.dispatchEvent('transmitInputAction', createInputAction(input));
+    dispatchEventCallback('transmitInputAction', createInputAction(input));
 
 export const mockTfPluginPartialInputAction = (input?: Partial<TouchFreeInputAction>) =>
     InputActionManager.handleInputAction(createInputAction(input));

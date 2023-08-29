@@ -1,5 +1,4 @@
-import { EventHandle, registerEventCallback } from '../TouchFree';
-import { TouchFreeInputAction, InputType } from '../TouchFreeToolingTypes';
+import { EventHandle, InputType, TouchFreeInputAction, registerEventCallback } from 'TouchFree';
 
 /**
  * Converts {@link TouchFreeInputAction | TouchFreeInputActions} into inputs for specific environments.

@@ -1,4 +1,4 @@
-import { Address, ConnectionManager } from '../ConnectionManager';
+import { Address, ConnectionManager } from 'TouchFree';
 
 describe('ConnectionManager', () => {
     const checkAddress = (address: Address) => {

@@ -1,6 +1,4 @@
-import { dispatchEvent } from '../TouchFree';
-import { TouchFreeInputAction, InputType } from '../TouchFreeToolingTypes';
-import { BaseInputController } from './BaseInputController';
+import { BaseInputController, InputType, TouchFreeInputAction, dispatchEventCallback } from 'TouchFree';
 
 /**
  * Provides web PointerEvents from incoming {@link TouchFreeInputAction}s.
@@ -119,7 +117,7 @@ export class WebInputController extends BaseInputController {
         this.activeEventProps.clientY = inputData.CursorPosition[1];
 
         if (elementAtPos !== null) {
-            dispatchEvent('inputAction', inputData);
+            dispatchEventCallback('inputAction', inputData);
         }
 
         switch (inputData.InputType) {

@@ -1,5 +1,6 @@
-import { ConnectionManager, TrackingStateResponse } from '../Connection';
-import { TrackingState } from './TrackingTypes';
+import { ConnectionManager, TrackingState } from 'TouchFree';
+
+import { TrackingStateResponse } from '_internal';
 
 /**
  * Request a {@link TrackingStateResponse} representing the current state of the tracking software

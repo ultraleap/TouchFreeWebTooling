@@ -6,23 +6,32 @@
  * See https://docs.ultraleap.com/touchfree-user-manual/
  */
 
-/** Functionality for changing configuration of the TouchFree Service */
-export * from './Configuration';
+/** Record analytics data while running */
+export * from 'Analytics';
 
-/** Functionality for managing a connection and messages sent to/from the TouchFree Service */
-export * from './Connection';
+/** Change configuration of the TouchFree Service */
+export * from 'Configuration';
 
-/** Functionality to create different kinds of cursors */
-export * from './Cursors';
+/** Manage a connection to the TouchFree service and messages send or receive messages */
+export * from 'Connection';
 
-/** Functionality for implementing input controllers to respond to TouchFree inputs */
-export * from './InputControllers';
+/** Multiple cursor styles/implementations and current cursor management */
+export * from 'Cursors';
 
-/** Plugins which extend TouchFree's functionality */
-export * from './Plugins';
+/** Access to events occurring within TouchFree */
+export * from 'Events';
 
-/** Functionality for controlling the Ultraleap Tracking Service via TouchFree Service */
-export * from './Tracking';
+/** Set up TouchFree tooling */
+export * from 'Initialization';
 
-export * from './TouchFreeToolingTypes';
-export * from './TouchFree';
+/** Receive data about interactions */
+export * from 'InputActions';
+
+/** Input controllers consume TouchFree InputActions to provide new functionality */
+export * from 'InputControllers';
+
+/** Math types and functions */
+export * from 'Math';
+
+/** Control the Ultraleap Tracking Service via TouchFree Service */
+export * from 'Tracking';

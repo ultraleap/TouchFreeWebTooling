@@ -1,4 +1,4 @@
-import { mapRangeToRange } from '../Utilities';
+import { mapRangeToRange } from 'TouchFree';
 
 describe('MapRangeToRange', () => {
     test('Map value in range to same range gives same value', () => {

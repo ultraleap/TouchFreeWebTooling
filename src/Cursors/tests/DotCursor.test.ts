@@ -1,11 +1,10 @@
-import * as TouchFree from '../../TouchFree';
-import { InputType } from '../../TouchFreeToolingTypes';
-import { intervalTest, mockTfInputAction } from '../../tests/testUtils';
-import { DotCursor } from '../DotCursor';
+import { DotCursor, InputType, init } from 'TouchFree';
+
+import { mockTfInputAction, intervalTest } from 'tests/testUtils';
 
 const CURSOR_SIZE = 75;
 
-TouchFree.init({ initialiseCursor: false });
+init({ initialiseCursor: false });
 let dotCursor: DotCursor;
 let cursor: HTMLImageElement;
 let cursorRing: HTMLImageElement;

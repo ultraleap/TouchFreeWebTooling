@@ -1,9 +1,8 @@
-import * as TouchFree from '../../TouchFree';
-import { InputType } from '../../TouchFreeToolingTypes';
-import { mockTfInputAction } from '../../tests/testUtils';
-import { CursorPart, SVGCursor } from '../SvgCursor';
+import { CursorPart, InputType, SVGCursor, init } from 'TouchFree';
 
-TouchFree.init({ initialiseCursor: false });
+import { mockTfInputAction } from 'tests/testUtils';
+
+init({ initialiseCursor: false });
 let svgCursor = new SVGCursor();
 let cursor = document.getElementById('svg-cursor');
 let cursorRing = document.getElementById('svg-cursor-ring');
