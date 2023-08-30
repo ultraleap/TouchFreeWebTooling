@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ConfigState } from '../Connection/RequestTypes';
 import { InteractionType } from '../InputActions/InputAction';
 import { Vector } from '../Math/Vectors';
 
@@ -79,7 +77,7 @@ export interface InteractionConfig {
 
 /**
  * This class is duplicate of {@link InteractionConfig} without the Interactions data being optional
- * This form of {@link InteractionConfig} is used in the {@link ConfigState} object returned when requesting
+ * This form of {@link InteractionConfig} is used when requesting
  * the current state of the Service's config or its config files.
  * @public
  */
