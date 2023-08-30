@@ -1,5 +1,4 @@
 import { registerEventCallback, dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
-import { CallbackHandler } from './CallbackHandler';
 import {
     HandPresenceState,
     InteractionZoneState,
@@ -7,9 +6,6 @@ import {
     TrackingServiceState,
     Address,
 } from './ConnectionTypes';
-import { MessageReceiver } from './MessageReceivers/BaseMessageReceiver';
-import { HandDataHandler } from './MessageReceivers/HandDataHandler';
-import { createMessageReceivers } from './MessageReceivers/index';
 import { ServiceStatus } from './RequestTypes';
 import { ServiceConnection } from './ServiceConnection';
 
@@ -41,27 +37,6 @@ export class ConnectionManager extends EventTarget {
     public static serviceConnection(): ServiceConnection | null {
         return ConnectionManager.currentServiceConnection;
     }
-
-    /**
-     * Global static reference to the callback handler
-     *
-     * @internal
-     */
-    public static callbackHandler: CallbackHandler;
-
-    /**
-     * Global static reference to message receivers
-     *
-     * @internal
-     */
-    private static messageReceivers: MessageReceiver[];
-
-    /**
-     * Global static reference to the hand data handler
-     *
-     * @internal
-     */
-    private static handDataHandler: HandDataHandler;
 
     /**
      * Global static instance of this manager
@@ -100,10 +75,6 @@ export class ConnectionManager extends EventTarget {
      * @public
      */
     public static init(initParams?: ConnectionInitParams) {
-        ConnectionManager.callbackHandler = new CallbackHandler();
-        ConnectionManager.handDataHandler = new HandDataHandler();
-        ConnectionManager.messageReceivers = createMessageReceivers(ConnectionManager.callbackHandler);
-
         ConnectionManager.instance = new ConnectionManager();
         if (initParams?.address) {
             ConnectionManager.setAddress(initParams.address);
@@ -154,8 +125,6 @@ export class ConnectionManager extends EventTarget {
      */
     public static connect(): void {
         ConnectionManager.currentServiceConnection = new ServiceConnection(
-            ConnectionManager.messageReceivers,
-            ConnectionManager.handDataHandler,
             ConnectionManager.ipAddress,
             ConnectionManager.port
         );

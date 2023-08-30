@@ -2,10 +2,10 @@ import { AnalyticsSessionRequestType, getAnalyticSessionEvents } from '../Analyt
 import { dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
 import { TrackingState } from '../Tracking/TrackingTypes';
 import { ActionCode } from './ActionCode';
-import { CallbackList } from './CallbackHandler';
-import { ConnectionManager } from './ConnectionManager';
+import { CallbackHandler, CallbackList } from './CallbackHandler';
 import { MessageReceiver } from './MessageReceivers/BaseMessageReceiver';
 import { HandDataHandler } from './MessageReceivers/HandDataHandler';
+import { createMessageReceivers } from './MessageReceivers/index';
 import {
     VersionHandshakeResponse,
     WebSocketResponse,
@@ -35,6 +35,7 @@ export class ServiceConnection {
     private handshakeCompleted: boolean;
     private internalTouchFreeVersion = '';
 
+    private readonly _callbackHandler: CallbackHandler;
     private readonly handDataHandler: HandDataHandler;
 
     private readonly messageReceivers: MessageReceiver[];
@@ -53,6 +54,10 @@ export class ServiceConnection {
         return this.handshakeCompleted;
     }
 
+    public get callbackHandler(): CallbackHandler {
+        return this._callbackHandler;
+    }
+
     /**
      * Sets up {@link WebSocket} connection and adds appropriate listeners for incoming messages.
      *
@@ -60,19 +65,13 @@ export class ServiceConnection {
      * Sets up a listener to request a handshake once the websocket has successfully opened.
      * No data will be sent over an open connection until a successful handshake has completed.
      *
-     * @param messageReceivers - The collection of message receivers to handle messages received on this connection.
-     * @param handDataHandler - The handler for hand data received on this connection.
      * @param ip - Optional override to default websocket ip '127.0.0.1'
      * @param port - Optional override to default websocket port '9739'
      */
-    constructor(
-        messageReceivers: MessageReceiver[],
-        handDataHandler: HandDataHandler,
-        ip = '127.0.0.1',
-        port = '9739'
-    ) {
-        this.messageReceivers = messageReceivers;
-        this.handDataHandler = handDataHandler;
+    constructor(ip = '127.0.0.1', port = '9739') {
+        this._callbackHandler = new CallbackHandler();
+        this.messageReceivers = createMessageReceivers(this._callbackHandler);
+        this.handDataHandler = new HandDataHandler();
 
         this.webSocket = new WebSocket(`ws://${ip}:${port}/connect`);
         this.webSocket.binaryType = 'arraybuffer';
@@ -114,7 +113,7 @@ export class ServiceConnection {
                     JSON.stringify(handshakeRequest),
                     guid,
                     this.connectionResultCallback,
-                    ConnectionManager.callbackHandler.handshakeCallbacks
+                    this._callbackHandler.handshakeCallbacks
                 );
             }
         }
@@ -179,12 +178,7 @@ export class ServiceConnection {
         requestID: string,
         callback?: (detail: WebSocketResponse | T) => void
     ): void => {
-        this.sendMessageWithSimpleResponse(
-            message,
-            requestID,
-            callback,
-            ConnectionManager.callbackHandler.responseCallbacks
-        );
+        this.sendMessageWithSimpleResponse(message, requestID, callback, this._callbackHandler.responseCallbacks);
     };
 
     private sendMessageWithSimpleResponse = <T extends WebSocketResponse>(
@@ -225,7 +219,7 @@ export class ServiceConnection {
             ActionCode.REQUEST_CONFIGURATION_STATE,
             'config state',
             callback,
-            ConnectionManager.callbackHandler.configStateCallbacks
+            this._callbackHandler.configStateCallbacks
         );
     };
 
@@ -239,7 +233,7 @@ export class ServiceConnection {
             ActionCode.RESET_INTERACTION_CONFIG_FILE,
             'config state',
             callback,
-            ConnectionManager.callbackHandler.configStateCallbacks
+            this._callbackHandler.configStateCallbacks
         );
     };
 
@@ -253,7 +247,7 @@ export class ServiceConnection {
             ActionCode.REQUEST_SERVICE_STATUS,
             'service status',
             callback,
-            ConnectionManager.callbackHandler.serviceStatusCallbacks
+            this._callbackHandler.serviceStatusCallbacks
         );
     };
 
@@ -267,7 +261,7 @@ export class ServiceConnection {
             ActionCode.REQUEST_CONFIGURATION_FILE,
             'config file',
             callback,
-            ConnectionManager.callbackHandler.configStateCallbacks
+            this._callbackHandler.configStateCallbacks
         );
     };
 
@@ -288,9 +282,9 @@ export class ServiceConnection {
                 position: atTopTarget ? 'Top' : 'Bottom',
             },
             ActionCode.QUICK_SETUP,
-            ConnectionManager.callbackHandler.responseCallbacks,
+            this._callbackHandler.responseCallbacks,
             callback,
-            ConnectionManager.callbackHandler.configStateCallbacks,
+            this._callbackHandler.configStateCallbacks,
             configurationCallback
         );
     };
@@ -305,7 +299,7 @@ export class ServiceConnection {
             ActionCode.GET_TRACKING_STATE,
             'tracking state',
             callback,
-            ConnectionManager.callbackHandler.trackingStateCallbacks
+            this._callbackHandler.trackingStateCallbacks
         );
     };
 
@@ -337,7 +331,7 @@ export class ServiceConnection {
         this.baseRequest(
             requestContent,
             ActionCode.SET_TRACKING_STATE,
-            ConnectionManager.callbackHandler.trackingStateCallbacks,
+            this._callbackHandler.trackingStateCallbacks,
             callback
         );
     };
@@ -433,7 +427,7 @@ export class ServiceConnection {
         this.baseRequest(
             { sessionID, requestType },
             ActionCode.ANALYTICS_SESSION_REQUEST,
-            ConnectionManager.callbackHandler.analyticsRequestCallbacks,
+            this._callbackHandler.analyticsRequestCallbacks,
             callback
         );
 
@@ -446,7 +440,7 @@ export class ServiceConnection {
         this.baseRequest(
             { sessionID, sessionEvents: getAnalyticSessionEvents() },
             ActionCode.ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST,
-            ConnectionManager.callbackHandler.analyticsRequestCallbacks,
+            this._callbackHandler.analyticsRequestCallbacks,
             callback
         );
 }
