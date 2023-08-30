@@ -1,5 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { InteractionType, Vector, ConfigState } from '../index';
+import { ConfigState } from '../Connection/RequestTypes';
+import { InteractionType } from '../InputActions/InputAction';
+import { Vector } from '../Math/Vectors';
 
 /**
  * Container for all of the settings related to the interactions being processed by the TouchFree Service.

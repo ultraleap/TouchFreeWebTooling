@@ -1,18 +1,12 @@
-import {
-    ActionCode,
-    BitmaskFlags,
-    ConnectionManager,
-    EventHandle,
-    HandDataManager,
-    HandPresenceState,
-    InteractionZoneState,
-    ServiceConnection,
-    WebsocketInputAction,
-    convertInputAction,
-    init,
-    intervalTest,
-    registerEventCallback,
-} from '../../index';
+import { HandDataManager } from '../../Hands/HandDataManager';
+import { init } from '../../Initialization/Initialization';
+import { EventHandle, registerEventCallback } from '../../TouchFreeEvents/TouchFreeEvents';
+import { intervalTest } from '../../tests/testUtils';
+import { ActionCode } from '../ActionCode';
+import { ConnectionManager } from '../ConnectionManager';
+import { HandPresenceState, InteractionZoneState } from '../ConnectionTypes';
+import { ServiceConnection } from '../ServiceConnection';
+import { BitmaskFlags, WebsocketInputAction, convertInputAction } from '../WebsocketInputAction';
 import { v4 as uuidgen } from 'uuid';
 
 describe('MessageReceiver', () => {

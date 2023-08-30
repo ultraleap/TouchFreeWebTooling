@@ -1,4 +1,6 @@
-import { WebInputController, getInputController, init } from '../../index';
+import { init } from '../../Initialization/Initialization';
+import { getInputController } from '../CurrentInputController';
+import { WebInputController } from '../WebInputController';
 
 describe('InputController', () => {
     test('getInputController should get the input controller correctly', () => {

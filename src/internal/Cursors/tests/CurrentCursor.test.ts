@@ -1,4 +1,6 @@
-import { DotCursor, SVGCursor, setCurrentCursor, getCurrentCursor } from '../../index';
+import { setCurrentCursor, getCurrentCursor } from '../CurrentCursor';
+import { DotCursor } from '../DotCursor';
+import { SVGCursor } from '../SvgCursor';
 
 describe('Cursors', () => {
     test('setCurrentCursor should set the cursor correctly', () => {

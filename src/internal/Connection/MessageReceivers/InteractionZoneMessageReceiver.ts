@@ -1,11 +1,7 @@
-import {
-    ActionCode,
-    CommunicationWrapper,
-    ConnectionManager,
-    EventUpdate,
-    InteractionZoneEvent,
-    InteractionZoneState,
-} from '../../index';
+import { ActionCode } from '../ActionCode';
+import { ConnectionManager } from '../ConnectionManager';
+import { InteractionZoneState } from '../ConnectionTypes';
+import { EventUpdate, CommunicationWrapper, InteractionZoneEvent } from '../ServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**

@@ -1,11 +1,11 @@
+import { ConnectionManager } from '../../Connection/ConnectionManager';
+import { init } from '../../Initialization/Initialization';
 import {
+    TouchFreeEventSignatures,
     registerEventCallback,
     dispatchEventCallback,
-    ConnectionManager,
-    init,
-    TouchFreeEventSignatures,
     TouchFreeEvent,
-} from '../../index';
+} from '../TouchFreeEvents';
 
 const events: TouchFreeEventSignatures = {
     onConnected: jest.fn(),

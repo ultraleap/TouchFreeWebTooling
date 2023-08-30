@@ -1,23 +1,21 @@
+import { AnalyticsSessionRequestType, getAnalyticSessionEvents } from '../Analytics/Analytics';
+import { dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
+import { TrackingState } from '../Tracking/TrackingTypes';
+import { ActionCode } from './ActionCode';
+import { CallbackList } from './CallbackHandler';
+import { ConnectionManager } from './ConnectionManager';
+import { MessageReceiver } from './MessageReceivers/BaseMessageReceiver';
+import { HandDataHandler } from './MessageReceivers/HandDataHandler';
 import {
-    ActionCode,
-    AnalyticsSessionRequestType,
-    CallbackList,
-    CommunicationWrapper,
-    ConfigState,
-    ConnectionManager,
-    HandDataHandler,
-    MessageReceiver,
-    ServiceStatus,
-    TouchFreeRequest,
-    TrackingState,
-    TrackingStateRequest,
-    TrackingStateResponse,
-    VERSIONINFO,
     VersionHandshakeResponse,
     WebSocketResponse,
-    dispatchEventCallback,
-    getAnalyticSessionEvents,
-} from '../index';
+    ConfigState,
+    ServiceStatus,
+    TrackingStateResponse,
+    TrackingStateRequest,
+    TouchFreeRequest,
+} from './RequestTypes';
+import { CommunicationWrapper, VERSIONINFO } from './ServiceTypes';
 import { v4 as uuidgen } from 'uuid';
 
 /**

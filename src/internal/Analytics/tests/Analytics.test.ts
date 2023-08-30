@@ -1,16 +1,16 @@
+import { ConnectionManager } from '../../Connection/ConnectionManager';
+import { WebSocketResponse } from '../../Connection/RequestTypes';
+import { ServiceConnection } from '../../Connection/ServiceConnection';
 import {
-    AnalyticEventKey,
-    ConnectionManager,
-    ServiceConnection,
-    WebSocketResponse,
-    getAnalyticSessionEvents,
-    getRegisteredAnalyticEventKeys,
-    isAnalyticsActive,
-    registerAnalyticEvents,
     startAnalyticsSession,
     stopAnalyticsSession,
+    isAnalyticsActive,
+    AnalyticEventKey,
     unregisterAnalyticEvents,
-} from '../../index';
+    getRegisteredAnalyticEventKeys,
+    registerAnalyticEvents,
+    getAnalyticSessionEvents,
+} from '../Analytics';
 
 const successResponse = new WebSocketResponse('test', 'Success', 'test', 'test');
 

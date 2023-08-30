@@ -1,4 +1,5 @@
-import { TouchFreeInputAction, registerEventCallback } from '../index';
+import { TouchFreeInputAction } from '../InputActions/InputAction';
+import { registerEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
 
 /**
  * Base class for creating touchless cursors.

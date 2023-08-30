@@ -1,4 +1,6 @@
-import { BaseInputController, InputType, TouchFreeInputAction, dispatchEventCallback } from '../index';
+import { InputType, TouchFreeInputAction } from '../InputActions/InputAction';
+import { dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
+import { BaseInputController } from './BaseInputController';
 
 /**
  * Provides web PointerEvents from incoming {@link TouchFreeInputAction}s.

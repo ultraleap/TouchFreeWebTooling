@@ -1,4 +1,6 @@
-import { ActionCode, ConnectionManager, HandPresenceState } from '../../index';
+import { ActionCode } from '../ActionCode';
+import { ConnectionManager } from '../ConnectionManager';
+import { HandPresenceState } from '../ConnectionTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**

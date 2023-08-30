@@ -1,12 +1,6 @@
-import {
-    TouchFreeInputAction,
-    InteractionType,
-    HandType,
-    HandChirality,
-    InputType,
-    InputActionManager,
-    dispatchEventCallback,
-} from '../index';
+import { TouchFreeInputAction, InteractionType, HandType, HandChirality, InputType } from '../InputActions/InputAction';
+import { InputActionManager } from '../InputActions/InputActionManager';
+import { dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
 
 export const createInputAction = (input?: Partial<TouchFreeInputAction>) =>
     new TouchFreeInputAction(

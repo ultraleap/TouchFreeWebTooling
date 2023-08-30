@@ -1,13 +1,8 @@
-import {
-    ActionCode,
-    CommunicationWrapper,
-    ConfigState,
-    ConnectionManager,
-    InteractionConfig,
-    PartialConfigState,
-    PhysicalConfig,
-    WebSocketResponse,
-} from '../index';
+import { ActionCode } from '../Connection/ActionCode';
+import { ConnectionManager } from '../Connection/ConnectionManager';
+import { WebSocketResponse, ConfigState, PartialConfigState } from '../Connection/RequestTypes';
+import { CommunicationWrapper } from '../Connection/ServiceTypes';
+import { InteractionConfig, PhysicalConfig } from './ConfigurationTypes';
 import { v4 as uuidgen } from 'uuid';
 
 /**

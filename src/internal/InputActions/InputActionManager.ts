@@ -1,4 +1,6 @@
-import { InputActionPlugin, TouchFreeInputAction, dispatchEventCallback } from '../index';
+import { dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
+import { TouchFreeInputAction } from './InputAction';
+import { InputActionPlugin } from './InputActionPlugin';
 
 /**
  * Manages all `TouchFreeInputAction` events, dispatching a `transmitInputAction` event for each action received.

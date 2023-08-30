@@ -1,18 +1,17 @@
+import { registerEventCallback, dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
+import { CallbackHandler } from './CallbackHandler';
 import {
-    HandDataHandler,
-    createMessageReceivers,
-    MessageReceiver,
-    CallbackHandler,
-    ServiceConnection,
-    ServiceStatus,
-    Address,
     HandPresenceState,
-    ConnectionInitParams,
     InteractionZoneState,
+    ConnectionInitParams,
     TrackingServiceState,
-    dispatchEventCallback,
-    registerEventCallback,
-} from '../index';
+    Address,
+} from './ConnectionTypes';
+import { MessageReceiver } from './MessageReceivers/BaseMessageReceiver';
+import { HandDataHandler } from './MessageReceivers/HandDataHandler';
+import { createMessageReceivers } from './MessageReceivers/index';
+import { ServiceStatus } from './RequestTypes';
+import { ServiceConnection } from './ServiceConnection';
 
 /**
  * Are we connected to the TouchFree service?

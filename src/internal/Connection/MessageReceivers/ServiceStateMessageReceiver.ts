@@ -1,4 +1,7 @@
-import { ActionCode, CallbackHandler, ServiceStatus, dispatchEventCallback } from '../../index';
+import { dispatchEventCallback } from '../../TouchFreeEvents/TouchFreeEvents';
+import { ActionCode } from '../ActionCode';
+import { CallbackHandler } from '../CallbackHandler';
+import { ServiceStatus } from '../RequestTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**

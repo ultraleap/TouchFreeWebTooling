@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { MessageReceiver } from '../index';
+import { MessageReceiver } from './MessageReceivers/BaseMessageReceiver';
 
 /**
  * Custom IP and port to connect to Service on

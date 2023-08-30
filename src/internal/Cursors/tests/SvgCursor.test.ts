@@ -1,4 +1,7 @@
-import { CursorPart, InputType, SVGCursor, init, mockTfInputAction } from '../../index';
+import { init } from '../../Initialization/Initialization';
+import { InputType } from '../../InputActions/InputAction';
+import { mockTfInputAction } from '../../tests/testUtils';
+import { CursorPart, SVGCursor } from '../SvgCursor';
 
 init({ initialiseCursor: false });
 let svgCursor = new SVGCursor();

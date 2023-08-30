@@ -1,4 +1,7 @@
-import { InputType, TouchFreeInputAction, TouchlessCursor, mapRangeToRange, registerEventCallback } from '../index';
+import { TouchFreeInputAction, InputType } from '../InputActions/InputAction';
+import { mapRangeToRange } from '../Math/Utilities';
+import { registerEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
+import { TouchlessCursor } from './TouchlessCursor';
 
 /**
  * {@link TouchlessCursor} which positions a dot on the screen at the hand location,

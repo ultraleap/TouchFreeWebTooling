@@ -1,4 +1,5 @@
-import { ConnectionManager, WebSocketResponse } from '../index';
+import { ConnectionManager } from '../Connection/ConnectionManager';
+import { WebSocketResponse } from '../Connection/RequestTypes';
 import { v4 as uuidgen } from 'uuid';
 
 type WebSocketCallback = (detail: WebSocketResponse) => void;

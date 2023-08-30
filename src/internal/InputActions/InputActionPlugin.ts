@@ -1,4 +1,4 @@
-import { TouchFreeInputAction } from '../index';
+import { TouchFreeInputAction } from './InputAction';
 
 /**
  * Base class for input action plugins

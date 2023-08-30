@@ -1,4 +1,7 @@
-import { setCurrentCursor, getCurrentCursor, init, SVGCursor, ConnectionManager } from '../../index';
+import { ConnectionManager } from '../../Connection/ConnectionManager';
+import { setCurrentCursor, getCurrentCursor } from '../../Cursors/CurrentCursor';
+import { SVGCursor } from '../../Cursors/SvgCursor';
+import { init } from '../Initialization';
 
 describe('Initialization', () => {
     describe('init', () => {

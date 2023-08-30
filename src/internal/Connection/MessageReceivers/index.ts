@@ -1,4 +1,4 @@
-import { CallbackHandler } from '../../index';
+import { CallbackHandler } from '../CallbackHandler';
 import { AnalyticsMessageReceiver } from './AnalyticsMessageReceiver';
 import { ConfigStateMessageReceiver } from './ConfigStateMessageReceiver';
 import { HandPresenceMessageReceiver } from './HandPresenceMessageReceiver';

@@ -4,7 +4,7 @@ import {
     TouchFreeRequestCallback,
     TrackingStateResponse,
     WebSocketResponse,
-} from '../index';
+} from './RequestTypes';
 
 /**
  * Represents a list of callbacks keyed against id strings

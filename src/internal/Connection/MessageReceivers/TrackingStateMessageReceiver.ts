@@ -1,4 +1,6 @@
-import { ActionCode, CallbackHandler, TrackingStateResponse } from '../../index';
+import { ActionCode } from '../ActionCode';
+import { CallbackHandler } from '../CallbackHandler';
+import { TrackingStateResponse } from '../RequestTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**

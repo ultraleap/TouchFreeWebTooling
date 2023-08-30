@@ -1,12 +1,7 @@
-import {
-    ActionCode,
-    BitmaskFlags,
-    InputActionManager,
-    InputType,
-    TouchFreeInputAction,
-    WebsocketInputAction,
-    convertInputAction,
-} from '../../index';
+import { TouchFreeInputAction, InputType } from '../../InputActions/InputAction';
+import { InputActionManager } from '../../InputActions/InputActionManager';
+import { ActionCode } from '../ActionCode';
+import { WebsocketInputAction, BitmaskFlags, convertInputAction } from '../WebsocketInputAction';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**

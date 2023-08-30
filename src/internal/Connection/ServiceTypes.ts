@@ -1,4 +1,5 @@
-import { ActionCode, HandPresenceState, InteractionZoneState } from '../index';
+import { ActionCode } from './ActionCode';
+import { HandPresenceState, InteractionZoneState } from './ConnectionTypes';
 
 /**
  * Object with versions for comparing the {@link VERSIONINFO.API_VERSION} of the Tooling and the Service.

@@ -1,4 +1,6 @@
-import { ActionCode, CallbackHandler, ConfigState } from '../../index';
+import { ActionCode } from '../ActionCode';
+import { CallbackHandler } from '../CallbackHandler';
+import { ConfigState } from '../RequestTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**

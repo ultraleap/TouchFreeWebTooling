@@ -1,4 +1,6 @@
-import { ConnectionManager, TrackingState, TrackingStateResponse } from '../index';
+import { ConnectionManager } from '../Connection/ConnectionManager';
+import { TrackingStateResponse } from '../Connection/RequestTypes';
+import { TrackingState } from './TrackingTypes';
 
 /**
  * Request a {@link TrackingStateResponse} representing the current state of the tracking software

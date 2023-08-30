@@ -1,13 +1,10 @@
-import {
-    ConnectionManager,
-    HandDataManager,
-    HandFrame,
-    InputActionManager,
-    ServiceStatus,
-    TouchFreeInputAction,
-    TrackingServiceState,
-    isConnected,
-} from '../index';
+import { ConnectionManager, isConnected } from '../Connection/ConnectionManager';
+import { TrackingServiceState } from '../Connection/ConnectionTypes';
+import { ServiceStatus } from '../Connection/RequestTypes';
+import { HandDataManager } from '../Hands/HandDataManager';
+import { HandFrame } from '../Hands/HandFrame';
+import { TouchFreeInputAction } from '../InputActions/InputAction';
+import { InputActionManager } from '../InputActions/InputActionManager';
 
 /**
  * Names and signatures of all TouchFree events

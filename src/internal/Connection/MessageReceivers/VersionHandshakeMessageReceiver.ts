@@ -1,4 +1,6 @@
-import { ActionCode, CallbackHandler, WebSocketResponse } from '../../index';
+import { ActionCode } from '../ActionCode';
+import { CallbackHandler } from '../CallbackHandler';
+import { WebSocketResponse } from '../RequestTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**

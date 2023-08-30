@@ -1,4 +1,7 @@
-import { DotCursor, InputType, init, intervalTest, mockTfInputAction } from '../../index';
+import { init } from '../../Initialization/Initialization';
+import { InputType } from '../../InputActions/InputAction';
+import { mockTfInputAction, intervalTest } from '../../tests/testUtils';
+import { DotCursor } from '../DotCursor';
 
 const CURSOR_SIZE = 75;
 

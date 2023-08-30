@@ -1,11 +1,9 @@
-import {
-    Address,
-    ConnectionManager,
-    SVGCursor,
-    WebInputController,
-    setCurrentCursor,
-    setInputController,
-} from '../index';
+import { ConnectionManager } from '../Connection/ConnectionManager';
+import { Address } from '../Connection/ConnectionTypes';
+import { setCurrentCursor } from '../Cursors/CurrentCursor';
+import { SVGCursor } from '../Cursors/SvgCursor';
+import { setInputController } from '../InputControllers/CurrentInputController';
+import { WebInputController } from '../InputControllers/WebInputController';
 
 /**
  * Extra options for initializing TouchFree

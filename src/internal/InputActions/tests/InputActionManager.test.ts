@@ -1,19 +1,15 @@
+import { registerEventCallback } from '../../TouchFreeEvents/TouchFreeEvents';
 import {
-    HandChirality,
-    HandType,
-    InputActionManager,
-    InputActionPlugin,
-    InputType,
-    InteractionType,
-    TouchFreeInputAction,
-    checkTwoInputActionsAreSame,
-    copyInputAction,
     createInputAction,
     mockTfPluginInputAction,
     mockTfPluginPartialInputAction,
-    registerEventCallback,
+    copyInputAction,
+    checkTwoInputActionsAreSame,
     sleep,
-} from '../../index';
+} from '../../tests/testUtils';
+import { TouchFreeInputAction, InteractionType, HandType, HandChirality, InputType } from '../InputAction';
+import { InputActionManager } from '../InputActionManager';
+import { InputActionPlugin } from '../InputActionPlugin';
 
 describe('InputActionManager', () => {
     test('Check plugin gets called with the correct data', () => {

@@ -1,18 +1,14 @@
+import { InteractionType, HandType, HandChirality, InputType } from '../../InputActions/InputAction';
 import {
     BitmaskFlags,
-    HandChirality,
-    HandType,
-    InputType,
-    InteractionType,
+    getInteractionFlags,
     getChiralityFromFlags,
     getHandTypeFromFlags,
     getInputTypeFromFlags,
-    getInteractionFlags,
     getInteractionTypeFromFlags,
-} from '../../index';
+} from '../WebsocketInputAction';
 
 // TODO: Generate enum values from types themselves?
-
 const interactionTypes: InteractionType[] = [
     InteractionType.GRAB,
     InteractionType.HOVER,

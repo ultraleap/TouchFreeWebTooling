@@ -1,13 +1,8 @@
-import {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ActionCode,
-    InteractionConfigFull,
-    PhysicalConfig,
-    InteractionConfig,
-    Mask,
-    TrackingServiceState,
-    ConfigurationState,
-} from '../index';
+import { InteractionConfigFull, PhysicalConfig, InteractionConfig } from '../Configuration/ConfigurationTypes';
+import { Mask } from '../Tracking/TrackingTypes';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ActionCode } from './ActionCode';
+import { TrackingServiceState, ConfigurationState } from './ConnectionTypes';
 
 /**
  * Data structure used as a base for sending requests to the TouchFree Service

@@ -1,4 +1,4 @@
-import { HandDataManager } from '../../index';
+import { HandDataManager } from '../../Hands/HandDataManager';
 
 /**
  * Receives hand data messages from the service and distributes them

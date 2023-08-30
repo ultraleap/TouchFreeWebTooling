@@ -1,5 +1,12 @@
-import { InputType, TouchFreeInputAction, TouchlessCursor, mapRangeToRange, registerEventCallback } from '../index';
+import { TouchFreeInputAction, InputType } from '../InputActions/InputAction';
+import { mapRangeToRange } from '../Math/Utilities';
+import { registerEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
+import { TouchlessCursor } from './TouchlessCursor';
 
+/**
+ * Identifies different parts of an {@link SVGCursor}
+ * @public
+ */
 export const enum CursorPart {
     CENTER_FILL,
     RING_FILL,

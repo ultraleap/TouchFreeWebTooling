@@ -1,4 +1,5 @@
-import { Address, ConnectionManager } from '../../index';
+import { ConnectionManager } from '../ConnectionManager';
+import { Address } from '../ConnectionTypes';
 
 describe('ConnectionManager', () => {
     const checkAddress = (address: Address) => {
