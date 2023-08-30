@@ -6,32 +6,92 @@
  * See https://docs.ultraleap.com/touchfree-user-manual/
  */
 
-/** Record analytics data while running */
-export * from 'Analytics';
+/**
+ * This file exports the public API surface of the library.
+ * Internals should not be leaked from this export, if any
+ * internals are required then explicit usage of the internal
+ * module is recommended.
+ */
 
-/** Change configuration of the TouchFree Service */
-export * from 'Configuration';
+export {
+    /** Analytics - Record analytics data while running */
+    isAnalyticsActive,
+    AnalyticSessionEvents,
+    getAnalyticSessionEvents,
+    AnalyticEventKey,
+    getRegisteredAnalyticEventKeys,
+    registerAnalyticEvents,
+    unregisterAnalyticEvents,
+    StartAnalyticsSessionOptions,
+    startAnalyticsSession,
+    StopAnalyticsSessionOptions,
+    stopAnalyticsSession,
 
-/** Manage a connection to the TouchFree service and messages send or receive messages */
-export * from 'Connection';
+    /** Configuration - Change configuration of the TouchFree Service */
+    requestConfigChange,
+    requestConfigState,
+    requestConfigFileChange,
+    requestConfigFileState,
+    resetInteractionConfigFileToDefault,
+    InteractionConfig,
+    InteractionConfigFull,
+    HoverAndHoldInteractionSettings,
+    TouchPlaneInteractionSettings,
+    PhysicalConfig,
+    TrackedPosition,
 
-/** Multiple cursor styles/implementations and current cursor management */
-export * from 'Cursors';
+    /** Connection - Manage a connection to the TouchFree service and messages send or receive messages */
+    isConnected,
+    ConnectionManager,
+    Address,
+    ConnectionInitParams,
+    TrackingServiceState,
+    ConfigurationState,
+    HandPresenceState,
+    InteractionZoneState,
 
-/** Access to events occurring within TouchFree */
-export * from 'Events';
+    /** Cursors - Multiple cursor styles/implementations and current cursor management */
+    DotCursor,
+    CursorPart,
+    SVGCursor,
+    TouchlessCursor,
+    getCurrentCursor,
+    setCurrentCursor,
 
-/** Set up TouchFree tooling */
-export * from 'Initialization';
+    /** Initialization - Set up TouchFree tooling */
+    TfInitParams,
+    init,
 
-/** Receive data about interactions */
-export * from 'InputActions';
+    /** InputActions - Receive data about interactions */
+    TouchFreeInputAction,
+    HandChirality,
+    HandType,
+    InputType,
+    InteractionType,
+    InputActionManager,
+    InputActionPlugin,
 
-/** Input controllers consume TouchFree InputActions to provide new functionality */
-export * from 'InputControllers';
+    /** InputControllers - Consume TouchFree InputActions to provide new functionality */
+    BaseInputController,
+    WebInputController,
+    getInputController,
+    setInputController,
 
-/** Math types and functions */
-export * from 'Math';
+    /** Math types and functions */
+    mapRangeToRange,
+    Vector,
+    Vector2,
 
-/** Control the Ultraleap Tracking Service via TouchFree Service */
-export * from 'Tracking';
+    /** TouchFreeEvents - Access to events occurring within TouchFree */
+    TouchFreeEventSignatures,
+    TouchFreeEvent,
+    EventHandle,
+    registerEventCallback,
+    dispatchEventCallback,
+
+    /** Tracking - Control the Ultraleap Tracking Service via TouchFree Service */
+    requestTrackingState,
+    requestTrackingChange,
+    Mask,
+    TrackingState,
+} from './internal/index';

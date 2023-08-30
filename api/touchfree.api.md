@@ -4,123 +4,25 @@
 
 ```ts
 
-// @internal
-export enum ActionCode {
-    ANALYTICS_SESSION_REQUEST = "ANALYTICS_SESSION_REQUEST",
-    ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST = "ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST",
-    CONFIGURATION_FILE_CHANGE_RESPONSE = "CONFIGURATION_FILE_CHANGE_RESPONSE",
-    // @deprecated
-    CONFIGURATION_FILE_RESPONSE = "CONFIGURATION_FILE_RESPONSE",
-    CONFIGURATION_FILE_STATE = "CONFIGURATION_FILE_STATE",
-    CONFIGURATION_RESPONSE = "CONFIGURATION_RESPONSE",
-    CONFIGURATION_STATE = "CONFIGURATION_STATE",
-    GET_TRACKING_STATE = "GET_TRACKING_STATE",
-    HAND_DATA = "HAND_DATA",
-    HAND_PRESENCE_EVENT = "HAND_PRESENCE_EVENT",
-    INPUT_ACTION = "INPUT_ACTION",
-    INTERACTION_ZONE_EVENT = "INTERACTION_ZONE_EVENT",
-    QUICK_SETUP = "QUICK_SETUP",
-    QUICK_SETUP_CONFIG = "QUICK_SETUP_CONFIG",
-    QUICK_SETUP_RESPONSE = "QUICK_SETUP_RESPONSE",
-    REQUEST_CONFIGURATION_FILE = "REQUEST_CONFIGURATION_FILE",
-    REQUEST_CONFIGURATION_STATE = "REQUEST_CONFIGURATION_STATE",
-    REQUEST_SERVICE_STATUS = "REQUEST_SERVICE_STATUS",
-    RESET_INTERACTION_CONFIG_FILE = "RESET_INTERACTION_CONFIG_FILE",
-    SERVICE_STATUS = "SERVICE_STATUS",
-    SERVICE_STATUS_RESPONSE = "SERVICE_STATUS_RESPONSE",
-    SET_CONFIGURATION_FILE = "SET_CONFIGURATION_FILE",
-    SET_CONFIGURATION_STATE = "SET_CONFIGURATION_STATE",
-    SET_HAND_DATA_STREAM_STATE = "SET_HAND_DATA_STREAM_STATE",
-    SET_TRACKING_STATE = "SET_TRACKING_STATE",
-    TRACKING_STATE = "TRACKING_STATE",
-    VERSION_HANDSHAKE = "VERSION_HANDSHAKE",
-    VERSION_HANDSHAKE_RESPONSE = "VERSION_HANDSHAKE_RESPONSE"
+// @public
+export interface Address {
+    ip?: string;
+    port?: string;
 }
 
-// @internal
+// @public
 export type AnalyticEventKey = keyof DocumentEventMap;
 
-// @internal
+// @public
 export type AnalyticSessionEvents = {
     [key in AnalyticEventKey]?: number;
 };
-
-// @internal
-export type AnalyticsSessionRequestType = 'START' | 'STOP';
 
 // @public
 export abstract class BaseInputController {
     constructor();
     disconnect(): void;
     protected handleInputAction(inputData: TouchFreeInputAction): void;
-}
-
-// @internal
-export enum BitmaskFlags {
-    CANCEL = 32,
-    DOWN = 64,
-    GRAB = 512,
-    HOVER = 1024,
-    LEFT = 1,
-    MOVE = 128,
-    NONE = 0,
-    NONE_INPUT = 16,
-    PRIMARY = 4,
-    PUSH = 2048,
-    RIGHT = 2,
-    SECONDARY = 8,
-    TOUCHPLANE = 4096,
-    UP = 256,
-    VELOCITYSWIPE = 8192
-}
-
-// @internal
-export class CallbackHandler {
-    constructor();
-    analyticsRequestCallbacks: CallbackList<WebSocketResponse>;
-    callbackClearTimer: number;
-    clearUnresponsivePromises(): void;
-    configStateCallbacks: CallbackList<ConfigState>;
-    handshakeCallbacks: CallbackList<WebSocketResponse>;
-    responseCallbacks: CallbackList<WebSocketResponse>;
-    serviceStatusCallbacks: CallbackList<ServiceStatus>;
-    trackingStateCallbacks: CallbackList<TrackingStateResponse>;
-}
-
-// @internal
-export type CallbackList<T> = {
-    [id: string]: TouchFreeRequestCallback<T>;
-};
-
-// @internal
-export class CommunicationWrapper<T> {
-    constructor(actionCode: ActionCode, content: T);
-    action: ActionCode;
-    content: T;
-}
-
-// @internal @deprecated
-export enum Compatibility {
-    COMPATIBLE = 0,
-    SERVICE_OUTDATED = 1,
-    TOOLING_OUTDATED = 2
-}
-
-// @public
-export class ConfigState implements TouchFreeRequest {
-    constructor(id: string, interaction: InteractionConfigFull, physical: PhysicalConfig);
-    interaction: InteractionConfigFull;
-    physical: PhysicalConfig;
-    requestID: string;
-}
-
-// @public
-export class ConfigurationManager {
-    static requestConfigChange(interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null, callback?: (detail: WebSocketResponse) => void): void;
-    static requestConfigFileChange(interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null, callback?: (detail: WebSocketResponse) => void): void;
-    static requestConfigFileState(callback?: (detail: ConfigState) => void): void;
-    static requestConfigState(callback?: (detail: ConfigState) => void): void;
-    static resetInteractionConfigFileToDefault(callback?: (newState: ConfigState) => void): void;
 }
 
 // @public
@@ -131,11 +33,19 @@ export enum ConfigurationState {
 }
 
 // @public
+export interface ConnectionInitParams {
+    // (undocumented)
+    address?: Address;
+}
+
+// @public
 export class ConnectionManager extends EventTarget {
     // @deprecated
     static addConnectionListener(onConnectFunc: () => void): void;
     // @deprecated
     static addServiceStatusListener(serviceStatusFunc: (serviceStatus: TrackingServiceState) => void): void;
+    // Warning: (ae-forgotten-export) The symbol "CallbackHandler" needs to be exported by the entry point index.d.ts
+    //
     // @internal
     static callbackHandler: CallbackHandler;
     static connect(): void;
@@ -144,25 +54,32 @@ export class ConnectionManager extends EventTarget {
     static getCurrentInteractionZoneState(): InteractionZoneState;
     static handleHandPresenceEvent(state: HandPresenceState): void;
     static handleInteractionZoneEvent(state: InteractionZoneState): void;
-    // Warning: (ae-forgotten-export) The symbol "InitParams" needs to be exported by the entry point index.d.ts
-    static init(initParams?: InitParams): void;
+    static init(initParams?: ConnectionInitParams): void;
     static instance: ConnectionManager;
     static ipAddress: string;
     static get isConnected(): boolean;
     static port: string;
+    // Warning: (ae-forgotten-export) The symbol "ServiceStatus" needs to be exported by the entry point index.d.ts
     static requestServiceStatus(callback?: (detail: ServiceStatus) => void): void;
+    // Warning: (ae-forgotten-export) The symbol "ServiceConnection" needs to be exported by the entry point index.d.ts
+    //
     // @internal
     static serviceConnection(): ServiceConnection | null;
-    // Warning: (ae-forgotten-export) The symbol "Address" needs to be exported by the entry point index.d.ts
     static setAddress(address: Address): void;
 }
 
-// @internal
-export function convertInputAction(wsInput: WebsocketInputAction): TouchFreeInputAction;
+// @public (undocumented)
+export const enum CursorPart {
+    // (undocumented)
+    CENTER_BORDER = 2,
+    // (undocumented)
+    CENTER_FILL = 0,
+    // (undocumented)
+    RING_FILL = 1
+}
 
 // @public
-function dispatchEvent_2<TEvent extends TouchFreeEvent>(eventType: TEvent, ...args: Parameters<TouchFreeEventSignatures[TEvent]>): void;
-export { dispatchEvent_2 as dispatchEvent }
+export function dispatchEventCallback<TEvent extends TouchFreeEvent>(eventType: TEvent, ...args: Parameters<TouchFreeEventSignatures[TEvent]>): void;
 
 // @public
 export class DotCursor extends TouchlessCursor {
@@ -187,36 +104,6 @@ export interface EventHandle {
     unregisterEventCallback(): void;
 }
 
-// @internal
-export type EventStatus = 'PROCESSED' | 'UNPROCESSED';
-
-// @internal
-export interface EventUpdate<T> {
-    state: T;
-    status: EventStatus;
-}
-
-// @internal
-export enum FingerType {
-    TYPE_INDEX = 1,
-    TYPE_MIDDLE = 2,
-    TYPE_PINKY = 4,
-    TYPE_RING = 3,
-    TYPE_THUMB = 0,
-    TYPE_UNKNOWN = -1
-}
-
-// @internal
-export class FlagUtilities {
-    static getChiralityFromFlags(flags: BitmaskFlags): HandChirality;
-    static getHandTypeFromFlags(flags: BitmaskFlags): HandType;
-    static getInputTypeFromFlags(flags: BitmaskFlags): InputType;
-    static getInteractionFlags(interactionType: InteractionType, handType: HandType, chirality: HandChirality, inputType: InputType): BitmaskFlags;
-    static getInteractionTypeFromFlags(flags: BitmaskFlags): InteractionType;
-}
-
-// Warning: (ae-incompatible-release-tags) The symbol "getAnalyticSessionEvents" is marked as @public, but its signature references "AnalyticSessionEvents" which is marked as @internal
-//
 // @public
 export const getAnalyticSessionEvents: () => AnalyticSessionEvents;
 
@@ -224,7 +111,7 @@ export const getAnalyticSessionEvents: () => AnalyticSessionEvents;
 export const getCurrentCursor: () => TouchlessCursor | undefined;
 
 // @public (undocumented)
-export const getInputController: () => WebInputController | undefined;
+export const getInputController: () => BaseInputController | undefined;
 
 // @public
 export function getRegisteredAnalyticEventKeys(): string[];
@@ -235,31 +122,12 @@ export enum HandChirality {
     RIGHT = 1
 }
 
-// @internal
-export class HandFrame {
-    hands: RawHand[];
-}
-
-// @internal
-export class HandPresenceEvent {
-    constructor(state: HandPresenceState);
-    state: HandPresenceState;
-}
-
 // @public
 export enum HandPresenceState {
     HAND_FOUND = 0,
     HANDS_LOST = 1,
     // @internal
     PROCESSED = 2
-}
-
-// @internal
-export class HandRenderDataStateRequest implements TouchFreeRequest {
-    constructor(id: string, enabled: boolean, lens: string);
-    enabled: boolean;
-    lens: string;
-    requestID: string;
 }
 
 // @public
@@ -316,6 +184,8 @@ export interface InteractionConfig {
     TouchPlane: Partial<TouchPlaneInteractionSettings>;
     UseScrollingOrDragging: boolean;
     UseSwipeInteraction: boolean;
+    // Warning: (ae-forgotten-export) The symbol "VelocitySwipeSettings" needs to be exported by the entry point index.d.ts
+    //
     // @internal
     VelocitySwipe: Partial<VelocitySwipeSettings>;
 }
@@ -344,11 +214,6 @@ export enum InteractionType {
     VELOCITYSWIPE = 4
 }
 
-// @internal
-export interface InteractionZoneEvent {
-    state: InteractionZoneState;
-}
-
 // @public
 export enum InteractionZoneState {
     HAND_ENTERED = 0,
@@ -357,6 +222,9 @@ export enum InteractionZoneState {
 
 // @public (undocumented)
 export const isAnalyticsActive: () => boolean;
+
+// @public
+export const isConnected: () => boolean;
 
 // @public
 export function mapRangeToRange(value: number, oldMin: number, oldMax: number, newMin: number, newMax: number): number;
@@ -369,14 +237,6 @@ export interface Mask {
     upper: number;
 }
 
-// @internal
-export class PartialConfigState implements TouchFreeRequest {
-    constructor(id: string, interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null);
-    interaction: Partial<InteractionConfig> | null;
-    physical: Partial<PhysicalConfig> | null;
-    requestID: string;
-}
-
 // @public
 export interface PhysicalConfig {
     LeapPositionRelativeToScreenBottomM: Vector;
@@ -387,70 +247,44 @@ export interface PhysicalConfig {
     ScreenWidthPX: number;
 }
 
-// @internal
-export class RawBone {
-    nextJoint: Vector;
-    prevJoint: Vector;
-}
-
-// @internal
-export class RawFinger {
-    bones: RawBone[];
-    type: FingerType;
-}
-
-// @internal
-export class RawHand {
-    currentPrimary: boolean;
-    fingers: RawFinger[];
-    wristPosition: Vector;
-    wristWidth: number;
-}
-
-// Warning: (ae-incompatible-release-tags) The symbol "registerAnalyticEvents" is marked as @public, but its signature references "AnalyticEventKey" which is marked as @internal
-//
 // @public
 export function registerAnalyticEvents(eventsIn?: readonly AnalyticEventKey[]): void;
 
 // @public
 export function registerEventCallback<TEvent extends TouchFreeEvent>(event: TEvent, callback: TouchFreeEventSignatures[TEvent]): EventHandle;
 
-// @internal
-export class ServiceConnection {
-    // Warning: (ae-forgotten-export) The symbol "IBaseMessageReceiver" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "HandDataHandler" needs to be exported by the entry point index.d.ts
-    constructor(messageReceivers: IBaseMessageReceiver[], handDataHandler: HandDataHandler, ip?: string, port?: string);
-    analyticsSessionRequest: (requestType: AnalyticsSessionRequestType, sessionID: string, callback?: ((detail: WebSocketResponse) => void) | undefined) => void;
-    disconnect: () => void;
-    get handshakeComplete(): boolean;
-    onMessage: (message: MessageEvent) => void;
-    quickSetupRequest: (atTopTarget: boolean, callback?: ((detail: WebSocketResponse) => void) | undefined, configurationCallback?: ((detail: ConfigState) => void) | undefined) => void;
-    requestConfigFile: (callback?: ((detail: ConfigState) => void) | undefined) => void;
-    requestConfigState: (callback?: ((detail: ConfigState) => void) | undefined) => void;
-    requestServiceStatus: (callback?: ((detail: ServiceStatus) => void) | undefined) => void;
-    requestTrackingChange: (state: Partial<TrackingState>, callback?: ((detail: TrackingStateResponse) => void) | undefined) => void;
-    requestTrackingState: (callback?: ((detail: TrackingStateResponse) => void) | undefined) => void;
-    resetInteractionConfigFile: (callback?: ((defaultConfig: ConfigState) => void) | undefined) => void;
-    sendMessage: <T extends WebSocketResponse>(message: string, requestID: string, callback?: ((detail: WebSocketResponse | T) => void) | undefined) => void;
-    get touchFreeVersion(): string;
-    updateAnalyticSessionEvents: (sessionID: string, callback?: ((detail: WebSocketResponse) => void) | undefined) => void;
-    webSocket: WebSocket;
-}
+// Warning: (ae-forgotten-export) The symbol "WebSocketResponse" needs to be exported by the entry point index.d.ts
+//
+// @public
+export function requestConfigChange(interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null, callback?: (detail: WebSocketResponse) => void): void;
 
 // @public
-export class ServiceStatus implements TouchFreeRequest {
-    constructor(id: string, trackingServiceState: TrackingServiceState, configurationState: ConfigurationState, serviceVersion: string, trackingVersion: string, cameraSerial: string, cameraFirmwareVersion: string);
-    cameraFirmwareVersion: string;
-    cameraSerial: string;
-    configurationState: ConfigurationState;
-    requestID: string;
-    serviceVersion: string;
-    trackingServiceState: TrackingServiceState;
-    trackingVersion: string;
-}
+export function requestConfigFileChange(interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null, callback?: (detail: WebSocketResponse) => void): void;
+
+// Warning: (ae-forgotten-export) The symbol "ConfigState" needs to be exported by the entry point index.d.ts
+//
+// @public
+export function requestConfigFileState(callback?: (detail: ConfigState) => void): void;
+
+// @public
+export function requestConfigState(callback?: (detail: ConfigState) => void): void;
+
+// Warning: (ae-forgotten-export) The symbol "TrackingStateResponse" needs to be exported by the entry point index.d.ts
+//
+// @public
+export function requestTrackingChange(state: Partial<TrackingState>, callback?: (detail: TrackingStateResponse) => void): void;
+
+// @public
+export function requestTrackingState(callback?: (detail: TrackingStateResponse) => void): void;
+
+// @public
+export function resetInteractionConfigFileToDefault(callback?: (newState: ConfigState) => void): void;
 
 // @public
 export const setCurrentCursor: (cursor?: TouchlessCursor) => TouchlessCursor | undefined;
+
+// @internal (undocumented)
+export const setInputController: (inputController: BaseInputController) => BaseInputController;
 
 // @public
 export function startAnalyticsSession(applicationName: string, options?: StartAnalyticsSessionOptions): void;
@@ -475,13 +309,6 @@ export interface StopAnalyticsSessionOptions {
 }
 
 // @public
-export interface SuccessWrapper<T> {
-    content?: T;
-    msg: string;
-    succeeded: boolean;
-}
-
-// @public
 export class SVGCursor extends TouchlessCursor {
     constructor(ringSizeMultiplier?: number, darkCursor?: boolean);
     // @internal
@@ -489,7 +316,6 @@ export class SVGCursor extends TouchlessCursor {
     hideCursor(): void;
     resetToDefaultColors(): void;
     resetToDefaultScale(): void;
-    // Warning: (ae-forgotten-export) The symbol "CursorPart" needs to be exported by the entry point index.d.ts
     setColor(cursorPart: CursorPart, color: string): void;
     setCursorOpacity(opacity: number): void;
     setCursorOptimise(optimise: boolean): void;
@@ -519,6 +345,8 @@ export interface TouchFreeEventSignatures {
     onConnected: () => void;
     onServiceStatusChange: (state: ServiceStatus) => void;
     onTrackingServiceStateChange: (state: TrackingServiceState) => void;
+    // Warning: (ae-forgotten-export) The symbol "HandFrame" needs to be exported by the entry point index.d.ts
+    //
     // @internal
     transmitHandData: (data: HandFrame) => void;
     transmitInputAction: (inputAction: TouchFreeInputAction) => void;
@@ -537,17 +365,6 @@ export class TouchFreeInputAction {
     InteractionType: InteractionType;
     ProgressToClick: number;
     Timestamp: number;
-}
-
-// @public
-export interface TouchFreeRequest {
-    requestID: string;
-}
-
-// @internal
-export interface TouchFreeRequestCallback<T> {
-    callback: (detail: T) => void;
-    timestamp: number;
 }
 
 // @public
@@ -582,13 +399,6 @@ export enum TrackedPosition {
 }
 
 // @public
-export class TrackingManager {
-    static convertResponseToState(response: TrackingStateResponse): Partial<TrackingState>;
-    static requestTrackingChange(state: Partial<TrackingState>, callback?: (detail: TrackingStateResponse) => void): void;
-    static requestTrackingState(callback?: (detail: TrackingStateResponse) => void): void;
-}
-
-// @public
 export enum TrackingServiceState {
     CONNECTED = 2,
     NO_CAMERA = 1,
@@ -604,27 +414,6 @@ export class TrackingState {
     mask: Mask;
 }
 
-// @internal
-export class TrackingStateRequest implements TouchFreeRequest {
-    constructor(id: string, mask: Mask, cameraReversed: boolean, allowImages: boolean, analyticsEnabled: boolean);
-    allowImages: boolean;
-    analyticsEnabled: boolean;
-    cameraReversed: boolean;
-    mask: Mask;
-    requestID: string;
-}
-
-// @public
-export interface TrackingStateResponse extends TouchFreeRequest {
-    allowImages: SuccessWrapper<boolean> | null;
-    analyticsEnabled: SuccessWrapper<boolean> | null;
-    cameraReversed: SuccessWrapper<boolean> | null;
-    mask: SuccessWrapper<Mask> | null;
-    requestID: string;
-}
-
-// Warning: (ae-incompatible-release-tags) The symbol "unregisterAnalyticEvents" is marked as @public, but its signature references "AnalyticEventKey" which is marked as @internal
-//
 // @public
 export function unregisterAnalyticEvents(eventsIn?: AnalyticEventKey[]): void;
 
@@ -641,36 +430,6 @@ export interface Vector2 {
     y: number;
 }
 
-// @internal
-export interface VelocitySwipeSettings {
-    AllowBidirectionalScroll: boolean;
-    AllowHorizontalScroll: boolean;
-    AllowVerticalScroll: boolean;
-    DownwardsMinVelocityIncrease_mmps: number;
-    MaxLateralVelocity_mmps: number;
-    MaxOpposingVelocity_mmps: number;
-    MaxReleaseVelocity_mmps: number;
-    MaxSwipeWidth: number;
-    MinScrollVelocity_mmps: number;
-    MinSwipeLength: number;
-    ScrollDelayMs: number;
-    SwipeWidthScaling: number;
-    UpwardsMinVelocityDecrease_mmps: number;
-}
-
-// @public
-export class VersionHandshakeResponse extends WebSocketResponse {
-    constructor(id: string, status: string, msg: string, request: string, touchFreeVersion: string, apiVersion: string);
-    apiVersion: string;
-    touchFreeVersion: string;
-}
-
-// @internal
-export class VersionInfo {
-    static readonly API_HEADER_NAME: string;
-    static readonly API_VERSION: string;
-}
-
 // @public
 export class WebInputController extends BaseInputController {
     constructor();
@@ -679,25 +438,6 @@ export class WebInputController extends BaseInputController {
     protected handleInputAction(inputData: TouchFreeInputAction): void;
     // @internal
     handleMove(element: Element | null): void;
-}
-
-// @internal
-export class WebsocketInputAction {
-    constructor(timestamp: number, interactionFlags: BitmaskFlags, cursorPosition: Vector2, distanceFromScreen: number, progressToClick: number);
-    CursorPosition: Vector2;
-    DistanceFromScreen: number;
-    InteractionFlags: BitmaskFlags;
-    ProgressToClick: number;
-    Timestamp: number;
-}
-
-// @public
-export class WebSocketResponse implements TouchFreeRequest {
-    constructor(id: string, status: string, msg: string, request: string);
-    message: string;
-    originalRequest: string;
-    requestID: string;
-    status: string;
 }
 
 ```
