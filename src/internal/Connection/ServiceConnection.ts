@@ -1,4 +1,4 @@
-import { AnalyticsSessionRequestType, getAnalyticSessionEvents } from '../Analytics/Analytics';
+import { AnalyticSessionEvents, AnalyticsSessionRequestType } from '../Analytics/AnalyticsTypes';
 import { dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
 import { TrackingState } from '../Tracking/TrackingTypes';
 import { ActionCode } from './ActionCode';
@@ -434,11 +434,16 @@ export class ServiceConnection {
     /**
      * Used to send a request to update the analytic session's events stored in the Service
      * @param sessionID - ID of the session
+     * @param events - Analytics events to send
      * @param callback - Optional callback to handle the response from the service
      */
-    updateAnalyticSessionEvents = (sessionID: string, callback?: (detail: WebSocketResponse) => void) =>
+    updateAnalyticSessionEvents = (
+        sessionID: string,
+        events: AnalyticSessionEvents,
+        callback?: (detail: WebSocketResponse) => void
+    ) =>
         this.baseRequest(
-            { sessionID, sessionEvents: getAnalyticSessionEvents() },
+            { sessionID, sessionEvents: events },
             ActionCode.ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST,
             this._callbackHandler.analyticsRequestCallbacks,
             callback

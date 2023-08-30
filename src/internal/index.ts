@@ -8,7 +8,8 @@
  * public API is controlled by the module in the directory above.
  */
 
-export * from './Analytics/Analytics';
+export * from './Analytics/AnalyticsApi';
+export * from './Analytics/AnalyticsTypes';
 
 export * from './Configuration/ConfigurationApi';
 export * from './Configuration/ConfigurationTypes';
@@ -46,5 +47,5 @@ export * from './Math/Vectors';
 
 export * from './TouchFreeEvents/TouchFreeEvents';
 
-export * from './Tracking/TrackingTypes';
 export * from './Tracking/TrackingApi';
+export * from './Tracking/TrackingTypes';

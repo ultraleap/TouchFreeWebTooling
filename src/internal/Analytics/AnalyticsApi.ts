@@ -1,8 +1,13 @@
 import { ConnectionManager } from '../Connection/ConnectionManager';
-import { WebSocketResponse } from '../Connection/RequestTypes';
+import {
+    AnalyticSessionEvents,
+    AnalyticEventKey,
+    AnalyticsSessionRequestType,
+    StartAnalyticsSessionOptions,
+    StopAnalyticsSessionOptions,
+    WebSocketCallback,
+} from './AnalyticsTypes';
 import { v4 as uuidgen } from 'uuid';
-
-type WebSocketCallback = (detail: WebSocketResponse) => void;
 
 let currentSessionId: string | undefined;
 let analyticsHeartbeat: number;
@@ -20,22 +25,10 @@ const isTFPointerEvent = (e: Event): boolean => 'pointerType' in e && e.pointerT
 export const isAnalyticsActive = () => currentSessionId !== undefined;
 
 /**
- * Index object of {@link AnalyticEventKey} to number
- * @public
- */
-export type AnalyticSessionEvents = { [key in AnalyticEventKey]?: number };
-
-/**
  * Returns a copy of an indexed object detailing how many times each analytics event has been triggered
  * @public
  */
 export const getAnalyticSessionEvents = (): AnalyticSessionEvents => Object.assign({}, sessionEvents);
-
-/**
- * Supported analytic event types
- * @public
- */
-export type AnalyticEventKey = keyof DocumentEventMap;
 
 /**
  * Returns the list of registered analytic event keys
@@ -83,12 +76,6 @@ export function unregisterAnalyticEvents(eventsIn?: AnalyticEventKey[]) {
 }
 
 /**
- * Type of analytics session request
- * @internal
- */
-export type AnalyticsSessionRequestType = 'START' | 'STOP';
-
-/**
  * Used to start or stop an analytics session
  *
  * @param requestType - START or STOP session. See {@link AnalyticsSessionRequestType}
@@ -114,7 +101,7 @@ function controlAnalyticsSession(
             if (detail.status !== 'Failure') {
                 currentSessionId = newID;
                 analyticsHeartbeat = window.setInterval(
-                    () => serviceConnection.updateAnalyticSessionEvents(newID),
+                    () => serviceConnection.updateAnalyticSessionEvents(newID, getAnalyticSessionEvents()),
                     2000
                 );
                 callback?.(detail);
@@ -131,23 +118,13 @@ function controlAnalyticsSession(
 
         const validSessionId = currentSessionId;
         clearInterval(analyticsHeartbeat);
-        serviceConnection.updateAnalyticSessionEvents(validSessionId, () => {
+        serviceConnection.updateAnalyticSessionEvents(validSessionId, getAnalyticSessionEvents(), () => {
             // Clear session events
             sessionEvents = {};
             serviceConnection.analyticsSessionRequest(requestType, validSessionId, callback);
             currentSessionId = undefined;
         });
     }
-}
-
-/**
- * Options to use with {@link startAnalyticsSession}
- *
- * @public
- */
-export interface StartAnalyticsSessionOptions {
-    callback?: WebSocketCallback;
-    stopCurrentSession?: boolean;
 }
 
 /**
@@ -167,15 +144,6 @@ export function startAnalyticsSession(applicationName: string, options?: StartAn
     }
 
     controlAnalyticsSession('START', applicationName, options?.callback);
-}
-
-/**
- * Options to use with {@link stopAnalyticsSession}
- *
- * @public
- */
-export interface StopAnalyticsSessionOptions {
-    callback?: WebSocketCallback;
 }
 
 /**

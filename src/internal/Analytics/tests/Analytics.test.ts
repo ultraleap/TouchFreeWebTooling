@@ -5,12 +5,12 @@ import {
     startAnalyticsSession,
     stopAnalyticsSession,
     isAnalyticsActive,
-    AnalyticEventKey,
     unregisterAnalyticEvents,
     getRegisteredAnalyticEventKeys,
     registerAnalyticEvents,
     getAnalyticSessionEvents,
-} from '../Analytics';
+} from '../AnalyticsApi';
+import { AnalyticEventKey } from '../AnalyticsTypes';
 
 const successResponse = new WebSocketResponse('test', 'Success', 'test', 'test');
 
@@ -40,7 +40,7 @@ describe('Analytics', () => {
             if (!serviceConnection) throw new Error('Service connection not available');
             updateSessionEventsMock = jest
                 .spyOn(serviceConnection, 'updateAnalyticSessionEvents')
-                .mockImplementation((_sessionID, callback) => {
+                .mockImplementation((_sessionID, _events, callback) => {
                     callback?.(successResponse);
                 });
         });

@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { MessageReceiver } from './MessageReceivers/BaseMessageReceiver';
-
 /**
  * Custom IP and port to connect to Service on
  *
@@ -59,8 +56,6 @@ export enum HandPresenceState {
     HANDS_LOST,
     /**
      * Used to indicate that no change in state is awaiting processing.
-     *
-     * See usage in {@link MessageReceiver} for more details.
      * @internal
      */
     PROCESSED,
