@@ -1,4 +1,4 @@
-import { isConnected } from '../Connection/ConnectionManager';
+import { isConnected } from '../Connection/ConnectionApi';
 import { TrackingServiceState } from '../Connection/ConnectionTypes';
 import { ServiceStatus } from '../Connection/RequestTypes';
 import { HandFrame } from '../Hands/HandFrame';

@@ -1,4 +1,4 @@
-import { ConnectionManager } from '../../Connection/ConnectionManager';
+import { connect, getServiceConnection } from '../../Connection/ConnectionApi';
 import { WebSocketResponse } from '../../Connection/RequestTypes';
 import { ServiceConnection } from '../../Connection/ServiceConnection';
 import {
@@ -35,8 +35,8 @@ describe('Analytics', () => {
         let updateSessionEventsMock: jest.SpyInstance;
 
         beforeAll(() => {
-            ConnectionManager.init();
-            serviceConnection = ConnectionManager.serviceConnection();
+            connect();
+            serviceConnection = getServiceConnection();
             if (!serviceConnection) throw new Error('Service connection not available');
             updateSessionEventsMock = jest
                 .spyOn(serviceConnection, 'updateAnalyticSessionEvents')

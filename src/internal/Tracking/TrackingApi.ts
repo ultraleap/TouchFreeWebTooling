@@ -1,22 +1,23 @@
-import { ConnectionManager } from '../Connection/ConnectionManager';
+import { getServiceConnection } from '../Connection/ConnectionApi';
 import { TrackingStateResponse } from '../Connection/RequestTypes';
 import { TrackingState } from './TrackingTypes';
 
 /**
  * Request a {@link TrackingStateResponse} representing the current state of the tracking software
  * @remarks
- * Use {@link convertResponseToState} on the response to get TrackingState in a more helpful form
  * @param callback - Callback to call with {@link TrackingStateResponse}
  *
  * @public
  */
-export function requestTrackingState(callback?: (detail: TrackingStateResponse) => void) {
+export function requestTrackingState(callback?: (detail: Partial<TrackingState>) => void) {
     if (!callback) {
         console.error('Config file state request failed. This call requires a callback.');
         return;
     }
 
-    ConnectionManager.serviceConnection()?.requestTrackingState(callback);
+    getServiceConnection()?.requestTrackingState((trackingState) => {
+        callback(convertResponseToState(trackingState));
+    });
 }
 
 /**
@@ -28,9 +29,13 @@ export function requestTrackingState(callback?: (detail: TrackingStateResponse) 
  */
 export function requestTrackingChange(
     state: Partial<TrackingState>,
-    callback?: (detail: TrackingStateResponse) => void
+    callback?: (detail: Partial<TrackingState>) => void
 ): void {
-    ConnectionManager.serviceConnection()?.requestTrackingChange(state, callback);
+    getServiceConnection()?.requestTrackingChange(state, (trackingState) => {
+        if (callback) {
+            callback(convertResponseToState(trackingState));
+        }
+    });
 }
 
 /**
@@ -38,10 +43,8 @@ export function requestTrackingChange(
  * response easier to consume.
  * @param response - Response to convert
  * @returns Converted Partial {@link TrackingState}
- *
- * @internal
  */
-export function convertResponseToState(response: TrackingStateResponse): Partial<TrackingState> {
+function convertResponseToState(response: TrackingStateResponse): Partial<TrackingState> {
     const newResponse: Partial<TrackingState> = {};
 
     if (response.mask !== undefined && response.mask !== null) {

@@ -36,20 +36,6 @@ export interface EventUpdate<T> {
 }
 
 /**
- * Enumeration of client-service compatibility
- * @deprecated Unused
- * @internal
- */
-export enum Compatibility {
-    /** The API versions are considered compatible */
-    COMPATIBLE,
-    /** The API versions are considered incompatible as Service is older than Tooling */
-    SERVICE_OUTDATED,
-    /** The API versions are considered incompatible as Tooling is older than Service */
-    TOOLING_OUTDATED,
-}
-
-/**
  * Data structure for {@link ActionCode.HAND_PRESENCE_EVENT} messages
  * @internal
  */

@@ -1,4 +1,4 @@
-import { ConnectionManager } from '../../Connection/ConnectionManager';
+import { getCurrentServiceAddress } from '../../Connection/ConnectionApi';
 import { setCurrentCursor, getCurrentCursor } from '../../Cursors/CurrentCursor';
 import { SVGCursor } from '../../Cursors/SvgCursor';
 import { init } from '../Initialization';
@@ -21,8 +21,8 @@ describe('Initialization', () => {
         it('Should pass a given address to the ConnectionManager', () => {
             const newAddress = { ip: '192.168.0.1', port: '8080' };
             init({ address: newAddress });
-            expect(ConnectionManager.ipAddress).toBe(newAddress.ip);
-            expect(ConnectionManager.port).toBe(newAddress.port);
+            expect(getCurrentServiceAddress().ip).toBe(newAddress.ip);
+            expect(getCurrentServiceAddress().port).toBe(newAddress.port);
         });
     });
 });

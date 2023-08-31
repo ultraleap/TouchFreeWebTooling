@@ -42,9 +42,12 @@ export {
 
     /** Connection - Manage a connection to the TouchFree service and messages send or receive messages */
     isConnected,
-    ConnectionManager,
+    connect,
+    disconnect,
+    getCurrentServiceAddress,
+    getDefaultServiceAddress,
+    requestServiceStatus,
     Address,
-    ConnectionInitParams,
     TrackingServiceState,
     ConfigurationState,
     HandPresenceState,
@@ -75,7 +78,6 @@ export {
     BaseInputController,
     WebInputController,
     getInputController,
-    setInputController,
 
     /** Math types and functions */
     mapRangeToRange,

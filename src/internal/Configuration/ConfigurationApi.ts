@@ -1,5 +1,5 @@
 import { ActionCode } from '../Connection/ActionCode';
-import { ConnectionManager } from '../Connection/ConnectionManager';
+import { getServiceConnection } from '../Connection/ConnectionApi';
 import { WebSocketResponse, ConfigState, PartialConfigState } from '../Connection/RequestTypes';
 import { CommunicationWrapper } from '../Connection/ServiceTypes';
 import { InteractionConfig, PhysicalConfig } from './ConfigurationTypes';
@@ -37,7 +37,7 @@ export function requestConfigState(callback?: (detail: ConfigState) => void): vo
         return;
     }
 
-    ConnectionManager.serviceConnection()?.requestConfigState(callback);
+    getServiceConnection()?.requestConfigState(callback);
 }
 
 /**
@@ -74,7 +74,7 @@ export function requestConfigFileState(callback?: (detail: ConfigState) => void)
         return;
     }
 
-    ConnectionManager.serviceConnection()?.requestConfigFile(callback);
+    getServiceConnection()?.requestConfigFile(callback);
 }
 
 /**
@@ -90,7 +90,7 @@ export function requestConfigFileState(callback?: (detail: ConfigState) => void)
  * @public
  */
 export function resetInteractionConfigFileToDefault(callback?: (newState: ConfigState) => void): void {
-    ConnectionManager.serviceConnection()?.resetInteractionConfigFile(callback);
+    getServiceConnection()?.resetInteractionConfigFile(callback);
 }
 
 function baseConfigChangeRequest(
@@ -106,5 +106,5 @@ function baseConfigChangeRequest(
 
     const jsonContent = JSON.stringify(request);
 
-    ConnectionManager.serviceConnection()?.sendMessage(jsonContent, requestID, callback);
+    getServiceConnection()?.sendMessage(jsonContent, requestID, callback);
 }

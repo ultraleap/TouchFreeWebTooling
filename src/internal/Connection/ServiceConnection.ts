@@ -3,6 +3,7 @@ import { dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
 import { TrackingState } from '../Tracking/TrackingTypes';
 import { ActionCode } from './ActionCode';
 import { CallbackHandler, CallbackList } from './CallbackHandler';
+import { Address, HandPresenceState, InteractionZoneState } from './ConnectionTypes';
 import { MessageReceiver } from './MessageReceivers/BaseMessageReceiver';
 import { HandDataHandler } from './MessageReceivers/HandDataHandler';
 import { createMessageReceivers } from './MessageReceivers/index';
@@ -21,10 +22,6 @@ import { v4 as uuidgen } from 'uuid';
 /**
  * Represents a connection to the TouchFree Service.
  *
- * @remarks
- * Typically only a single instance of this class exists, managed by
- * the {@link ConnectionManager}.
- *
  * @internal
  */
 export class ServiceConnection {
@@ -34,6 +31,9 @@ export class ServiceConnection {
     private handshakeRequested: boolean;
     private handshakeCompleted: boolean;
     private internalTouchFreeVersion = '';
+
+    private currentHandPresence = HandPresenceState.HANDS_LOST;
+    private currentInteractionZoneState = InteractionZoneState.HAND_EXITED;
 
     private readonly _callbackHandler: CallbackHandler;
     private readonly handDataHandler: HandDataHandler;
@@ -45,6 +45,20 @@ export class ServiceConnection {
      */
     public get touchFreeVersion() {
         return this.internalTouchFreeVersion;
+    }
+
+    /**
+     * Get current presence state of the hand.
+     */
+    public getCurrentHandPresence(): HandPresenceState {
+        return this.currentHandPresence;
+    }
+
+    /**
+     * Get current interaction zone state
+     */
+    public getCurrentInteractionZoneState(): InteractionZoneState {
+        return this.currentInteractionZoneState;
     }
 
     /**
@@ -65,15 +79,14 @@ export class ServiceConnection {
      * Sets up a listener to request a handshake once the websocket has successfully opened.
      * No data will be sent over an open connection until a successful handshake has completed.
      *
-     * @param ip - Optional override to default websocket ip '127.0.0.1'
-     * @param port - Optional override to default websocket port '9739'
+     * @param address - Address to connect to websocket on
      */
-    constructor(ip = '127.0.0.1', port = '9739') {
+    constructor(address: Address) {
         this._callbackHandler = new CallbackHandler();
-        this.messageReceivers = createMessageReceivers(this._callbackHandler);
+        this.messageReceivers = createMessageReceivers(this, this._callbackHandler);
         this.handDataHandler = new HandDataHandler();
 
-        this.webSocket = new WebSocket(`ws://${ip}:${port}/connect`);
+        this.webSocket = new WebSocket(`ws://${address.ip}:${address.port}/connect`);
         this.webSocket.binaryType = 'arraybuffer';
 
         this.webSocket.addEventListener('message', this.onMessage);
@@ -448,6 +461,35 @@ export class ServiceConnection {
             this._callbackHandler.analyticsRequestCallbacks,
             callback
         );
+
+    /**
+     * Handles HandPresence events from the service and dispatches
+     * the `handFound` and `handsLost` events on this class
+     * @param state - Hand state
+     */
+    handleHandPresenceEvent(state: HandPresenceState): void {
+        this.currentHandPresence = state;
+
+        if (state === HandPresenceState.HAND_FOUND) {
+            dispatchEventCallback('handFound');
+        } else {
+            dispatchEventCallback('handsLost');
+        }
+    }
+
+    /**
+     * Handle an InteractionZone event by dispatching
+     * `handEntered` and `handExited` events on this class
+     */
+    handleInteractionZoneEvent(state: InteractionZoneState): void {
+        this.currentInteractionZoneState = state;
+
+        if (state === InteractionZoneState.HAND_ENTERED) {
+            dispatchEventCallback('handEntered');
+        } else {
+            dispatchEventCallback('handExited');
+        }
+    }
 }
 
 enum ServiceBinaryDataTypes {

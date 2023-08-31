@@ -17,7 +17,7 @@ export interface Mask {
  * Represents the settings available for modification in the Tracking API
  * @public
  */
-export class TrackingState {
+export interface TrackingState {
     /** Camera masking state */
     mask: Mask;
     /** Is camera orientation reversed from normal? */
@@ -26,11 +26,4 @@ export class TrackingState {
     allowImages: boolean;
     /** Toggle analytics */
     analyticsEnabled: boolean;
-
-    constructor(mask: Mask, cameraReversed: boolean, allowImages: boolean, analyticsEnabled: boolean) {
-        this.mask = mask;
-        this.cameraReversed = cameraReversed;
-        this.allowImages = allowImages;
-        this.analyticsEnabled = analyticsEnabled;
-    }
 }

@@ -1,4 +1,4 @@
-import { ConnectionManager } from '../Connection/ConnectionManager';
+import { connect } from '../Connection/ConnectionApi';
 import { Address } from '../Connection/ConnectionTypes';
 import { setCurrentCursor } from '../Cursors/CurrentCursor';
 import { SVGCursor } from '../Cursors/SvgCursor';
@@ -27,7 +27,7 @@ export interface TfInitParams {
  * @public
  */
 export function init(tfInitParams?: TfInitParams): void {
-    ConnectionManager.init({ address: tfInitParams?.address });
+    connect(tfInitParams?.address);
 
     setInputController(new WebInputController());
 

@@ -11,15 +11,6 @@ export interface Address {
 }
 
 /**
- * Initialization parameters for ConnectionManager
- *
- * @public
- */
-export interface ConnectionInitParams {
-    address?: Address;
-}
-
-/**
  * State of the Ultraleap Tracking Service that TouchFree Service connects to
  * @public
  */

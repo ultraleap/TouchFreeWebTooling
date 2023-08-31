@@ -33,42 +33,9 @@ export enum ConfigurationState {
 }
 
 // @public
-export interface ConnectionInitParams {
-    // (undocumented)
-    address?: Address;
-}
+export function connect(address?: Address): void;
 
 // @public
-export class ConnectionManager extends EventTarget {
-    // @deprecated
-    static addConnectionListener(onConnectFunc: () => void): void;
-    // @deprecated
-    static addServiceStatusListener(serviceStatusFunc: (serviceStatus: TrackingServiceState) => void): void;
-    // Warning: (ae-forgotten-export) The symbol "CallbackHandler" needs to be exported by the entry point index.d.ts
-    //
-    // @internal
-    static callbackHandler: CallbackHandler;
-    static connect(): void;
-    static disconnect(): void;
-    static getCurrentHandPresence(): HandPresenceState;
-    static getCurrentInteractionZoneState(): InteractionZoneState;
-    static handleHandPresenceEvent(state: HandPresenceState): void;
-    static handleInteractionZoneEvent(state: InteractionZoneState): void;
-    static init(initParams?: ConnectionInitParams): void;
-    static instance: ConnectionManager;
-    static ipAddress: string;
-    static get isConnected(): boolean;
-    static port: string;
-    // Warning: (ae-forgotten-export) The symbol "ServiceStatus" needs to be exported by the entry point index.d.ts
-    static requestServiceStatus(callback?: (detail: ServiceStatus) => void): void;
-    // Warning: (ae-forgotten-export) The symbol "ServiceConnection" needs to be exported by the entry point index.d.ts
-    //
-    // @internal
-    static serviceConnection(): ServiceConnection | null;
-    static setAddress(address: Address): void;
-}
-
-// @public (undocumented)
 export const enum CursorPart {
     // (undocumented)
     CENTER_BORDER = 2,
@@ -77,6 +44,9 @@ export const enum CursorPart {
     // (undocumented)
     RING_FILL = 1
 }
+
+// @public
+export function disconnect(): void;
 
 // @public
 export function dispatchEventCallback<TEvent extends TouchFreeEvent>(eventType: TEvent, ...args: Parameters<TouchFreeEventSignatures[TEvent]>): void;
@@ -109,6 +79,12 @@ export const getAnalyticSessionEvents: () => AnalyticSessionEvents;
 
 // @public (undocumented)
 export const getCurrentCursor: () => TouchlessCursor | undefined;
+
+// @public
+export function getCurrentServiceAddress(): Address;
+
+// @public
+export function getDefaultServiceAddress(): Address;
 
 // @public (undocumented)
 export const getInputController: () => BaseInputController | undefined;
@@ -269,22 +245,22 @@ export function requestConfigFileState(callback?: (detail: ConfigState) => void)
 // @public
 export function requestConfigState(callback?: (detail: ConfigState) => void): void;
 
-// Warning: (ae-forgotten-export) The symbol "TrackingStateResponse" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "ServiceStatus" needs to be exported by the entry point index.d.ts
 //
 // @public
-export function requestTrackingChange(state: Partial<TrackingState>, callback?: (detail: TrackingStateResponse) => void): void;
+export function requestServiceStatus(callback?: (detail: ServiceStatus) => void): void;
 
 // @public
-export function requestTrackingState(callback?: (detail: TrackingStateResponse) => void): void;
+export function requestTrackingChange(state: Partial<TrackingState>, callback?: (detail: Partial<TrackingState>) => void): void;
+
+// @public
+export function requestTrackingState(callback?: (detail: Partial<TrackingState>) => void): void;
 
 // @public
 export function resetInteractionConfigFileToDefault(callback?: (newState: ConfigState) => void): void;
 
 // @public
 export const setCurrentCursor: (cursor?: TouchlessCursor) => TouchlessCursor | undefined;
-
-// @internal (undocumented)
-export const setInputController: (inputController: BaseInputController) => BaseInputController;
 
 // @public
 export function startAnalyticsSession(applicationName: string, options?: StartAnalyticsSessionOptions): void;
@@ -406,8 +382,7 @@ export enum TrackingServiceState {
 }
 
 // @public
-export class TrackingState {
-    constructor(mask: Mask, cameraReversed: boolean, allowImages: boolean, analyticsEnabled: boolean);
+export interface TrackingState {
     allowImages: boolean;
     analyticsEnabled: boolean;
     cameraReversed: boolean;

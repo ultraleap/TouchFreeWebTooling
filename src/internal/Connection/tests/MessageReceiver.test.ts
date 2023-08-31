@@ -3,7 +3,7 @@ import { init } from '../../Initialization/Initialization';
 import { EventHandle, registerEventCallback } from '../../TouchFreeEvents/TouchFreeEvents';
 import { intervalTest } from '../../tests/testUtils';
 import { ActionCode } from '../ActionCode';
-import { ConnectionManager } from '../ConnectionManager';
+import { getServiceConnection } from '../ConnectionApi';
 import { HandPresenceState, InteractionZoneState } from '../ConnectionTypes';
 import { ServiceConnection } from '../ServiceConnection';
 import { BitmaskFlags, WebsocketInputAction, convertInputAction } from '../WebsocketInputAction';
@@ -78,7 +78,7 @@ describe('MessageReceiver', () => {
     beforeEach(() => {
         // Reset service after each test to completely reset mocks
         init();
-        serviceConnection = ConnectionManager.serviceConnection();
+        serviceConnection = getServiceConnection();
         jest.restoreAllMocks();
         if (serviceConnection) {
             serviceConnection.webSocket.send = jest.fn((msg) => {
@@ -213,7 +213,8 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for a hand presence event', async () => {
-        const testFn = jest.spyOn(ConnectionManager, 'handleHandPresenceEvent');
+        if (serviceConnection === null) fail();
+        const testFn = jest.spyOn(serviceConnection, 'handleHandPresenceEvent');
         testFn.mockImplementation(() => {});
         mockOpen();
 
@@ -223,7 +224,8 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for an interaction zone event', async () => {
-        const testFn = jest.spyOn(ConnectionManager, 'handleInteractionZoneEvent').mockImplementation();
+        if (serviceConnection === null) fail();
+        const testFn = jest.spyOn(serviceConnection, 'handleInteractionZoneEvent').mockImplementation();
         mockOpen();
 
         onMessage(ActionCode.INTERACTION_ZONE_EVENT, { state: InteractionZoneState.HAND_ENTERED });

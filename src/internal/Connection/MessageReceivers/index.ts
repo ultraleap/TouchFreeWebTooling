@@ -1,4 +1,5 @@
 import { CallbackHandler } from '../CallbackHandler';
+import { ServiceConnection } from '../ServiceConnection';
 import { AnalyticsMessageReceiver } from './AnalyticsMessageReceiver';
 import { ConfigStateMessageReceiver } from './ConfigStateMessageReceiver';
 import { HandPresenceMessageReceiver } from './HandPresenceMessageReceiver';
@@ -12,13 +13,13 @@ import { VersionHandshakeMessageReceiver } from './VersionHandshakeMessageReceiv
 export { HandDataHandler } from './HandDataHandler';
 export { MessageReceiver } from './BaseMessageReceiver';
 
-export const createMessageReceivers = (callbackHandler: CallbackHandler) => {
+export const createMessageReceivers = (serviceConnection: ServiceConnection, callbackHandler: CallbackHandler) => {
     return [
         new AnalyticsMessageReceiver(callbackHandler),
         new ConfigStateMessageReceiver(callbackHandler),
-        new HandPresenceMessageReceiver(),
+        new HandPresenceMessageReceiver(serviceConnection),
         new InputActionMessageReceiver(),
-        new InteractionZoneMessageReceiver(),
+        new InteractionZoneMessageReceiver(serviceConnection),
         new ResponseMessageReceiver(callbackHandler),
         new ServiceStateMessageReceiver(callbackHandler),
         new TrackingStateMessageReceiver(callbackHandler),

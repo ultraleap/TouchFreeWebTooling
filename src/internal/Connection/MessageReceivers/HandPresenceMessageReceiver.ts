@@ -1,6 +1,6 @@
 import { ActionCode } from '../ActionCode';
-import { ConnectionManager } from '../ConnectionManager';
 import { HandPresenceState } from '../ConnectionTypes';
+import { ServiceConnection } from '../ServiceConnection';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**
@@ -14,11 +14,14 @@ export class HandPresenceMessageReceiver extends BaseMessageReceiver<{ state: Ha
      */
     public readonly actionCode: ActionCode[] = [ActionCode.HAND_PRESENCE_EVENT];
 
+    private readonly serviceConnection: ServiceConnection;
+
     /**
      * Sets up consuming hand presence messages and sending them to the {@link ConnectionManager}
      */
-    constructor() {
+    constructor(serviceConnection: ServiceConnection) {
         super(false);
+        this.serviceConnection = serviceConnection;
         this.setup(() => this.checkForState());
     }
 
@@ -27,7 +30,7 @@ export class HandPresenceMessageReceiver extends BaseMessageReceiver<{ state: Ha
      */
     checkForState = () => {
         if (this.lastItem?.state !== undefined && this.lastItem?.state !== HandPresenceState.PROCESSED) {
-            ConnectionManager.handleHandPresenceEvent(this.lastItem.state);
+            this.serviceConnection.handleHandPresenceEvent(this.lastItem.state);
             this.lastItem.state = HandPresenceState.PROCESSED;
         }
     };

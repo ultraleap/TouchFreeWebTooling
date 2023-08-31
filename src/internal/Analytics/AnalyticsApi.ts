@@ -1,4 +1,4 @@
-import { ConnectionManager } from '../Connection/ConnectionManager';
+import { getServiceConnection } from '../Connection/ConnectionApi';
 import {
     AnalyticSessionEvents,
     AnalyticEventKey,
@@ -87,7 +87,7 @@ function controlAnalyticsSession(
     application: string,
     callback?: WebSocketCallback
 ) {
-    const serviceConnection = ConnectionManager.serviceConnection();
+    const serviceConnection = getServiceConnection();
     if (!serviceConnection) return;
 
     if (requestType === 'START') {
