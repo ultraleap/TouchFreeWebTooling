@@ -1,3 +1,4 @@
+import * as ConnectionApi from '../../Connection/ConnectionApi';
 import { init } from '../../Initialization/Initialization';
 import {
     TouchFreeEventSignatures,
@@ -31,9 +32,9 @@ describe('Events', () => {
                 expect(fn).toBeCalledTimes(1);
             });
             it('Should pass whenConnected callback through to onConnected if there is a current connection', () => {
-                //const mock = jest.spyOn(ConnectionManager, 'isConnected', 'get').mockReturnValue(true);
+                const mock = jest.spyOn(ConnectionApi, 'isConnected').mockReturnValue(true);
                 registerEventCallback('whenConnected', fn);
-                //mock.mockRestore();
+                mock.mockRestore();
                 expect(fn).toBeCalledTimes(2);
             });
         } else {
