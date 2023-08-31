@@ -1,8 +1,9 @@
 import { ActionCode } from '../Connection/ActionCode';
 import { getServiceConnection } from '../Connection/ConnectionApi';
-import { WebSocketResponse, ConfigState, PartialConfigState } from '../Connection/RequestTypes';
+import { ResponseCallback } from '../Connection/ConnectionTypes';
+import { PartialConfigState } from '../Connection/RequestTypes';
 import { CommunicationWrapper } from '../Connection/ServiceTypes';
-import { InteractionConfig, PhysicalConfig } from './ConfigurationTypes';
+import { InteractionConfig, PhysicalConfig, TouchFreeConfig } from './ConfigurationTypes';
 import { v4 as uuidgen } from 'uuid';
 
 /**
@@ -18,20 +19,20 @@ import { v4 as uuidgen } from 'uuid';
  * @public
  */
 export function requestConfigChange(
-    interaction: Partial<InteractionConfig> | null,
-    physical: Partial<PhysicalConfig> | null,
-    callback?: (detail: WebSocketResponse) => void
+    interaction?: Partial<InteractionConfig>,
+    physical?: Partial<PhysicalConfig>,
+    callback?: ResponseCallback
 ): void {
-    baseConfigChangeRequest(interaction, physical, ActionCode.SET_CONFIGURATION_STATE, callback);
+    baseConfigChangeRequest(ActionCode.SET_CONFIGURATION_STATE, interaction, physical, callback);
 }
 
 /**
  * Request active configuration state of the TouchFree Service
- * @param callback - Callback with the requested {@link ConfigState}
+ * @param callback - Callback with the requested {@link TouchFreeConfig}
  *
  * @public
  */
-export function requestConfigState(callback?: (detail: ConfigState) => void): void {
+export function requestConfigState(callback?: (detail: TouchFreeConfig) => void): void {
     if (!callback) {
         console.error('Config state request failed. This call requires a callback.');
         return;
@@ -55,20 +56,20 @@ export function requestConfigState(callback?: (detail: ConfigState) => void): vo
  * @public
  */
 export function requestConfigFileChange(
-    interaction: Partial<InteractionConfig> | null,
-    physical: Partial<PhysicalConfig> | null,
-    callback?: (detail: WebSocketResponse) => void
+    interaction?: Partial<InteractionConfig>,
+    physical?: Partial<PhysicalConfig>,
+    callback?: ResponseCallback
 ): void {
-    baseConfigChangeRequest(interaction, physical, ActionCode.SET_CONFIGURATION_FILE, callback);
+    baseConfigChangeRequest(ActionCode.SET_CONFIGURATION_FILE, interaction, physical, callback);
 }
 
 /**
  * Request configuration state of the services config files.
- * @param callback - Callback with the requested {@link ConfigState}
+ * @param callback - Callback with the requested {@link TouchFreeConfig}
  *
  * @public
  */
-export function requestConfigFileState(callback?: (detail: ConfigState) => void): void {
+export function requestConfigFileState(callback?: (detail: TouchFreeConfig) => void): void {
     if (!callback) {
         console.error('Config file state request failed. This call requires a callback.');
         return;
@@ -85,23 +86,23 @@ export function requestConfigFileState(callback?: (detail: ConfigState) => void)
  * by *any* connected client will be lost when changing these files.
  * The change will be applied **to the current config files directly**,
  * disregarding current active config state.
- * @param callback - callback containing the new {@link ConfigState}
+ * @param callback - callback containing the new {@link TouchFreeConfig}
  *
  * @public
  */
-export function resetInteractionConfigFileToDefault(callback?: (newState: ConfigState) => void): void {
+export function resetInteractionConfigFileToDefault(callback?: (newState: TouchFreeConfig) => void): void {
     getServiceConnection()?.resetInteractionConfigFile(callback);
 }
 
 function baseConfigChangeRequest(
-    interaction: Partial<InteractionConfig> | null,
-    physical: Partial<PhysicalConfig> | null,
     action: ActionCode,
-    callback?: (detail: WebSocketResponse) => void
+    interaction?: Partial<InteractionConfig>,
+    physical?: Partial<PhysicalConfig>,
+    callback?: ResponseCallback
 ): void {
     const requestID = uuidgen();
 
-    const content = new PartialConfigState(requestID, interaction, physical);
+    const content: PartialConfigState = { requestID, interaction, physical };
     const request = new CommunicationWrapper(action, content);
 
     const jsonContent = JSON.stringify(request);

@@ -1,6 +1,6 @@
 import {
     ConfigState,
-    ServiceStatus,
+    ServiceStateResponse,
     TouchFreeRequestCallback,
     TrackingStateResponse,
     WebSocketResponse,
@@ -47,9 +47,9 @@ export class CallbackHandler {
     responseCallbacks: CallbackList<WebSocketResponse> = {};
 
     /**
-     * A {@link CallbackList} awaiting {@link ServiceStatus} responses from the Service.
+     * A {@link CallbackList} awaiting {@link ServiceStateResponse} responses from the Service.
      */
-    serviceStatusCallbacks: CallbackList<ServiceStatus> = {};
+    serviceStatusCallbacks: CallbackList<ServiceStateResponse> = {};
 
     /**
      * A {@link CallbackList} awaiting {@link TrackingStateResponse} responses from the Service.

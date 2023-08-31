@@ -1,5 +1,4 @@
-import { Address } from './ConnectionTypes';
-import { ServiceStatus } from './RequestTypes';
+import { Address, ServiceState, convertResponseToServiceState } from './ConnectionTypes';
 import { ServiceConnection } from './ServiceConnection';
 
 /** The private reference to the currently managed `ServiceConnection`. */
@@ -76,11 +75,11 @@ export function disconnect(): void {
  * @param callback - Callback to call with the response
  * @public
  */
-export function requestServiceStatus(callback?: (detail: ServiceStatus) => void): void {
+export function requestServiceStatus(callback?: (detail: ServiceState) => void): void {
     if (!callback) {
         console.error('Request failed. This is due to a missing callback');
         return;
     }
 
-    getServiceConnection()?.requestServiceStatus(callback);
+    getServiceConnection()?.requestServiceStatus((detail) => callback(convertResponseToServiceState(detail)));
 }

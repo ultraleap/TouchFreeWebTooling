@@ -1,9 +1,4 @@
-import { WebSocketResponse } from '../Connection/RequestTypes';
-
-/**
- * @internal
- */
-export type WebSocketCallback = (detail: WebSocketResponse) => void;
+import { ResponseCallback } from '../Connection/ConnectionTypes';
 
 /**
  * Index object of {@link AnalyticEventKey} to number
@@ -29,7 +24,7 @@ export type AnalyticsSessionRequestType = 'START' | 'STOP';
  * @public
  */
 export interface StartAnalyticsSessionOptions {
-    callback?: WebSocketCallback;
+    callback?: ResponseCallback;
     stopCurrentSession?: boolean;
 }
 
@@ -39,5 +34,5 @@ export interface StartAnalyticsSessionOptions {
  * @public
  */
 export interface StopAnalyticsSessionOptions {
-    callback?: WebSocketCallback;
+    callback?: ResponseCallback;
 }

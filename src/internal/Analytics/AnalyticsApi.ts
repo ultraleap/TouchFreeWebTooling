@@ -1,11 +1,11 @@
 import { getServiceConnection } from '../Connection/ConnectionApi';
+import { ResponseCallback } from '../Connection/ConnectionTypes';
 import {
     AnalyticSessionEvents,
     AnalyticEventKey,
     AnalyticsSessionRequestType,
     StartAnalyticsSessionOptions,
     StopAnalyticsSessionOptions,
-    WebSocketCallback,
 } from './AnalyticsTypes';
 import { v4 as uuidgen } from 'uuid';
 
@@ -85,7 +85,7 @@ export function unregisterAnalyticEvents(eventsIn?: AnalyticEventKey[]) {
 function controlAnalyticsSession(
     requestType: AnalyticsSessionRequestType,
     application: string,
-    callback?: WebSocketCallback
+    callback?: ResponseCallback
 ) {
     const serviceConnection = getServiceConnection();
     if (!serviceConnection) return;

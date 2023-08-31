@@ -229,26 +229,20 @@ export function registerAnalyticEvents(eventsIn?: readonly AnalyticEventKey[]): 
 // @public
 export function registerEventCallback<TEvent extends TouchFreeEvent>(event: TEvent, callback: TouchFreeEventSignatures[TEvent]): EventHandle;
 
-// Warning: (ae-forgotten-export) The symbol "WebSocketResponse" needs to be exported by the entry point index.d.ts
-//
 // @public
-export function requestConfigChange(interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null, callback?: (detail: WebSocketResponse) => void): void;
+export function requestConfigChange(interaction?: Partial<InteractionConfig>, physical?: Partial<PhysicalConfig>, callback?: ResponseCallback): void;
 
 // @public
-export function requestConfigFileChange(interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null, callback?: (detail: WebSocketResponse) => void): void;
-
-// Warning: (ae-forgotten-export) The symbol "ConfigState" needs to be exported by the entry point index.d.ts
-//
-// @public
-export function requestConfigFileState(callback?: (detail: ConfigState) => void): void;
+export function requestConfigFileChange(interaction?: Partial<InteractionConfig>, physical?: Partial<PhysicalConfig>, callback?: ResponseCallback): void;
 
 // @public
-export function requestConfigState(callback?: (detail: ConfigState) => void): void;
+export function requestConfigFileState(callback?: (detail: TouchFreeConfig) => void): void;
 
-// Warning: (ae-forgotten-export) The symbol "ServiceStatus" needs to be exported by the entry point index.d.ts
-//
 // @public
-export function requestServiceStatus(callback?: (detail: ServiceStatus) => void): void;
+export function requestConfigState(callback?: (detail: TouchFreeConfig) => void): void;
+
+// @public
+export function requestServiceStatus(callback?: (detail: ServiceState) => void): void;
 
 // @public
 export function requestTrackingChange(state: Partial<TrackingState>, callback?: (detail: Partial<TrackingState>) => void): void;
@@ -257,7 +251,26 @@ export function requestTrackingChange(state: Partial<TrackingState>, callback?: 
 export function requestTrackingState(callback?: (detail: Partial<TrackingState>) => void): void;
 
 // @public
-export function resetInteractionConfigFileToDefault(callback?: (newState: ConfigState) => void): void;
+export function resetInteractionConfigFileToDefault(callback?: (newState: TouchFreeConfig) => void): void;
+
+// @public
+export type ResponseCallback = (state: ResponseState) => void;
+
+// @public
+export interface ResponseState {
+    message: string;
+    status: string;
+}
+
+// @public
+export interface ServiceState {
+    cameraFirmwareVersion: string;
+    cameraSerial: string;
+    configurationState: ConfigurationState;
+    touchFreeServiceVersion: string;
+    trackingServiceState: TrackingServiceState;
+    trackingServiceVersion: string;
+}
 
 // @public
 export const setCurrentCursor: (cursor?: TouchlessCursor) => TouchlessCursor | undefined;
@@ -267,10 +280,8 @@ export function startAnalyticsSession(applicationName: string, options?: StartAn
 
 // @public
 export interface StartAnalyticsSessionOptions {
-    // Warning: (ae-forgotten-export) The symbol "WebSocketCallback" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
-    callback?: WebSocketCallback;
+    callback?: ResponseCallback;
     // (undocumented)
     stopCurrentSession?: boolean;
 }
@@ -281,7 +292,7 @@ export function stopAnalyticsSession(applicationName: string, options?: StopAnal
 // @public
 export interface StopAnalyticsSessionOptions {
     // (undocumented)
-    callback?: WebSocketCallback;
+    callback?: ResponseCallback;
 }
 
 // @public
@@ -309,6 +320,12 @@ export interface TfInitParams {
 }
 
 // @public
+export interface TouchFreeConfig {
+    interaction: InteractionConfigFull;
+    physical: PhysicalConfig;
+}
+
+// @public
 export type TouchFreeEvent = Extract<keyof TouchFreeEventSignatures, string>;
 
 // @public
@@ -319,7 +336,7 @@ export interface TouchFreeEventSignatures {
     handsLost: () => void;
     inputAction: (inputAction: TouchFreeInputAction) => void;
     onConnected: () => void;
-    onServiceStatusChange: (state: ServiceStatus) => void;
+    onServiceStatusChange: (state: ServiceState) => void;
     onTrackingServiceStateChange: (state: TrackingServiceState) => void;
     // Warning: (ae-forgotten-export) The symbol "HandFrame" needs to be exported by the entry point index.d.ts
     //

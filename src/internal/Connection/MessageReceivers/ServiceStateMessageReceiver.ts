@@ -1,7 +1,8 @@
 import { dispatchEventCallback } from '../../TouchFreeEvents/TouchFreeEvents';
 import { ActionCode } from '../ActionCode';
 import { CallbackHandler } from '../CallbackHandler';
-import { ServiceStatus } from '../RequestTypes';
+import { convertResponseToServiceState } from '../ConnectionTypes';
+import { ServiceStateResponse } from '../RequestTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**
@@ -9,7 +10,7 @@ import { BaseMessageReceiver } from './BaseMessageReceiver';
  *
  * @internal
  */
-export class ServiceStateMessageReceiver extends BaseMessageReceiver<ServiceStatus> {
+export class ServiceStateMessageReceiver extends BaseMessageReceiver<ServiceStateResponse> {
     /**
      * The {@link ActionCode | ActionCodes} that are handled by this message receiver
      */
@@ -24,10 +25,10 @@ export class ServiceStateMessageReceiver extends BaseMessageReceiver<ServiceStat
     }
 
     /**
-     * Checks {@link queue} for a single {@link ServiceStatus} and handles it.
+     * Checks {@link queue} for a single {@link ServiceStateResponse} and handles it.
      */
     checkForState = (callbackHandler: CallbackHandler): void => {
-        const serviceStatus: ServiceStatus | undefined = this.queue.shift();
+        const serviceStatus: ServiceStateResponse | undefined = this.queue.shift();
 
         if (serviceStatus) {
             const callbackResult = BaseMessageReceiver.handleCallbackList(
@@ -46,7 +47,7 @@ export class ServiceStateMessageReceiver extends BaseMessageReceiver<ServiceStat
                         dispatchEventCallback('onTrackingServiceStateChange', serviceStatus.trackingServiceState);
                     }
 
-                    dispatchEventCallback('onServiceStatusChange', serviceStatus);
+                    dispatchEventCallback('onServiceStatusChange', convertResponseToServiceState(serviceStatus));
                     break;
                 case 'Success':
                     // no-op

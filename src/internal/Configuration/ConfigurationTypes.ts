@@ -334,3 +334,14 @@ export enum TrackedPosition {
     /** The nearest bone to the screen */
     NEAREST,
 }
+
+/**
+ * All TouchFree configuration data
+ * @public
+ */
+export interface TouchFreeConfig {
+    /** See {@link InteractionConfigFull} */
+    interaction: InteractionConfigFull;
+    /** See {@link PhysicalConfig} */
+    physical: PhysicalConfig;
+}

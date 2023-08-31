@@ -38,6 +38,7 @@ export {
     HoverAndHoldInteractionSettings,
     TouchPlaneInteractionSettings,
     PhysicalConfig,
+    TouchFreeConfig,
     TrackedPosition,
 
     /** Connection - Manage a connection to the TouchFree service and messages send or receive messages */
@@ -48,10 +49,13 @@ export {
     getDefaultServiceAddress,
     requestServiceStatus,
     Address,
+    ServiceState,
     TrackingServiceState,
     ConfigurationState,
     HandPresenceState,
     InteractionZoneState,
+    ResponseState,
+    ResponseCallback,
 
     /** Cursors - Multiple cursor styles/implementations and current cursor management */
     DotCursor,

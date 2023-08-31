@@ -1,6 +1,7 @@
+import { ServiceStateResponse } from './RequestTypes';
+
 /**
  * Custom IP and port to connect to Service on
- *
  * @public
  */
 export interface Address {
@@ -62,3 +63,56 @@ export enum InteractionZoneState {
     /** Sent when the "active" hand leaves the interaction zone */
     HAND_EXITED,
 }
+
+/**
+ * State including TouchFree service/config, tracking service and camera
+ * @public
+ */
+export interface ServiceState {
+    /** See {@link TrackingServiceState} */
+    trackingServiceState: TrackingServiceState;
+    /** See {@link ConfigurationState} */
+    configurationState: ConfigurationState;
+    /** Service Version */
+    touchFreeServiceVersion: string;
+    /** Tracking Version */
+    trackingServiceVersion: string;
+    /** Camera Serial Number */
+    cameraSerial: string;
+    /** Camera Firmware Version */
+    cameraFirmwareVersion: string;
+}
+
+/**
+ * Converts a response type to {@link ServiceState}
+ * @param response - Response object from the service
+ * @returns Converted ServiceState
+ * @internal
+ */
+export function convertResponseToServiceState(response: ServiceStateResponse): ServiceState {
+    return {
+        cameraFirmwareVersion: response.cameraFirmwareVersion,
+        cameraSerial: response.cameraSerial,
+        configurationState: response.configurationState,
+        touchFreeServiceVersion: response.serviceVersion,
+        trackingServiceState: response.trackingServiceState,
+        trackingServiceVersion: response.trackingVersion,
+    };
+}
+
+/**
+ * General purpose response type
+ * @public
+ */
+export interface ResponseState {
+    /** Response status - usually success or failure */
+    status: string;
+    /** Message accompanying the response */
+    message: string;
+}
+
+/**
+ * General purpose response callback
+ * @public
+ */
+export type ResponseCallback = (state: ResponseState) => void;

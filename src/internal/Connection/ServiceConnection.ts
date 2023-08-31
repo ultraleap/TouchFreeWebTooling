@@ -11,7 +11,7 @@ import {
     VersionHandshakeResponse,
     WebSocketResponse,
     ConfigState,
-    ServiceStatus,
+    ServiceStateResponse,
     TrackingStateResponse,
     TrackingStateRequest,
     TouchFreeRequest,
@@ -255,7 +255,7 @@ export class ServiceConnection {
      *
      * @param callback - Callback to handle the response from the service
      */
-    requestServiceStatus = (callback?: (detail: ServiceStatus) => void): void => {
+    requestServiceStatus = (callback?: (detail: ServiceStateResponse) => void): void => {
         this.baseRequestWithRequiredCallback(
             ActionCode.REQUEST_SERVICE_STATUS,
             'service status',

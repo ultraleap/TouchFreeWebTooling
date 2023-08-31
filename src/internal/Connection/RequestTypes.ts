@@ -28,6 +28,11 @@ export interface TouchFreeRequestCallback<T> {
 }
 
 /**
+ * @internal
+ */
+export type WebSocketCallback = (detail: WebSocketResponse) => void;
+
+/**
  * Outer container for {@link TrackingStateResponse} properties, including success state and a
  * message with property content
  * @internal
@@ -67,26 +72,17 @@ export class ConfigState implements TouchFreeRequest {
  * All properties are optional - configuration not included is not modified
  * @internal
  */
-export class PartialConfigState implements TouchFreeRequest {
+export interface PartialConfigState extends TouchFreeRequest {
     /** Optional {@link InteractionConfig} */
-    interaction: Partial<InteractionConfig> | null;
+    interaction?: Partial<InteractionConfig>;
     /** Optional {@link PhysicalConfig} */
-    physical: Partial<PhysicalConfig> | null;
-    /** Request ID */
-    requestID: string;
-
-    constructor(id: string, interaction: Partial<InteractionConfig> | null, physical: Partial<PhysicalConfig> | null) {
-        this.requestID = id;
-        this.interaction = interaction;
-        this.physical = physical;
-    }
+    physical?: Partial<PhysicalConfig>;
 }
 
 /**
  * Response data structure for {@link ActionCode.GET_TRACKING_STATE} and {@link ActionCode.SET_TRACKING_STATE} requests
  * @internal
  */
-// TODO: Don't expose internal types via this - use another type in public API
 export interface TrackingStateResponse extends TouchFreeRequest {
     /** RequestID */
     requestID: string;
@@ -104,7 +100,7 @@ export interface TrackingStateResponse extends TouchFreeRequest {
  * Data structure for {@link ActionCode.REQUEST_SERVICE_STATUS} and {@link ActionCode.SERVICE_STATUS} requests
  * @internal
  */
-export class ServiceStatus implements TouchFreeRequest {
+export class ServiceStateResponse implements TouchFreeRequest {
     /** See {@link TrackingServiceState} */
     trackingServiceState: TrackingServiceState;
     /** See {@link ConfigurationState} */
