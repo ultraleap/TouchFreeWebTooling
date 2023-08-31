@@ -10,7 +10,7 @@ import { BaseInputController } from './BaseInputController';
  * class. This allows this class to ignore them when determining which elements should receive
  * new pointer events. If you don't do this, none of the events transmitted here are guaranteed
  * to make it to their intended targets, as they will be captured by the cursor.
- * @public
+ * @internal
  */
 export class WebInputController extends BaseInputController {
     /**
@@ -65,7 +65,7 @@ export class WebInputController extends BaseInputController {
      * @param element - The DOM element under the cursor this frame
      * @internal
      */
-    handleMove(element: Element | null): void {
+    private handleMove(element: Element | null): void {
         if (element !== this.lastHoveredElement) {
             // Handle sending pointerover/pointerout to the individual elements
             // These events bubble, so we only have to dispatch them to the element directly under

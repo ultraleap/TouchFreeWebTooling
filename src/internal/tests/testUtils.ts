@@ -2,17 +2,16 @@ import { TouchFreeInputAction, InteractionType, HandType, HandChirality, InputTy
 import { InputActionManager } from '../InputActions/InputActionManager';
 import { dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
 
-export const createInputAction = (input?: Partial<TouchFreeInputAction>) =>
-    new TouchFreeInputAction(
-        input?.Timestamp ?? Date.now(),
-        input?.InteractionType ?? InteractionType.PUSH,
-        input?.HandType ?? HandType.PRIMARY,
-        input?.Chirality ?? HandChirality.RIGHT,
-        input?.InputType ?? InputType.MOVE,
-        input?.CursorPosition ?? [0, 0],
-        input?.DistanceFromScreen ?? 5,
-        input?.ProgressToClick ?? 0
-    );
+export const createInputAction = (input?: Partial<TouchFreeInputAction>) => ({
+    Timestamp: input?.Timestamp ?? Date.now(),
+    InteractionType: input?.InteractionType ?? InteractionType.PUSH,
+    HandType: input?.HandType ?? HandType.PRIMARY,
+    Chirality: input?.Chirality ?? HandChirality.RIGHT,
+    InputType: input?.InputType ?? InputType.MOVE,
+    CursorPosition: input?.CursorPosition ?? [0, 0],
+    DistanceFromScreen: input?.DistanceFromScreen ?? 5,
+    ProgressToClick: input?.ProgressToClick ?? 0,
+});
 
 export const mockTfInputAction = (input?: Partial<TouchFreeInputAction>) =>
     dispatchEventCallback('transmitInputAction', createInputAction(input));

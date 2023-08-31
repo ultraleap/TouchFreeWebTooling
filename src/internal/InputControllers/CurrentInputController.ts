@@ -2,11 +2,10 @@ import { BaseInputController } from './BaseInputController';
 
 /**
  * Global input controller initialized by {@link init}
- * @public
  */
 let globalInputController: BaseInputController | undefined;
 
-/** @public */
+/** @internal */
 export const getInputController = () => globalInputController;
 
 /** @internal */

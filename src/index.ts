@@ -78,11 +78,6 @@ export {
     InputActionManager,
     InputActionPlugin,
 
-    /** InputControllers - Consume TouchFree InputActions to provide new functionality */
-    BaseInputController,
-    WebInputController,
-    getInputController,
-
     /** Math types and functions */
     mapRangeToRange,
     Vector,

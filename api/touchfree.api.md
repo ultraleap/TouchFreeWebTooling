@@ -19,13 +19,6 @@ export type AnalyticSessionEvents = {
 };
 
 // @public
-export abstract class BaseInputController {
-    constructor();
-    disconnect(): void;
-    protected handleInputAction(inputData: TouchFreeInputAction): void;
-}
-
-// @public
 export enum ConfigurationState {
     ERRORED = 2,
     LOADED = 1,
@@ -85,9 +78,6 @@ export function getCurrentServiceAddress(): Address;
 
 // @public
 export function getDefaultServiceAddress(): Address;
-
-// @public (undocumented)
-export const getInputController: () => BaseInputController | undefined;
 
 // @public
 export function getRegisteredAnalyticEventKeys(): string[];
@@ -348,8 +338,7 @@ export interface TouchFreeEventSignatures {
 }
 
 // @public
-export class TouchFreeInputAction {
-    constructor(timestamp: number, interactionType: InteractionType, handType: HandType, handChirality: HandChirality, inputType: InputType, cursorPosition: Array<number>, distanceFromScreen: number, progressToClick: number);
+export interface TouchFreeInputAction {
     Chirality: HandChirality;
     CursorPosition: Array<number>;
     DistanceFromScreen: number;
@@ -420,16 +409,6 @@ export interface Vector {
 export interface Vector2 {
     x: number;
     y: number;
-}
-
-// @public
-export class WebInputController extends BaseInputController {
-    constructor();
-    enterLeaveEnabled: boolean;
-    // @internal
-    protected handleInputAction(inputData: TouchFreeInputAction): void;
-    // @internal
-    handleMove(element: Element | null): void;
 }
 
 ```

@@ -102,16 +102,16 @@ export function convertInputAction(wsInput: WebsocketInputAction): TouchFreeInpu
     const yPosition = window.innerHeight - wsInput.CursorPosition.y / window.devicePixelRatio;
     const xPosition = wsInput.CursorPosition.x / window.devicePixelRatio;
 
-    return new TouchFreeInputAction(
-        wsInput.Timestamp,
-        getInteractionTypeFromFlags(wsInput.InteractionFlags),
-        getHandTypeFromFlags(wsInput.InteractionFlags),
-        getChiralityFromFlags(wsInput.InteractionFlags),
-        getInputTypeFromFlags(wsInput.InteractionFlags),
-        [xPosition, yPosition],
-        wsInput.DistanceFromScreen,
-        wsInput.ProgressToClick
-    );
+    return {
+        Timestamp: wsInput.Timestamp,
+        InteractionType: getInteractionTypeFromFlags(wsInput.InteractionFlags),
+        HandType: getHandTypeFromFlags(wsInput.InteractionFlags),
+        Chirality: getChiralityFromFlags(wsInput.InteractionFlags),
+        InputType: getInputTypeFromFlags(wsInput.InteractionFlags),
+        CursorPosition: [xPosition, yPosition],
+        DistanceFromScreen: wsInput.DistanceFromScreen,
+        ProgressToClick: wsInput.ProgressToClick,
+    };
 }
 
 /**

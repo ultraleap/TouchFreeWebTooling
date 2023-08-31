@@ -41,16 +41,16 @@ describe('InputActionManager', () => {
         mockTfPluginInputAction(currentInputAction);
         expect(pluginCallCount).toBe(1);
 
-        currentInputAction = new TouchFreeInputAction(
-            477777,
-            InteractionType.TOUCHPLANE,
-            HandType.SECONDARY,
-            HandChirality.RIGHT,
-            InputType.DOWN,
-            [332, 455],
-            20,
-            80
-        );
+        currentInputAction = {
+            Timestamp: 477777,
+            InteractionType: InteractionType.TOUCHPLANE,
+            HandType: HandType.SECONDARY,
+            Chirality: HandChirality.RIGHT,
+            InputType: InputType.DOWN,
+            CursorPosition: [332, 455],
+            DistanceFromScreen: 20,
+            ProgressToClick: 80,
+        };
         mockTfPluginInputAction(currentInputAction);
         expect(pluginCallCount).toBe(2);
     });

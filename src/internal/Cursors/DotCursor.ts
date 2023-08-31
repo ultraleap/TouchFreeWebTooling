@@ -46,7 +46,7 @@ export class DotCursor extends TouchlessCursor {
     /**
      * Constructs a new cursor consisting of a central cursor and a ring.
      * @remarks
-     * If you intend to make use of `WebInputController`, make sure both {@link cursor} and {@link cursorRing}
+     * If you intend to make use of `WebInputController`, make sure both `cursor` and `cursorRing`
      * elements have the `touchfree-cursor` class. This prevents them from blocking other elements from
      * receiving events.
      * @param cursor - Cursor HTML element

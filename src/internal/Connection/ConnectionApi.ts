@@ -41,7 +41,7 @@ export function getCurrentServiceAddress(): Address {
 }
 
 /**
- * Getter for currently managed static `ServiceConnection`.
+ * Getter for currently managed static {@link ServiceConnection}.
  *
  * @internal
  */
@@ -50,7 +50,7 @@ export function getServiceConnection(): ServiceConnection | null {
 }
 
 /**
- * Creates a new {@link ServiceConnection} using {@link Address}.
+ * Connect to TouchFree service at given {@link Address}.
  * A successful connection will dispatch the `"onConnected"` event.
  * @public
  */

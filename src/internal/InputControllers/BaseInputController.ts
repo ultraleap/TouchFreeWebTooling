@@ -7,7 +7,7 @@ import { EventHandle, registerEventCallback } from '../TouchFreeEvents/TouchFree
  * @remarks
  * This base class handles subscribing to the TouchFree `'transmitInputAction'` event.
  * Override {@link handleInputAction} in subclasses to implement specific behaviour.
- * @public
+ * @internal
  */
 export abstract class BaseInputController {
     private static instantiated = false;

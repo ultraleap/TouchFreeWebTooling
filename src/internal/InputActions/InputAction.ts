@@ -6,7 +6,7 @@
  *
  * @public
  */
-export class TouchFreeInputAction {
+export interface TouchFreeInputAction {
     /** Timestamp of action */
     Timestamp: number;
     /** Type of interaction. See {@link InteractionType} */
@@ -29,26 +29,6 @@ export class TouchFreeInputAction {
     DistanceFromScreen: number;
     /** How close the action is to triggering a click between 0 (no click) and 1 (click) */
     ProgressToClick: number;
-
-    constructor(
-        timestamp: number,
-        interactionType: InteractionType,
-        handType: HandType,
-        handChirality: HandChirality,
-        inputType: InputType,
-        cursorPosition: Array<number>,
-        distanceFromScreen: number,
-        progressToClick: number
-    ) {
-        this.Timestamp = timestamp;
-        this.InteractionType = interactionType;
-        this.HandType = handType;
-        this.Chirality = handChirality;
-        this.InputType = inputType;
-        this.CursorPosition = cursorPosition;
-        this.DistanceFromScreen = distanceFromScreen;
-        this.ProgressToClick = progressToClick;
-    }
 }
 
 /**

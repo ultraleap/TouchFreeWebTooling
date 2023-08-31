@@ -3,9 +3,9 @@ import { TrackingStateResponse } from '../Connection/RequestTypes';
 import { TrackingState } from './TrackingTypes';
 
 /**
- * Request a {@link TrackingStateResponse} representing the current state of the tracking software
+ * Request a {@link TrackingState} representing the current state of the tracking software
  * @remarks
- * @param callback - Callback to call with {@link TrackingStateResponse}
+ * @param callback - Callback to call with {@link TrackingState}
  *
  * @public
  */

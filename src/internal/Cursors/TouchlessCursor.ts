@@ -5,12 +5,12 @@ import { registerEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
  * Base class for creating touchless cursors.
  *
  * @remarks
- * Override {@link handleInputAction} to react to {@link TouchFreeInputAction}s
+ * Override `handleInputAction` to react to {@link TouchFreeInputAction}s
  * @public
  */
 export abstract class TouchlessCursor {
     /**
-     * The {@link HTMLElement} or {@link SVGElement} that represents this cursor
+     * The `HTMLElement` or `SVGElement` that represents this cursor
      */
     cursor: HTMLElement | SVGElement | undefined;
 
@@ -33,7 +33,7 @@ export abstract class TouchlessCursor {
      * Registers the Cursor for updates via the `'transmitInputAction'` TouchFree event
      *
      * @remarks
-     * If you intend to make use of `WebInputController`, make sure both {@link cursor} has
+     * If you intend to make use of `WebInputController`, make sure `cursor` has
      * the `touchfree-cursor` class. This prevents them from blocking other elements from
      * receiving events.
      * @param cursor - Cursor element
@@ -47,7 +47,7 @@ export abstract class TouchlessCursor {
     }
 
     /**
-     * Sets the position of the cursor, should be run after {@link handleInputAction}.
+     * Sets the position of the cursor, should be run after `handleInputAction`.
      * @param inputAction - Input action to use when updating cursor
      */
     protected updateCursor(inputAction: TouchFreeInputAction): void {
