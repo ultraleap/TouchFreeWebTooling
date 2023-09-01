@@ -26,7 +26,7 @@ build::bundle:
     - win10
   script:
     # Get the TF Tooling for web version
-    - set -Name TF_TOOLING_API_VERSION -Value "$((Select-String -Path ".\src\TouchFreeToolingTypes.ts" "public static readonly API_VERSION. string = '(.*)';" | Select-Object * -First 1).Matches.Groups[1].Value)"
+    - set -Name TF_TOOLING_API_VERSION -Value "$((Select-String -Path ".\src\internal\Connection\ServiceTypes.ts" "API_VERSION. string = '(.*)';" | Select-Object * -First 1).Matches.Groups[1].Value)"
 
     # Update Version.txt with latest information before packaging
     - python ./Scripts/UpdateVersionFile.py --path ${CI_PROJECT_DIR}/Version.txt --swVer $TF_TFW_VERSION --apiVer $TF_TOOLING_API_VERSION --ref ${CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
