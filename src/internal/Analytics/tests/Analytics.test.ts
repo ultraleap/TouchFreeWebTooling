@@ -12,7 +12,12 @@ import {
 } from '../AnalyticsApi';
 import { AnalyticEventKey } from '../AnalyticsTypes';
 
-const successResponse = new WebSocketResponse('test', 'Success', 'test', 'test');
+const successResponse: WebSocketResponse = {
+    message: 'test',
+    status: 'Success',
+    originalRequest: 'test',
+    requestID: 'test',
+};
 
 const requestMock = (serviceConnection: ServiceConnection | null) => {
     if (!serviceConnection) throw new Error('Service connection not available');

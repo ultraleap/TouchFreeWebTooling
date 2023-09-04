@@ -3,7 +3,7 @@ import { getServiceConnection } from '../Connection/ConnectionApi';
 import { ResponseCallback } from '../Connection/ConnectionTypes';
 import { PartialConfigState } from '../Connection/RequestTypes';
 import { CommunicationWrapper } from '../Connection/ServiceTypes';
-import { InteractionConfig, PhysicalConfig, TouchFreeConfig } from './ConfigurationTypes';
+import { DeepPartial, InteractionConfig, PhysicalConfig, TouchFreeConfig } from './ConfigurationTypes';
 import { v4 as uuidgen } from 'uuid';
 
 /**
@@ -19,8 +19,8 @@ import { v4 as uuidgen } from 'uuid';
  * @public
  */
 export function requestConfigChange(
-    interaction?: Partial<InteractionConfig>,
-    physical?: Partial<PhysicalConfig>,
+    interaction?: DeepPartial<InteractionConfig>,
+    physical?: DeepPartial<PhysicalConfig>,
     callback?: ResponseCallback
 ): void {
     baseConfigChangeRequest(ActionCode.SET_CONFIGURATION_STATE, interaction, physical, callback);
@@ -56,8 +56,8 @@ export function requestConfigState(callback?: (detail: TouchFreeConfig) => void)
  * @public
  */
 export function requestConfigFileChange(
-    interaction?: Partial<InteractionConfig>,
-    physical?: Partial<PhysicalConfig>,
+    interaction?: DeepPartial<InteractionConfig>,
+    physical?: DeepPartial<PhysicalConfig>,
     callback?: ResponseCallback
 ): void {
     baseConfigChangeRequest(ActionCode.SET_CONFIGURATION_FILE, interaction, physical, callback);
@@ -96,14 +96,14 @@ export function resetInteractionConfigFileToDefault(callback?: (newState: TouchF
 
 function baseConfigChangeRequest(
     action: ActionCode,
-    interaction?: Partial<InteractionConfig>,
-    physical?: Partial<PhysicalConfig>,
+    interaction?: DeepPartial<InteractionConfig>,
+    physical?: DeepPartial<PhysicalConfig>,
     callback?: ResponseCallback
 ): void {
     const requestID = uuidgen();
 
     const content: PartialConfigState = { requestID, interaction, physical };
-    const request = new CommunicationWrapper(action, content);
+    const request: CommunicationWrapper<PartialConfigState> = { action, content };
 
     const jsonContent = JSON.stringify(request);
 

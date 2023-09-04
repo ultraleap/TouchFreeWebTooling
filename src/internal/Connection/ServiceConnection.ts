@@ -16,7 +16,7 @@ import {
     TrackingStateRequest,
     TouchFreeRequest,
 } from './RequestTypes';
-import { CommunicationWrapper, VERSIONINFO } from './ServiceTypes';
+import { CommunicationWrapper, VERSION_INFO } from './ServiceTypes';
 import { v4 as uuidgen } from 'uuid';
 
 /**
@@ -115,7 +115,7 @@ export class ServiceConnection {
                 action: ActionCode.VERSION_HANDSHAKE,
                 content: {
                     requestID: guid,
-                    [VERSIONINFO.API_HEADER_NAME]: VERSIONINFO.API_VERSION,
+                    [VERSION_INFO.API_HEADER_NAME]: VERSION_INFO.API_VERSION,
                 },
             };
 
@@ -202,13 +202,12 @@ export class ServiceConnection {
     ): void => {
         if (!requestID) {
             if (callback) {
-                const response = new WebSocketResponse(
-                    '',
-                    'Failure',
-                    'Request failed. This is due to a missing or invalid requestID',
-                    message
-                );
-                callback(response);
+                callback({
+                    requestID: '',
+                    status: 'Failure',
+                    message: 'Request failed. This is due to a missing or invalid requestID',
+                    originalRequest: message,
+                });
             }
 
             console.error('Request failed. This is due to a missing or invalid requestID');
@@ -405,7 +404,7 @@ export class ServiceConnection {
     ) => {
         const requestID = uuidgen();
         const content = { ...fields, requestID } as T;
-        const wrapper = new CommunicationWrapper<T>(actionCode, content);
+        const wrapper: CommunicationWrapper<T> = { action: actionCode, content };
         const message = JSON.stringify(wrapper);
 
         if (callback && callbackList) {

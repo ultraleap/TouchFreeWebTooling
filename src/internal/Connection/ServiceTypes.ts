@@ -1,12 +1,12 @@
 import { ActionCode } from './ActionCode';
-import { HandPresenceState, InteractionZoneState } from './ConnectionTypes';
+import { InteractionZoneState } from './ConnectionTypes';
 
 /**
- * Object with versions for comparing the {@link VERSIONINFO.API_VERSION} of the Tooling and the Service.
+ * Object with versions for comparing the {@link VERSION_INFO.API_VERSION} of the Tooling and the Service.
  *
  * @internal
  */
-export const VERSIONINFO = {
+export const VERSION_INFO = {
     /**
      * The current version of communication API used between Tooling and the TouchFree Service
      */
@@ -36,19 +36,6 @@ export interface EventUpdate<T> {
 }
 
 /**
- * Data structure for {@link ActionCode.HAND_PRESENCE_EVENT} messages
- * @internal
- */
-export class HandPresenceEvent {
-    /** Type of the current event. See {@link HandPresenceState} */
-    state: HandPresenceState;
-
-    constructor(state: HandPresenceState) {
-        this.state = state;
-    }
-}
-
-/**
  * This data structure for {@link ActionCode.INTERACTION_ZONE_EVENT} messages
  * @internal
  */
@@ -61,14 +48,9 @@ export interface InteractionZoneEvent {
  * Container used to wrap request data structures with an {@link ActionCode}
  * @internal
  */
-export class CommunicationWrapper<T> {
+export interface CommunicationWrapper<T> {
     /** See {@link ActionCode} */
     action: ActionCode;
     /** Wrapped content */
     content: T;
-
-    constructor(actionCode: ActionCode, content: T) {
-        this.action = actionCode;
-        this.content = content;
-    }
 }

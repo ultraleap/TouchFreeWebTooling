@@ -76,7 +76,7 @@ export enum InputType {
  */
 export enum InteractionType {
     /**
-     * The user must perform a GRAB gesture to 'Touch' by bringing their fingers and thumb together
+     * The user must perform a GRAB gesture to 'Touch' by making a fist
      * @internal
      */
     GRAB,

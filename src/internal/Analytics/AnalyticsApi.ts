@@ -34,9 +34,7 @@ export const getAnalyticSessionEvents = (): AnalyticSessionEvents => Object.assi
  * Returns the list of registered analytic event keys
  * @public
  */
-export function getRegisteredAnalyticEventKeys(): string[] {
-    return Object.keys(analyticEvents);
-}
+export const getRegisteredAnalyticEventKeys = () => Object.keys(analyticEvents);
 
 /**
  * Registers a given list of event for the TouchFree service to record.

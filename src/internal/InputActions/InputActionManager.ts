@@ -7,7 +7,7 @@ import { InputActionPlugin } from './InputActionPlugin';
  * @remarks
  * Runs `inputAction` data through all `InputActionPlugins` before dispatching.
  * Also dispatches a `transmitInputActionRaw` event with the `inputAction` data unmodified by any plugins.
- * @public
+ * @internal
  */
 export class InputActionManager extends EventTarget {
     /**

@@ -7,7 +7,7 @@ import { TrackingState } from './TrackingTypes';
  * @remarks
  * @param callback - Callback to call with {@link TrackingState}
  *
- * @public
+ * @internal
  */
 export function requestTrackingState(callback?: (detail: Partial<TrackingState>) => void) {
     if (!callback) {
@@ -25,7 +25,7 @@ export function requestTrackingState(callback?: (detail: Partial<TrackingState>)
  * @param state - State to request. Options not provided within the object will not be modified.
  * @param callback - Optional callback if you require confirmation that settings were changed correctly.
  *
- * @public
+ * @internal
  */
 export function requestTrackingChange(
     state: Partial<TrackingState>,

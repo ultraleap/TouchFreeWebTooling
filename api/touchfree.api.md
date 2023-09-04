@@ -39,6 +39,11 @@ export const enum CursorPart {
 }
 
 // @public
+export type DeepPartial<T> = T extends object ? {
+    [P in keyof T]?: DeepPartial<T[P]>;
+} : T;
+
+// @public
 export function disconnect(): void;
 
 // @public
@@ -63,11 +68,6 @@ export class DotCursor extends TouchlessCursor {
 }
 
 // @public
-export interface EventHandle {
-    unregisterEventCallback(): void;
-}
-
-// @public
 export const getAnalyticSessionEvents: () => AnalyticSessionEvents;
 
 // @public (undocumented)
@@ -80,7 +80,7 @@ export function getCurrentServiceAddress(): Address;
 export function getDefaultServiceAddress(): Address;
 
 // @public
-export function getRegisteredAnalyticEventKeys(): string[];
+export const getRegisteredAnalyticEventKeys: () => string[];
 
 // @public
 export enum HandChirality {
@@ -112,25 +112,6 @@ export interface HoverAndHoldInteractionSettings {
 export function init(tfInitParams?: TfInitParams): void;
 
 // @public
-export class InputActionManager extends EventTarget {
-    // @internal
-    static handleInputAction(action: TouchFreeInputAction): void;
-    static get instance(): InputActionManager;
-    static internalInstance: InputActionManager;
-    static plugins: Array<InputActionPlugin> | null;
-    static setPlugins(plugins: Array<InputActionPlugin>): void;
-}
-
-// @public
-export abstract class InputActionPlugin extends EventTarget {
-    // @internal
-    modifyInputAction(inputAction: TouchFreeInputAction): TouchFreeInputAction | null;
-    runPlugin(inputAction: TouchFreeInputAction): TouchFreeInputAction | null;
-    // @internal
-    transmitInputAction(inputAction: TouchFreeInputAction): void;
-}
-
-// @public
 export enum InputType {
     CANCEL = 1,
     DOWN = 2,
@@ -142,23 +123,6 @@ export enum InputType {
 // @public
 export interface InteractionConfig {
     DeadzoneRadius: number;
-    HoverAndHold: Partial<HoverAndHoldInteractionSettings>;
-    InteractionMaxDistanceCm: number;
-    InteractionMinDistanceCm: number;
-    InteractionType: InteractionType;
-    InteractionZoneEnabled: boolean;
-    TouchPlane: Partial<TouchPlaneInteractionSettings>;
-    UseScrollingOrDragging: boolean;
-    UseSwipeInteraction: boolean;
-    // Warning: (ae-forgotten-export) The symbol "VelocitySwipeSettings" needs to be exported by the entry point index.d.ts
-    //
-    // @internal
-    VelocitySwipe: Partial<VelocitySwipeSettings>;
-}
-
-// @public
-export interface InteractionConfigFull {
-    DeadzoneRadius: number;
     HoverAndHold: HoverAndHoldInteractionSettings;
     InteractionMaxDistanceCm: number;
     InteractionMinDistanceCm: number;
@@ -167,6 +131,10 @@ export interface InteractionConfigFull {
     TouchPlane: TouchPlaneInteractionSettings;
     UseScrollingOrDragging: boolean;
     UseSwipeInteraction: boolean;
+    // Warning: (ae-forgotten-export) The symbol "VelocitySwipeSettings" needs to be exported by the entry point index.d.ts
+    //
+    // @internal
+    VelocitySwipe: VelocitySwipeSettings;
 }
 
 // @public
@@ -190,18 +158,10 @@ export enum InteractionZoneState {
 export const isAnalyticsActive: () => boolean;
 
 // @public
-export const isConnected: () => boolean;
+export function isConnected(): boolean;
 
 // @public
 export function mapRangeToRange(value: number, oldMin: number, oldMax: number, newMin: number, newMax: number): number;
-
-// @public
-export interface Mask {
-    left: number;
-    lower: number;
-    right: number;
-    upper: number;
-}
 
 // @public
 export interface PhysicalConfig {
@@ -217,13 +177,13 @@ export interface PhysicalConfig {
 export function registerAnalyticEvents(eventsIn?: readonly AnalyticEventKey[]): void;
 
 // @public
-export function registerEventCallback<TEvent extends TouchFreeEvent>(event: TEvent, callback: TouchFreeEventSignatures[TEvent]): EventHandle;
+export function registerEventCallback<TEvent extends TouchFreeEvent>(event: TEvent, callback: TouchFreeEventSignatures[TEvent]): TouchFreeEventHandle;
 
 // @public
-export function requestConfigChange(interaction?: Partial<InteractionConfig>, physical?: Partial<PhysicalConfig>, callback?: ResponseCallback): void;
+export function requestConfigChange(interaction?: DeepPartial<InteractionConfig>, physical?: DeepPartial<PhysicalConfig>, callback?: ResponseCallback): void;
 
 // @public
-export function requestConfigFileChange(interaction?: Partial<InteractionConfig>, physical?: Partial<PhysicalConfig>, callback?: ResponseCallback): void;
+export function requestConfigFileChange(interaction?: DeepPartial<InteractionConfig>, physical?: DeepPartial<PhysicalConfig>, callback?: ResponseCallback): void;
 
 // @public
 export function requestConfigFileState(callback?: (detail: TouchFreeConfig) => void): void;
@@ -233,12 +193,6 @@ export function requestConfigState(callback?: (detail: TouchFreeConfig) => void)
 
 // @public
 export function requestServiceStatus(callback?: (detail: ServiceState) => void): void;
-
-// @public
-export function requestTrackingChange(state: Partial<TrackingState>, callback?: (detail: Partial<TrackingState>) => void): void;
-
-// @public
-export function requestTrackingState(callback?: (detail: Partial<TrackingState>) => void): void;
 
 // @public
 export function resetInteractionConfigFileToDefault(callback?: (newState: TouchFreeConfig) => void): void;
@@ -311,12 +265,17 @@ export interface TfInitParams {
 
 // @public
 export interface TouchFreeConfig {
-    interaction: InteractionConfigFull;
+    interaction: InteractionConfig;
     physical: PhysicalConfig;
 }
 
 // @public
 export type TouchFreeEvent = Extract<keyof TouchFreeEventSignatures, string>;
+
+// @public
+export interface TouchFreeEventHandle {
+    unregisterEventCallback(): void;
+}
 
 // @public
 export interface TouchFreeEventSignatures {
@@ -385,14 +344,6 @@ export enum TrackingServiceState {
     CONNECTED = 2,
     NO_CAMERA = 1,
     UNAVAILABLE = 0
-}
-
-// @public
-export interface TrackingState {
-    allowImages: boolean;
-    analyticsEnabled: boolean;
-    cameraReversed: boolean;
-    mask: Mask;
 }
 
 // @public

@@ -18,7 +18,7 @@ describe('Initialization', () => {
 
         it('Should create an SVGCursor when initialiseCursor is true', () => checkDefaultCursor(true));
 
-        it('Should pass a given address to the ConnectionManager', () => {
+        it('Should pass a given address to connect', () => {
             const newAddress = { ip: '192.168.0.1', port: '8080' };
             init({ address: newAddress });
             expect(getCurrentServiceAddress().ip).toBe(newAddress.ip);

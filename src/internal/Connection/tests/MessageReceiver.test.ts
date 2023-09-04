@@ -1,6 +1,6 @@
 import { HandDataManager } from '../../Hands/HandDataManager';
 import { init } from '../../Initialization/Initialization';
-import { EventHandle, registerEventCallback } from '../../TouchFreeEvents/TouchFreeEvents';
+import { TouchFreeEventHandle, registerEventCallback } from '../../TouchFreeEvents/TouchFreeEvents';
 import { intervalTest } from '../../tests/testUtils';
 import { ActionCode } from '../ActionCode';
 import { getServiceConnection } from '../ConnectionApi';
@@ -55,20 +55,20 @@ describe('MessageReceiver', () => {
         return testFn;
     };
 
-    const createInputAction = (flag?: BitmaskFlags, position?: { x: number; y: number }) => {
+    const createInputAction = (flag?: BitmaskFlags, position?: { x: number; y: number }): WebsocketInputAction => {
         const newFlag = flag ?? BitmaskFlags.MOVE;
         const newPos = position ?? { x: 0, y: 0 };
 
-        return new WebsocketInputAction(
-            Date.now(),
-            BitmaskFlags.LEFT + BitmaskFlags.PRIMARY + newFlag + BitmaskFlags.PUSH,
-            newPos,
-            0,
-            0
-        );
+        return {
+            Timestamp: Date.now(),
+            InteractionFlags: BitmaskFlags.LEFT + BitmaskFlags.PRIMARY + newFlag + BitmaskFlags.PUSH,
+            CursorPosition: newPos,
+            DistanceFromScreen: 0,
+            ProgressToClick: 0,
+        };
     };
 
-    let handler: EventHandle;
+    let handler: TouchFreeEventHandle;
 
     afterEach(() => {
         if (!handler) return;
@@ -238,13 +238,13 @@ describe('MessageReceiver', () => {
         handler = registerEventCallback('transmitInputAction', testFn);
         mockOpen();
 
-        const action = new WebsocketInputAction(
-            Date.now(),
-            BitmaskFlags.LEFT + BitmaskFlags.PRIMARY + BitmaskFlags.MOVE + BitmaskFlags.PUSH,
-            { x: 0, y: 0 },
-            0,
-            0
-        );
+        const action: WebsocketInputAction = {
+            Timestamp: Date.now(),
+            InteractionFlags: BitmaskFlags.LEFT + BitmaskFlags.PRIMARY + BitmaskFlags.MOVE + BitmaskFlags.PUSH,
+            CursorPosition: { x: 0, y: 0 },
+            DistanceFromScreen: 0,
+            ProgressToClick: 0,
+        };
 
         onMessage(ActionCode.INPUT_ACTION, { ...action });
 

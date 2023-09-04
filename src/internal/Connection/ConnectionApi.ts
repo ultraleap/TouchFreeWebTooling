@@ -16,13 +16,13 @@ let currentConnectionAddress: Address = defaultConnectionAddress;
  * @returns Whether connected to TouchFree service or not.
  * @public
  */
-export const isConnected = (): boolean => {
+export function isConnected(): boolean {
     return (
         currentServiceConnection !== null &&
         currentServiceConnection.webSocket.readyState === WebSocket.OPEN &&
         currentServiceConnection.handshakeComplete
     );
-};
+}
 
 /**
  * Get the default address to to connect to the service websocket

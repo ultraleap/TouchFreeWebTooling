@@ -75,7 +75,7 @@ export type TouchFreeEvent = Extract<keyof TouchFreeEventSignatures, string>;
  * Object that can unregister a callback from an event
  * @public
  */
-export interface EventHandle {
+export interface TouchFreeEventHandle {
     /**
      * Unregister the callback represented by this object
      */
@@ -90,14 +90,14 @@ const touchFreeEventTarget = new EventTarget();
  * @param event - The event to register a callback to. See {@link TouchFreeEvent}
  * @param callback - The callback to register. Callback signature depends on event being registered.
  * See {@link TouchFreeEventSignatures}
- * @returns An {@link EventHandle} that can be used to unregister the callback
+ * @returns An {@link TouchFreeEventHandle} that can be used to unregister the callback
  *
  * @public
  */
 export function registerEventCallback<TEvent extends TouchFreeEvent>(
     event: TEvent,
     callback: TouchFreeEventSignatures[TEvent]
-): EventHandle {
+): TouchFreeEventHandle {
     const eventImpl = eventImplementations()[event];
     const callbackImpl = eventImpl.withCallback(callback);
     const listener = callbackImpl.listener;
@@ -144,7 +144,7 @@ function makeCustomEventWrapper<T>(callback: (arg: T) => void): EventListener {
 /**
  * Signature required for RegisterEvent functions
  */
-type RegisterEventFunc = (eventType: TouchFreeEvent, listener: EventListener) => EventHandle;
+type RegisterEventFunc = (eventType: TouchFreeEvent, listener: EventListener) => TouchFreeEventHandle;
 
 /**
  * Default implementation of RegisterEvent

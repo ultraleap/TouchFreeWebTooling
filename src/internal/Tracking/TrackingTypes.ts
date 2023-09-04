@@ -1,6 +1,6 @@
 /**
  * Masking values to apply to each edge of the camera's feed
- * @public
+ * @internal
  */
 export interface Mask {
     /** Amount of masking to apply to the left edge */
@@ -15,7 +15,7 @@ export interface Mask {
 
 /**
  * Represents the settings available for modification in the Tracking API
- * @public
+ * @internal
  */
 export interface TrackingState {
     /** Camera masking state */

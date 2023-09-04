@@ -33,8 +33,8 @@ export {
     requestConfigFileChange,
     requestConfigFileState,
     resetInteractionConfigFileToDefault,
+    DeepPartial,
     InteractionConfig,
-    InteractionConfigFull,
     HoverAndHoldInteractionSettings,
     TouchPlaneInteractionSettings,
     PhysicalConfig,
@@ -75,8 +75,6 @@ export {
     HandType,
     InputType,
     InteractionType,
-    InputActionManager,
-    InputActionPlugin,
 
     /** Math types and functions */
     mapRangeToRange,
@@ -86,13 +84,7 @@ export {
     /** TouchFreeEvents - Access to events occurring within TouchFree */
     TouchFreeEventSignatures,
     TouchFreeEvent,
-    EventHandle,
+    TouchFreeEventHandle,
     registerEventCallback,
     dispatchEventCallback,
-
-    /** Tracking - Control the Ultraleap Tracking Service via TouchFree Service */
-    requestTrackingState,
-    requestTrackingChange,
-    Mask,
-    TrackingState,
 } from './internal/index';

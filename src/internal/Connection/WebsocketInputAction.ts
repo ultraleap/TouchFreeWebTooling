@@ -7,7 +7,7 @@ import { Vector2 } from '../Math/Vectors';
  *
  * @internal
  */
-export class WebsocketInputAction {
+export interface WebsocketInputAction {
     /** Timestamp of action */
     Timestamp: number;
     /** InteractionFlags */
@@ -24,20 +24,6 @@ export class WebsocketInputAction {
     DistanceFromScreen: number;
     /** How close the action is to triggering a click between 0 (no click) and 1 (click) */
     ProgressToClick: number;
-
-    constructor(
-        timestamp: number,
-        interactionFlags: BitmaskFlags,
-        cursorPosition: Vector2,
-        distanceFromScreen: number,
-        progressToClick: number
-    ) {
-        this.Timestamp = timestamp;
-        this.InteractionFlags = interactionFlags;
-        this.CursorPosition = cursorPosition;
-        this.DistanceFromScreen = distanceFromScreen;
-        this.ProgressToClick = progressToClick;
-    }
 }
 
 /**

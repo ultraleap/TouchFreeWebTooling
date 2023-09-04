@@ -7,7 +7,7 @@ import { TouchFreeInputAction } from './InputAction';
  * from the service before dispatching an inputAction event.
  * Input action plugins invoke a `"inputActionOutput"` event on themselves
  * for subscribers to listen to if the results of a specific plugin is required.
- * @public
+ * @internal
  */
 export abstract class InputActionPlugin extends EventTarget {
     /**
