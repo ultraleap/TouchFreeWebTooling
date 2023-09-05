@@ -372,6 +372,9 @@
          * DEFAULT VALUE: false
          */
         // "addToApiReportFile": false
+      },
+      "TS2411": {
+        "logLevel": "none"
       }
 
       // "TS2551": {
