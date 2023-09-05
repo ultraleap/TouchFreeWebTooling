@@ -2,7 +2,7 @@ import { AnalyticSessionEvents, AnalyticsSessionRequestType } from '../Analytics
 import { dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
 import { TrackingState } from '../Tracking/TrackingTypes';
 import { ActionCode } from './ActionCode';
-import { CallbackHandler, CallbackList } from './CallbackHandler';
+import { CallbackList, CallbackLists, createDefaultCallbackLists, setClearCallbacksInterval } from './CallbackLists';
 import { Address, HandPresenceState, InteractionZoneState } from './ConnectionTypes';
 import { MessageReceiver } from './MessageReceivers/BaseMessageReceiver';
 import { HandDataHandler } from './MessageReceivers/HandDataHandler';
@@ -35,9 +35,8 @@ export class ServiceConnection {
     private currentHandPresence = HandPresenceState.HANDS_LOST;
     private currentInteractionZoneState = InteractionZoneState.HAND_EXITED;
 
-    private readonly _callbackHandler: CallbackHandler;
     private readonly handDataHandler: HandDataHandler;
-
+    private readonly callbackLists: CallbackLists;
     private readonly messageReceivers: MessageReceiver[];
 
     /**
@@ -68,8 +67,11 @@ export class ServiceConnection {
         return this.handshakeCompleted;
     }
 
-    public get callbackHandler(): CallbackHandler {
-        return this._callbackHandler;
+    /**
+     * Get callback lists object
+     */
+    public getCallbackLists() {
+        return this.callbackLists;
     }
 
     /**
@@ -82,9 +84,10 @@ export class ServiceConnection {
      * @param address - Address to connect to websocket on
      */
     constructor(address: Address) {
-        this._callbackHandler = new CallbackHandler();
-        this.messageReceivers = createMessageReceivers(this, this._callbackHandler);
+        this.callbackLists = createDefaultCallbackLists();
+        this.messageReceivers = createMessageReceivers(this);
         this.handDataHandler = new HandDataHandler();
+        setClearCallbacksInterval(300, 300, this.callbackLists);
 
         this.webSocket = new WebSocket(`ws://${address.ip}:${address.port}/connect`);
         this.webSocket.binaryType = 'arraybuffer';
@@ -126,7 +129,7 @@ export class ServiceConnection {
                     JSON.stringify(handshakeRequest),
                     guid,
                     this.connectionResultCallback,
-                    this._callbackHandler.handshakeCallbacks
+                    this.callbackLists.handshakeCallbacks
                 );
             }
         }
@@ -191,7 +194,7 @@ export class ServiceConnection {
         requestID: string,
         callback?: (detail: WebSocketResponse | T) => void
     ): void => {
-        this.sendMessageWithSimpleResponse(message, requestID, callback, this._callbackHandler.responseCallbacks);
+        this.sendMessageWithSimpleResponse(message, requestID, callback, this.callbackLists.responseCallbacks);
     };
 
     private sendMessageWithSimpleResponse = <T extends WebSocketResponse>(
@@ -231,7 +234,7 @@ export class ServiceConnection {
             ActionCode.REQUEST_CONFIGURATION_STATE,
             'config state',
             callback,
-            this._callbackHandler.configStateCallbacks
+            this.callbackLists.configStateCallbacks
         );
     };
 
@@ -245,7 +248,7 @@ export class ServiceConnection {
             ActionCode.RESET_INTERACTION_CONFIG_FILE,
             'config state',
             callback,
-            this._callbackHandler.configStateCallbacks
+            this.callbackLists.configStateCallbacks
         );
     };
 
@@ -259,7 +262,7 @@ export class ServiceConnection {
             ActionCode.REQUEST_SERVICE_STATUS,
             'service status',
             callback,
-            this._callbackHandler.serviceStatusCallbacks
+            this.callbackLists.serviceStatusCallbacks
         );
     };
 
@@ -273,7 +276,7 @@ export class ServiceConnection {
             ActionCode.REQUEST_CONFIGURATION_FILE,
             'config file',
             callback,
-            this._callbackHandler.configStateCallbacks
+            this.callbackLists.configStateCallbacks
         );
     };
 
@@ -294,9 +297,9 @@ export class ServiceConnection {
                 position: atTopTarget ? 'Top' : 'Bottom',
             },
             ActionCode.QUICK_SETUP,
-            this._callbackHandler.responseCallbacks,
+            this.callbackLists.responseCallbacks,
             callback,
-            this._callbackHandler.configStateCallbacks,
+            this.callbackLists.configStateCallbacks,
             configurationCallback
         );
     };
@@ -311,7 +314,7 @@ export class ServiceConnection {
             ActionCode.GET_TRACKING_STATE,
             'tracking state',
             callback,
-            this._callbackHandler.trackingStateCallbacks
+            this.callbackLists.trackingStateCallbacks
         );
     };
 
@@ -343,7 +346,7 @@ export class ServiceConnection {
         this.baseRequest(
             requestContent,
             ActionCode.SET_TRACKING_STATE,
-            this._callbackHandler.trackingStateCallbacks,
+            this.callbackLists.trackingStateCallbacks,
             callback
         );
     };
@@ -439,7 +442,7 @@ export class ServiceConnection {
         this.baseRequest(
             { sessionID, requestType },
             ActionCode.ANALYTICS_SESSION_REQUEST,
-            this._callbackHandler.analyticsRequestCallbacks,
+            this.callbackLists.analyticsRequestCallbacks,
             callback
         );
 
@@ -457,7 +460,7 @@ export class ServiceConnection {
         this.baseRequest(
             { sessionID, sessionEvents: events },
             ActionCode.ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST,
-            this._callbackHandler.analyticsRequestCallbacks,
+            this.callbackLists.analyticsRequestCallbacks,
             callback
         );
 

@@ -15,7 +15,7 @@ export * from './Configuration/ConfigurationApi';
 export * from './Configuration/ConfigurationTypes';
 
 export * from './Connection/ActionCode';
-export * from './Connection/CallbackHandler';
+export * from './Connection/CallbackLists';
 export * from './Connection/ConnectionTypes';
 export * from './Connection/ConnectionApi';
 export * from './Connection/MessageReceivers/index';

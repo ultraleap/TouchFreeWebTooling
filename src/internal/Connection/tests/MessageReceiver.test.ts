@@ -47,7 +47,7 @@ describe('MessageReceiver', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         jest.spyOn(serviceConnection as any, 'requestHandshake').mockImplementation();
         if (serviceConnection === null) return;
-        serviceConnection.callbackHandler.handshakeCallbacks['handshake-guid'] = {
+        serviceConnection.getCallbackLists().handshakeCallbacks['handshake-guid'] = {
             timestamp: Date.now(),
             callback: () => {},
         };

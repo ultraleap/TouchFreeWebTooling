@@ -1,5 +1,5 @@
 import { ActionCode } from '../ActionCode';
-import { CallbackHandler } from '../CallbackHandler';
+import { CallbackList } from '../CallbackLists';
 import { WebSocketResponse } from '../RequestTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
@@ -20,8 +20,8 @@ export class AnalyticsMessageReceiver extends BaseMessageReceiver<WebSocketRespo
     /**
      * Sets up consuming messages from a queue and passing them to the callbacks
      */
-    constructor(callbackHandler: CallbackHandler) {
+    constructor(callbackList: CallbackList<WebSocketResponse>) {
         super(true);
-        this.setup(() => this.checkQueue(this.queue, callbackHandler.analyticsRequestCallbacks));
+        this.setup(() => this.checkQueue(this.queue, callbackList));
     }
 }

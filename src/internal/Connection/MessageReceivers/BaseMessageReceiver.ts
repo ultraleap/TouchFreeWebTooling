@@ -1,6 +1,6 @@
 import { ActionCode } from '../ActionCode';
-import { CallbackList } from '../CallbackHandler';
-import { TouchFreeRequest, WebSocketResponse, TouchFreeRequestCallback } from '../RequestTypes';
+import { CallbackList } from '../CallbackLists';
+import { TouchFreeRequest, WebSocketResponse } from '../RequestTypes';
 import { CommunicationWrapper } from '../ServiceTypes';
 
 export interface MessageReceiver {
@@ -122,20 +122,5 @@ export abstract class BaseMessageReceiver<ConvertedMessage> implements MessageRe
                 '\n Original request - ' +
                 response.originalRequest
         );
-    };
-
-    protected static clearUnresponsiveItems = <T>(
-        lastClearTime: number,
-        callbacks: { [id: string]: TouchFreeRequestCallback<T> }
-    ) => {
-        if (callbacks !== undefined) {
-            for (const key in callbacks) {
-                if (callbacks[key].timestamp < lastClearTime) {
-                    delete callbacks[key];
-                } else {
-                    break;
-                }
-            }
-        }
     };
 }

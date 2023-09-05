@@ -1,4 +1,3 @@
-import { CallbackHandler } from '../CallbackHandler';
 import { ServiceConnection } from '../ServiceConnection';
 import { AnalyticsMessageReceiver } from './AnalyticsMessageReceiver';
 import { ConfigStateMessageReceiver } from './ConfigStateMessageReceiver';
@@ -13,16 +12,17 @@ import { VersionHandshakeMessageReceiver } from './VersionHandshakeMessageReceiv
 export { HandDataHandler } from './HandDataHandler';
 export { MessageReceiver } from './BaseMessageReceiver';
 
-export const createMessageReceivers = (serviceConnection: ServiceConnection, callbackHandler: CallbackHandler) => {
+export const createMessageReceivers = (serviceConnection: ServiceConnection) => {
+    const callbacks = serviceConnection.getCallbackLists();
     return [
-        new AnalyticsMessageReceiver(callbackHandler),
-        new ConfigStateMessageReceiver(callbackHandler),
+        new AnalyticsMessageReceiver(callbacks.analyticsRequestCallbacks),
+        new ConfigStateMessageReceiver(callbacks.configStateCallbacks),
         new HandPresenceMessageReceiver(serviceConnection),
         new InputActionMessageReceiver(),
         new InteractionZoneMessageReceiver(serviceConnection),
-        new ResponseMessageReceiver(callbackHandler),
-        new ServiceStateMessageReceiver(callbackHandler),
-        new TrackingStateMessageReceiver(callbackHandler),
-        new VersionHandshakeMessageReceiver(callbackHandler),
+        new ResponseMessageReceiver(callbacks.responseCallbacks),
+        new ServiceStateMessageReceiver(callbacks.serviceStatusCallbacks),
+        new TrackingStateMessageReceiver(callbacks.trackingStateCallbacks),
+        new VersionHandshakeMessageReceiver(callbacks.handshakeCallbacks),
     ];
 };

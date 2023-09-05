@@ -1,5 +1,5 @@
 import { ActionCode } from '../ActionCode';
-import { CallbackHandler } from '../CallbackHandler';
+import { CallbackList } from '../CallbackLists';
 import { WebSocketResponse } from '../RequestTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
@@ -17,19 +17,19 @@ export class VersionHandshakeMessageReceiver extends BaseMessageReceiver<WebSock
     /**
      * Sets up consuming messages from a queue and passing them to the callbacks
      */
-    constructor(callbackHandler: CallbackHandler) {
+    constructor(callbackList: CallbackList<WebSocketResponse>) {
         super(true);
-        this.setup(() => this.checkForState(callbackHandler));
+        this.setup(() => this.checkForState(callbackList));
     }
 
     /**
      * Checks {@link queue} for a single {@link WebSocketResponse} and handles it.
      */
-    checkForState = (callbackHandler: CallbackHandler): void => {
+    checkForState = (callbackList: CallbackList<WebSocketResponse>): void => {
         const response: WebSocketResponse | undefined = this.queue.shift();
 
         if (response) {
-            const responseResult = BaseMessageReceiver.handleCallbackList(response, callbackHandler.handshakeCallbacks);
+            const responseResult = BaseMessageReceiver.handleCallbackList(response, callbackList);
 
             const configStateError = (response as HandshakeExtraInformation)?.configurationStateError;
 

@@ -1,5 +1,5 @@
 import { ActionCode } from '../ActionCode';
-import { CallbackHandler } from '../CallbackHandler';
+import { CallbackList } from '../CallbackLists';
 import { ConfigState } from '../RequestTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
@@ -21,22 +21,19 @@ export class ConfigStateMessageReceiver extends BaseMessageReceiver<ConfigState>
     /**
      * Sets up consuming messages from a queue and passing them to the callbacks
      */
-    constructor(callbackHandler: CallbackHandler) {
+    constructor(callbackList: CallbackList<ConfigState>) {
         super(true);
-        this.setup(() => this.checkForState(callbackHandler));
+        this.setup(() => this.checkForState(callbackList));
     }
 
     /**
      * Checks {@link queue} for a single {@link configState} and handles it.
      */
-    checkForState = (callbackHandler: CallbackHandler): void => {
+    checkForState = (callbackList: CallbackList<ConfigState>): void => {
         const configState: ConfigState | undefined = this.queue.shift();
 
         if (configState) {
-            const configResult = BaseMessageReceiver.handleCallbackList(
-                configState,
-                callbackHandler.configStateCallbacks
-            );
+            const configResult = BaseMessageReceiver.handleCallbackList(configState, callbackList);
             switch (configResult) {
                 case 'NoCallbacksFound':
                     console.warn('Received a ConfigState message that did not match a callback.');

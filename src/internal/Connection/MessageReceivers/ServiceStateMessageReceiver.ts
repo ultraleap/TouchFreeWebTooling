@@ -1,6 +1,6 @@
 import { dispatchEventCallback } from '../../TouchFreeEvents/TouchFreeEvents';
 import { ActionCode } from '../ActionCode';
-import { CallbackHandler } from '../CallbackHandler';
+import { CallbackList } from '../CallbackLists';
 import { convertResponseToServiceState } from '../ConnectionTypes';
 import { ServiceStateResponse } from '../RequestTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
@@ -19,22 +19,19 @@ export class ServiceStateMessageReceiver extends BaseMessageReceiver<ServiceStat
     /**
      * Sets up consuming messages from a queue and passing them to the callbacks
      */
-    constructor(callbackHandler: CallbackHandler) {
+    constructor(callbackList: CallbackList<ServiceStateResponse>) {
         super(true);
-        this.setup(() => this.checkForState(callbackHandler));
+        this.setup(() => this.checkForState(callbackList));
     }
 
     /**
      * Checks {@link queue} for a single {@link ServiceStateResponse} and handles it.
      */
-    checkForState = (callbackHandler: CallbackHandler): void => {
+    checkForState = (callbackList: CallbackList<ServiceStateResponse>): void => {
         const serviceStatus: ServiceStateResponse | undefined = this.queue.shift();
 
         if (serviceStatus) {
-            const callbackResult = BaseMessageReceiver.handleCallbackList(
-                serviceStatus,
-                callbackHandler.serviceStatusCallbacks
-            );
+            const callbackResult = BaseMessageReceiver.handleCallbackList(serviceStatus, callbackList);
 
             switch (callbackResult) {
                 // If callback didn't happen for known reasons, we can be sure it's an independent status event rather

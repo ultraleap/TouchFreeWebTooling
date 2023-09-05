@@ -1,5 +1,5 @@
 import { ActionCode } from '../ActionCode';
-import { CallbackHandler } from '../CallbackHandler';
+import { CallbackList } from '../CallbackLists';
 import { TrackingStateResponse } from '../RequestTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
@@ -17,8 +17,8 @@ export class TrackingStateMessageReceiver extends BaseMessageReceiver<TrackingSt
     /**
      * Sets up consuming messages from a queue and passing them to the callbacks
      */
-    constructor(callbackHandler: CallbackHandler) {
+    constructor(callbackList: CallbackList<TrackingStateResponse>) {
         super(true);
-        this.setup(() => this.checkQueue(this.queue, callbackHandler.trackingStateCallbacks));
+        this.setup(() => this.checkQueue(this.queue, callbackList));
     }
 }
