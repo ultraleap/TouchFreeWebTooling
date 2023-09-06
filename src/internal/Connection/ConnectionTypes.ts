@@ -1,5 +1,3 @@
-import { ServiceStateResponse } from './RequestTypes';
-
 /**
  * Custom IP and port to connect to Service on
  * @public
@@ -81,23 +79,6 @@ export interface ServiceState {
     cameraSerial: string;
     /** Camera Firmware Version */
     cameraFirmwareVersion: string;
-}
-
-/**
- * Converts a response type to {@link ServiceState}
- * @param response - Response object from the service
- * @returns Converted ServiceState
- * @internal
- */
-export function convertResponseToServiceState(response: ServiceStateResponse): ServiceState {
-    return {
-        cameraFirmwareVersion: response.cameraFirmwareVersion,
-        cameraSerial: response.cameraSerial,
-        configurationState: response.configurationState,
-        touchFreeServiceVersion: response.serviceVersion,
-        trackingServiceState: response.trackingServiceState,
-        trackingServiceVersion: response.trackingVersion,
-    };
 }
 
 /**

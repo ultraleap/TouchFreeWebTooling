@@ -2,7 +2,7 @@ import { PhysicalConfig, InteractionConfig, DeepPartial } from '../Configuration
 import { Mask } from '../Tracking/TrackingTypes';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionCode } from './ActionCode';
-import { TrackingServiceState, ConfigurationState } from './ConnectionTypes';
+import { TrackingServiceState, ConfigurationState, ServiceState } from './ConnectionTypes';
 
 /**
  * Data structure used as a base for sending requests to the TouchFree Service
@@ -152,4 +152,21 @@ export interface HandRenderDataStateRequest extends TouchFreeRequest {
     enabled: boolean;
     /** Lens */
     lens: string;
+}
+
+/**
+ * Converts a response type to {@link ServiceState}
+ * @param response - Response object from the service
+ * @returns Converted ServiceState
+ * @internal
+ */
+export function convertResponseToServiceState(response: ServiceStateResponse): ServiceState {
+    return {
+        cameraFirmwareVersion: response.cameraFirmwareVersion,
+        cameraSerial: response.cameraSerial,
+        configurationState: response.configurationState,
+        touchFreeServiceVersion: response.serviceVersion,
+        trackingServiceState: response.trackingServiceState,
+        trackingServiceVersion: response.trackingVersion,
+    };
 }

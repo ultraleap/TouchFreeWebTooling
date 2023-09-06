@@ -1,7 +1,5 @@
 import { InteractionType } from '../InputActions/InputAction';
 import { Vector } from '../Math/Vectors';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { requestConfigChange, requestConfigFileChange } from './ConfigurationApi';
 
 /**
  * Makes all properties and nested properties of T optional
@@ -21,7 +19,7 @@ export type DeepPartial<T> = T extends object
  * There are also some settings for specific interactions.
  *
  * To modify the settings of the service, create an object with this layout
- * and send it to the service using {@link requestConfigChange} or {@link requestConfigFileChange}
+ * and send it to the service using `requestConfigChange` or `requestConfigFileChange`
  *
  * Optional fields without a value will not change when sent to the TouchFree Service.
  *
@@ -91,7 +89,7 @@ export interface InteractionConfig {
  * @remarks
  *
  * To modify the settings of the service, create an object with this layout
- * and send it to the service using {@link requestConfigChange} or {@link requestConfigFileChange}
+ * and send it to the service using `requestConfigChange` or `requestConfigFileChange`
  *
  * Optional fields without a value will not change when sent to the TouchFree Service.
  *
@@ -121,7 +119,7 @@ export interface HoverAndHoldInteractionSettings {
  * @remarks
  *
  * To modify the settings of the service, create an object with this layout
- * and send it to the service using {@link requestConfigChange} or {@link requestConfigFileChange}
+ * and send it to the service using `requestConfigChange` or `requestConfigFileChange`
  *
  * Optional fields without a value will not change when sent to the TouchFree Service.
  *
@@ -148,7 +146,7 @@ export interface TouchPlaneInteractionSettings {
  * @remarks
  *
  * To modify the settings of the service, create an object with this layout
- * and send it to the service using {@link requestConfigChange} or {@link requestConfigFileChange}
+ * and send it to the service using `requestConfigChange` or `requestConfigFileChange`
  *
  * Optional fields without a value will not change when sent to the TouchFree Service.
  *
@@ -218,7 +216,7 @@ export interface VelocitySwipeSettings {
  * @remarks
  *
  * To modify the settings of the service, create an object with this layout
- * and send it to the service using {@link requestConfigChange} or {@link requestConfigFileChange}
+ * and send it to the service using `requestConfigChange` or `requestConfigFileChange`
  *
  * Optional fields without a value will not change when sent to the TouchFree Service.
  *

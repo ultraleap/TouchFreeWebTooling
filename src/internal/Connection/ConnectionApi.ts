@@ -1,4 +1,5 @@
-import { Address, ServiceState, convertResponseToServiceState } from './ConnectionTypes';
+import { Address, ServiceState } from './ConnectionTypes';
+import { convertResponseToServiceState } from './RequestTypes';
 import { ServiceConnection } from './ServiceConnection';
 
 /** The private reference to the currently managed `ServiceConnection`. */

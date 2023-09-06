@@ -4,9 +4,17 @@ import { TrackingState } from '../Tracking/TrackingTypes';
 import { ActionCode } from './ActionCode';
 import { CallbackList, CallbackLists, createDefaultCallbackLists, setClearCallbacksInterval } from './CallbackLists';
 import { Address, HandPresenceState, InteractionZoneState } from './ConnectionTypes';
+import { AnalyticsMessageReceiver } from './MessageReceivers/AnalyticsMessageReceiver';
 import { MessageReceiver } from './MessageReceivers/BaseMessageReceiver';
+import { ConfigStateMessageReceiver } from './MessageReceivers/ConfigStateMessageReceiver';
 import { HandDataHandler } from './MessageReceivers/HandDataHandler';
-import { createMessageReceivers } from './MessageReceivers/index';
+import { HandPresenceMessageReceiver } from './MessageReceivers/HandPresenceMessageReceiver';
+import { InputActionMessageReceiver } from './MessageReceivers/InputActionMessageReceiver';
+import { InteractionZoneMessageReceiver } from './MessageReceivers/InteractionZoneMessageReceiver';
+import { ResponseMessageReceiver } from './MessageReceivers/ResponseMessageReceiver';
+import { ServiceStateMessageReceiver } from './MessageReceivers/ServiceStateMessageReceiver';
+import { TrackingStateMessageReceiver } from './MessageReceivers/TrackingStateMessageReceiver';
+import { VersionHandshakeMessageReceiver } from './MessageReceivers/VersionHandshakeMessageReceiver';
 import {
     VersionHandshakeResponse,
     WebSocketResponse,
@@ -18,6 +26,22 @@ import {
 } from './RequestTypes';
 import { CommunicationWrapper, VERSION_INFO } from './ServiceTypes';
 import { v4 as uuidgen } from 'uuid';
+
+const createMessageReceivers = (serviceConnection: ServiceConnection) => {
+    const callbacks = serviceConnection.getCallbackLists();
+    return [
+        new AnalyticsMessageReceiver(callbacks.analyticsRequestCallbacks),
+        new ConfigStateMessageReceiver(callbacks.configStateCallbacks),
+        // Passing wrapped callbacks so that the method is not copied and can be replaced in tests
+        new HandPresenceMessageReceiver((state) => serviceConnection.handleHandPresenceEvent(state)),
+        new InputActionMessageReceiver(),
+        new InteractionZoneMessageReceiver((state) => serviceConnection.handleInteractionZoneEvent(state)),
+        new ResponseMessageReceiver(callbacks.responseCallbacks),
+        new ServiceStateMessageReceiver(callbacks.serviceStatusCallbacks),
+        new TrackingStateMessageReceiver(callbacks.trackingStateCallbacks),
+        new VersionHandshakeMessageReceiver(callbacks.handshakeCallbacks),
+    ];
+};
 
 /**
  * Represents a connection to the TouchFree Service.
@@ -85,8 +109,8 @@ export class ServiceConnection {
      */
     constructor(address: Address) {
         this.callbackLists = createDefaultCallbackLists();
-        this.messageReceivers = createMessageReceivers(this);
         this.handDataHandler = new HandDataHandler();
+        this.messageReceivers = createMessageReceivers(this);
         setClearCallbacksInterval(300, 300, this.callbackLists);
 
         this.webSocket = new WebSocket(`ws://${address.ip}:${address.port}/connect`);
@@ -469,7 +493,7 @@ export class ServiceConnection {
      * the `handFound` and `handsLost` events on this class
      * @param state - Hand state
      */
-    handleHandPresenceEvent(state: HandPresenceState): void {
+    handleHandPresenceEvent = (state: HandPresenceState): void => {
         this.currentHandPresence = state;
 
         if (state === HandPresenceState.HAND_FOUND) {
@@ -477,13 +501,13 @@ export class ServiceConnection {
         } else {
             dispatchEventCallback('handsLost');
         }
-    }
+    };
 
     /**
      * Handle an InteractionZone event by dispatching
      * `handEntered` and `handExited` events on this class
      */
-    handleInteractionZoneEvent(state: InteractionZoneState): void {
+    handleInteractionZoneEvent = (state: InteractionZoneState): void => {
         this.currentInteractionZoneState = state;
 
         if (state === InteractionZoneState.HAND_ENTERED) {
@@ -491,7 +515,7 @@ export class ServiceConnection {
         } else {
             dispatchEventCallback('handExited');
         }
-    }
+    };
 }
 
 enum ServiceBinaryDataTypes {

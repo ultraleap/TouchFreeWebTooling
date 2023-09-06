@@ -1,6 +1,5 @@
 import { ActionCode } from '../ActionCode';
 import { InteractionZoneState } from '../ConnectionTypes';
-import { ServiceConnection } from '../ServiceConnection';
 import { EventUpdate, CommunicationWrapper, InteractionZoneEvent } from '../ServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
@@ -15,15 +14,12 @@ export class InteractionZoneMessageReceiver extends BaseMessageReceiver<EventUpd
      */
     public readonly actionCode: ActionCode[] = [ActionCode.INTERACTION_ZONE_EVENT];
 
-    private readonly serviceConnection: ServiceConnection;
-
     /**
      * Sets up consuming interaction zone messages and sending them to the {@link ConnectionManager}
      */
-    constructor(serviceConnection: ServiceConnection) {
+    constructor(callback: (state: InteractionZoneState) => void) {
         super(false);
-        this.serviceConnection = serviceConnection;
-        this.setup(() => this.checkForState());
+        this.setup(() => this.checkForState(callback));
     }
 
     /**
@@ -39,9 +35,9 @@ export class InteractionZoneMessageReceiver extends BaseMessageReceiver<EventUpd
     /**
      * Checks the latest message and processes it if it has not been processed yet
      */
-    checkForState = () => {
+    checkForState = (callback: (state: InteractionZoneState) => void) => {
         if (this.lastItem?.status === 'UNPROCESSED') {
-            this.serviceConnection.handleInteractionZoneEvent(this.lastItem.state);
+            callback(this.lastItem.state);
             this.lastItem.status = 'PROCESSED';
         }
     };
