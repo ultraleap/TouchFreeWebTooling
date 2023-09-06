@@ -16,8 +16,6 @@
 export {
     /** Analytics - Record analytics data while running */
     isAnalyticsActive,
-    AnalyticSessionEvents,
-    getAnalyticSessionEvents,
     AnalyticEventKey,
     getRegisteredAnalyticEventKeys,
     registerAnalyticEvents,

@@ -26,7 +26,7 @@ export const isAnalyticsActive = () => currentSessionId !== undefined;
 
 /**
  * Returns a copy of an indexed object detailing how many times each analytics event has been triggered
- * @public
+ * @internal
  */
 export const getAnalyticSessionEvents = (): AnalyticSessionEvents => Object.assign({}, sessionEvents);
 

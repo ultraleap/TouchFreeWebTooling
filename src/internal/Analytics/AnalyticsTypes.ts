@@ -2,7 +2,7 @@ import { ResponseCallback } from '../Connection/ConnectionTypes';
 
 /**
  * Index object of {@link AnalyticEventKey} to number
- * @public
+ * @internal
  */
 export type AnalyticSessionEvents = { [key in AnalyticEventKey]?: number };
 
