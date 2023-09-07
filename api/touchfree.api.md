@@ -14,11 +14,6 @@ export interface Address {
 export type AnalyticEventKey = keyof DocumentEventMap;
 
 // @public
-export type AnalyticSessionEvents = {
-    [key in AnalyticEventKey]?: number;
-};
-
-// @public
 export enum ConfigurationState {
     ERRORED = 2,
     LOADED = 1,
@@ -66,9 +61,6 @@ export class DotCursor extends TouchlessCursor {
     // @internal
     protected updateCursor(inputAction: TouchFreeInputAction): void;
 }
-
-// @public
-export const getAnalyticSessionEvents: () => AnalyticSessionEvents;
 
 // @public (undocumented)
 export const getCurrentCursor: () => TouchlessCursor | undefined;

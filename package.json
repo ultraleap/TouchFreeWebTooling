@@ -15,7 +15,7 @@
     "test": "jest --ci --reporters=default --reporters=jest-junit",
     "test:coverage": "jest --ci --coverage",
     "test:watch": "jest --watch",
-    "build:api-report": "npm run build:tsc && api-extractor run --verbose -c api-extractor.jsonc",
+    "build:api-report": "npm run build:tsc && api-extractor run --local --verbose -c api-extractor.jsonc",
     "build:docs": "npm run build:api-report && api-documenter markdown -i docs -o docs/markdown",
     "build:tsc": "tsc",
     "build:bundle": "webpack",
