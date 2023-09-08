@@ -58,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Top level `TouchFree` module was removed. `init` and `TfInitParams` has moved to the `Initialization` module and are exported in the top level module. Other functionality has bee redistributed to `Cursors`, `TouchFreeEvents`, `CurrentInputController` and `ConnectionApi` modules.
+- Top level `TouchFree` module was removed. `init` and `TfInitParams` has moved to the `Initialization` module and are exported in the top level module. Other functionality has been redistributed to `Cursors`, `TouchFreeEvents`, `CurrentInputController` and `ConnectionApi` modules.
 - Previously deprecated or internal unused functionality has been removed.
 - `InteractionConfigFull` has been removed - the base `InteractionConfig` no longer has partial fields.
   - `DeepPartial` is used in situations where fields of the configuration should be optional.
