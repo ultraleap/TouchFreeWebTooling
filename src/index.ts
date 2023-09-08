@@ -6,26 +6,83 @@
  * See https://docs.ultraleap.com/touchfree-user-manual/
  */
 
-/** Functionality for changing configuration of the TouchFree Service */
-export * from './Configuration';
+/**
+ * This file exports the public API surface of the library.
+ * Internals should not be leaked from this export, if any
+ * internals are required then explicit usage of the internal
+ * module is recommended.
+ */
 
-/** Functionality for managing a connection and messages sent to/from the TouchFree Service */
-export * from './Connection';
+export {
+    /** Analytics - Record analytics data while running */
+    isAnalyticsActive,
+    AnalyticEventKey,
+    getRegisteredAnalyticEventKeys,
+    registerAnalyticEvents,
+    unregisterAnalyticEvents,
+    StartAnalyticsSessionOptions,
+    startAnalyticsSession,
+    StopAnalyticsSessionOptions,
+    stopAnalyticsSession,
 
-/** Functionality to create different kinds of cursors */
-export * from './Cursors';
+    /** Configuration - Change configuration of the TouchFree Service */
+    requestConfigChange,
+    requestConfigState,
+    requestConfigFileChange,
+    requestConfigFileState,
+    resetInteractionConfigFileToDefault,
+    DeepPartial,
+    InteractionConfig,
+    HoverAndHoldInteractionSettings,
+    TouchPlaneInteractionSettings,
+    PhysicalConfig,
+    TouchFreeConfig,
+    TrackedPosition,
 
-/** Functionality for implementing input controllers to respond to TouchFree inputs */
-export * from './InputControllers';
+    /** Connection - Manage a connection to the TouchFree service and messages send or receive messages */
+    isConnected,
+    connect,
+    disconnect,
+    getCurrentServiceAddress,
+    getDefaultServiceAddress,
+    requestServiceStatus,
+    Address,
+    ServiceState,
+    TrackingServiceState,
+    ConfigurationState,
+    HandPresenceState,
+    InteractionZoneState,
+    ResponseState,
+    ResponseCallback,
 
-/** Plugins which extend TouchFree's functionality */
-export * from './Plugins';
+    /** Cursors - Multiple cursor styles/implementations and current cursor management */
+    DotCursor,
+    CursorPart,
+    SVGCursor,
+    TouchlessCursor,
+    getCurrentCursor,
+    setCurrentCursor,
 
-/** Functionality for controlling the Ultraleap Tracking Service via TouchFree Service */
-export * from './Tracking';
+    /** Initialization - Set up TouchFree tooling */
+    TfInitParams,
+    init,
 
-/** Utility functionality */
-export * from './Utilities';
+    /** InputActions - Receive data about interactions */
+    TouchFreeInputAction,
+    HandChirality,
+    HandType,
+    InputType,
+    InteractionType,
 
-export * from './TouchFreeToolingTypes';
-export * from './TouchFree';
+    /** Math types and functions */
+    mapRangeToRange,
+    Vector,
+    Vector2,
+
+    /** TouchFreeEvents - Access to events occurring within TouchFree */
+    TouchFreeEventSignatures,
+    TouchFreeEvent,
+    TouchFreeEventHandle,
+    registerEventCallback,
+    dispatchEventCallback,
+} from './internal/index';

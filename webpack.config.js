@@ -1,7 +1,7 @@
 module.exports = {
     entry: {
         TouchFree_Tooling: {
-            import: './src/index.ts',
+            import: './src/bundle.ts',
             library: {
                 name: 'touchfree',
                 type: 'umd',

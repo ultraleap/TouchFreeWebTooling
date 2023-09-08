@@ -1,5 +1,6 @@
 module.exports = {
     preset: 'ts-jest',
+    testPathIgnorePatterns: ['/node_modules/', 'build/'],
     testEnvironment: 'jsdom',
     collectCoverageFrom: ['./src/**/*.ts'],
     setupFilesAfterEnv: ['jest-extended-snapshot'],
