@@ -20,6 +20,7 @@ const events: TouchFreeEventSignatures = {
     transmitInputActionRaw: jest.fn(),
     handEntered: jest.fn(),
     handExited: jest.fn(),
+    onLicenseStateChange: jest.fn(),
 };
 
 describe('Events', () => {

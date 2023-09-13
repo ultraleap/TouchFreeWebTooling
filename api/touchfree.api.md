@@ -277,6 +277,10 @@ export interface TouchFreeEventSignatures {
     handsLost: () => void;
     inputAction: (inputAction: TouchFreeInputAction) => void;
     onConnected: () => void;
+    // Warning: (ae-forgotten-export) The symbol "LicenseState" needs to be exported by the entry point index.d.ts
+    //
+    // @internal
+    onLicenseStateChange: (state: LicenseState) => void;
     onServiceStatusChange: (state: ServiceState) => void;
     onTrackingServiceStateChange: (state: TrackingServiceState) => void;
     // Warning: (ae-forgotten-export) The symbol "HandFrame" needs to be exported by the entry point index.d.ts

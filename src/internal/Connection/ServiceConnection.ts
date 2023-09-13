@@ -11,6 +11,9 @@ import { HandDataHandler } from './MessageReceivers/HandDataHandler';
 import { HandPresenceMessageReceiver } from './MessageReceivers/HandPresenceMessageReceiver';
 import { InputActionMessageReceiver } from './MessageReceivers/InputActionMessageReceiver';
 import { InteractionZoneMessageReceiver } from './MessageReceivers/InteractionZoneMessageReceiver';
+import { LicensingChangeResponseMessageReceiver } from './MessageReceivers/LicensingMessageReceivers/LicenseChangeResponseReceiver';
+import { LicensingStateMessageReceiver } from './MessageReceivers/LicensingMessageReceivers/LicenseStateMessageReceiver';
+import { LicensingStateResponseMessageReceiver } from './MessageReceivers/LicensingMessageReceivers/LicenseStateResponseMessageReceiver';
 import { ResponseMessageReceiver } from './MessageReceivers/ResponseMessageReceiver';
 import { ServiceStateMessageReceiver } from './MessageReceivers/ServiceStateMessageReceiver';
 import { TrackingStateMessageReceiver } from './MessageReceivers/TrackingStateMessageReceiver';
@@ -23,6 +26,8 @@ import {
     TrackingStateResponse,
     TrackingStateRequest,
     TouchFreeRequest,
+    LicenseChangeResponse,
+    LicenseStateResponse,
 } from './RequestTypes';
 import { CommunicationWrapper, VERSION_INFO } from './ServiceTypes';
 import { v4 as uuidgen } from 'uuid';
@@ -40,6 +45,9 @@ const createMessageReceivers = (serviceConnection: ServiceConnection) => {
         new ServiceStateMessageReceiver(callbacks.serviceStatusCallbacks),
         new TrackingStateMessageReceiver(callbacks.trackingStateCallbacks),
         new VersionHandshakeMessageReceiver(callbacks.handshakeCallbacks),
+        new LicensingChangeResponseMessageReceiver(callbacks.licenseChangeCallbacks),
+        new LicensingStateMessageReceiver(),
+        new LicensingStateResponseMessageReceiver(callbacks.licenseStateCallbacks),
     ];
 };
 
@@ -301,6 +309,54 @@ export class ServiceConnection {
             'config file',
             callback,
             this.callbackLists.configStateCallbacks
+        );
+    };
+
+    /**
+     * Use internally to request the current state of Licensing within the Service via the
+     * {@link webSocket}. Provides a {@link LicenseState} through the _callback parameter.
+     *
+     * @param _callback - The callback through which the {@link LicenseState} will be provided upon
+     * completion. If your _callback requires context it should be bound to that context via .bind()
+     */
+    requestLicenseState = (callback: (detail: LicenseStateResponse) => void): void => {
+        this.baseRequestWithRequiredCallback(
+            ActionCode.GET_LICENSE_STATE,
+            'License state',
+            callback,
+            this.callbackLists.licenseStateCallbacks
+        );
+    };
+
+    /**
+     * Use internally to attempt to add a License Key to TouchFree
+     *
+     * @param licenseKey - the license key you wish to add
+     * @param _callback - Provides a {@link LicenseChangeResponse} upon completion, which includes
+     * a boolean success/fail state and string content.
+     */
+    addLicenseRequest = (licenseKey: string, callback: (detail: LicenseChangeResponse) => void): void => {
+        this.baseRequest(
+            { licenseKey: licenseKey },
+            ActionCode.ADD_LICENSE_KEY,
+            this.callbackLists.licenseChangeCallbacks,
+            callback
+        );
+    };
+
+    /**
+     * Use internally to attempt to remove a License Key from TouchFree
+     *
+     * @param licenseKey - the license key you wish to remove
+     * @param _callback - Provides a {@link LicenseChangeResponse} upon completion, which includes
+     * a boolean success/fail state and string content.
+     */
+    removeLicenseRequest = (licenseKey: string, callback: (detail: LicenseChangeResponse) => void): void => {
+        this.baseRequest(
+            { licenseKey: licenseKey },
+            ActionCode.ADD_LICENSE_KEY,
+            this.callbackLists.licenseChangeCallbacks,
+            callback
         );
     };
 

@@ -1,5 +1,7 @@
 import {
     ConfigState,
+    LicenseChangeResponse,
+    LicenseStateResponse,
     ServiceStateResponse,
     TouchFreeRequestCallback,
     TrackingStateResponse,
@@ -23,6 +25,8 @@ export interface CallbackLists {
     serviceStatusCallbacks: CallbackList<ServiceStateResponse>;
     trackingStateCallbacks: CallbackList<TrackingStateResponse>;
     handshakeCallbacks: CallbackList<WebSocketResponse>;
+    licenseStateCallbacks: CallbackList<LicenseStateResponse>;
+    licenseChangeCallbacks: CallbackList<LicenseChangeResponse>;
 }
 
 export const createDefaultCallbackLists = (): CallbackLists => ({
@@ -32,6 +36,8 @@ export const createDefaultCallbackLists = (): CallbackLists => ({
     responseCallbacks: {},
     serviceStatusCallbacks: {},
     trackingStateCallbacks: {},
+    licenseStateCallbacks: {},
+    licenseChangeCallbacks: {},
 });
 
 export const setClearCallbacksInterval = (
