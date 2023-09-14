@@ -2,7 +2,7 @@ import { isConnected } from '../Connection/ConnectionApi';
 import { ServiceState, TrackingServiceState } from '../Connection/ConnectionTypes';
 import { HandFrame } from '../Hands/HandFrame';
 import { TouchFreeInputAction } from '../InputActions/InputAction';
-import { LicenseState } from '../Licensing/LicensingApi';
+import { LicenseState } from '../Licensing/LicensingTypes';
 
 /**
  * Names and signatures of all TouchFree events

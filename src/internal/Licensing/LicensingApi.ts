@@ -1,13 +1,5 @@
 import { getServiceConnection } from '../Connection/ConnectionApi';
-
-/**
- * @internal
- */
-export enum LicenseState {
-    UNLICENSED,
-    LICENSED,
-    CAMERA_UNLICENSED,
-}
+import { LicenseChangeResult, LicenseState } from './LicensingTypes';
 
 let currentState: LicenseState = LicenseState.UNLICENSED;
 
@@ -31,14 +23,6 @@ export function requestGetLicenseState(callback: (detail: LicenseState) => void)
         currentState = response.licenseState;
         callback(response.licenseState);
     });
-}
-
-/**
- * @internal
- */
-export interface LicenseChangeResult {
-    changeDetails: string;
-    succeeded: boolean;
 }
 
 /**

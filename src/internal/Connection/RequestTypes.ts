@@ -1,5 +1,5 @@
 import { PhysicalConfig, InteractionConfig, DeepPartial } from '../Configuration/ConfigurationTypes';
-import { LicenseChangeResult, LicenseState } from '../Licensing/LicensingApi';
+import { LicenseChangeResult, LicenseState } from '../Licensing/LicensingTypes';
 import { Mask } from '../Tracking/TrackingTypes';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionCode } from './ActionCode';

@@ -11,9 +11,15 @@ import { HandDataHandler } from './MessageReceivers/HandDataHandler';
 import { HandPresenceMessageReceiver } from './MessageReceivers/HandPresenceMessageReceiver';
 import { InputActionMessageReceiver } from './MessageReceivers/InputActionMessageReceiver';
 import { InteractionZoneMessageReceiver } from './MessageReceivers/InteractionZoneMessageReceiver';
-import { LicensingChangeResponseMessageReceiver } from './MessageReceivers/LicensingMessageReceivers/LicenseChangeResponseReceiver';
-import { LicensingStateMessageReceiver } from './MessageReceivers/LicensingMessageReceivers/LicenseStateMessageReceiver';
-import { LicensingStateResponseMessageReceiver } from './MessageReceivers/LicensingMessageReceivers/LicenseStateResponseMessageReceiver';
+import {
+    LicensingChangeResponseMessageReceiver
+} from './MessageReceivers/LicensingMessageReceivers/LicenseChangeResponseReceiver';
+import {
+    LicensingStateMessageReceiver
+} from './MessageReceivers/LicensingMessageReceivers/LicenseStateMessageReceiver';
+import {
+    LicensingStateResponseMessageReceiver
+} from './MessageReceivers/LicensingMessageReceivers/LicenseStateResponseMessageReceiver';
 import { ResponseMessageReceiver } from './MessageReceivers/ResponseMessageReceiver';
 import { ServiceStateMessageReceiver } from './MessageReceivers/ServiceStateMessageReceiver';
 import { TrackingStateMessageReceiver } from './MessageReceivers/TrackingStateMessageReceiver';
