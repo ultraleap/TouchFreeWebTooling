@@ -56,6 +56,7 @@ export * from './InputControllers/CurrentInputController';
 export * from './InputControllers/WebInputController';
 
 export * from './Licensing/LicensingApi';
+export * from './Licensing/LicensingTypes';
 
 export * from './Math/Utilities';
 export * from './Math/Vectors';
