@@ -1,4 +1,4 @@
-import { Vector } from '../Math/Vectors';
+import { type Vector } from '../Math/Vectors';
 
 /**
  * A frame of hand data

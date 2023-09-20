@@ -1,6 +1,6 @@
 import { dispatchEventCallback } from '../../../TouchFreeEvents/TouchFreeEvents';
 import { ActionCode } from '../../ActionCode';
-import { LicenseStateResponse } from '../../RequestTypes';
+import { type LicenseStateResponse } from '../../RequestTypes';
 import { BaseMessageReceiver } from '../BaseMessageReceiver';
 
 /**

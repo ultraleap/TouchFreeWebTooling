@@ -1,11 +1,11 @@
 import {
-    ConfigState,
-    LicenseChangeResponse,
-    LicenseStateResponse,
-    ServiceStateResponse,
-    TouchFreeRequestCallback,
-    TrackingStateResponse,
-    WebSocketResponse,
+    type ConfigState,
+    type LicenseChangeResponse,
+    type LicenseStateResponse,
+    type ServiceStateResponse,
+    type TouchFreeRequestCallback,
+    type TrackingStateResponse,
+    type WebSocketResponse,
 } from './RequestTypes';
 
 /**

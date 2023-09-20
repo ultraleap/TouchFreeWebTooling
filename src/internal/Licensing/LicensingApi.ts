@@ -1,5 +1,5 @@
 import { getServiceConnection } from '../Connection/ConnectionApi';
-import { LicenseChangeResult, LicenseState } from './LicensingTypes';
+import { type LicenseChangeResult, LicenseState } from './LicensingTypes';
 
 let currentState: LicenseState = LicenseState.UNLICENSED;
 

@@ -1,4 +1,10 @@
-import { TouchFreeInputAction, InteractionType, HandType, HandChirality, InputType } from '../InputActions/InputAction';
+import {
+    type TouchFreeInputAction,
+    InteractionType,
+    HandType,
+    HandChirality,
+    InputType,
+} from '../InputActions/InputAction';
 import { InputActionManager } from '../InputActions/InputActionManager';
 import { dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
 
@@ -66,3 +72,34 @@ export const intervalTest = async (test: () => unknown) => {
 };
 
 export const sleep = async (timeoutMS: number) => await new Promise((resolve) => setTimeout(resolve, timeoutMS));
+
+function getAllCombinations(paramsList: any[][] = []): any[][] {
+    if (paramsList.length === 0) {
+        return [];
+    }
+
+    const [firstParams, ...rest] = paramsList;
+    if (rest.length === 0) {
+        return firstParams.map((param: any) => [param]);
+    }
+
+    const combinations: any[] = [];
+
+    getAllCombinations(rest).forEach((restCombination: any) => {
+        firstParams.forEach((param: any) => {
+            combinations.push([param].concat(restCombination));
+        });
+    });
+
+    return combinations;
+}
+
+export function snapshotAllCombinations(fn: (...fnArgs: any) => any, ...args: any[][]) {
+    const snapshot: { [k: string]: any } = {};
+
+    getAllCombinations(args).forEach((combination) => {
+        snapshot[combination.join(',')] = fn(...combination);
+    });
+
+    expect(snapshot).toMatchSnapshot();
+}

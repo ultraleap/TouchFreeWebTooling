@@ -1,5 +1,5 @@
 import { getCurrentServiceAddress, connect } from '../ConnectionApi';
-import { Address } from '../ConnectionTypes';
+import { type Address } from '../ConnectionTypes';
 
 describe('ConnectionApi', () => {
     const checkAddress = (address: Address) => {

@@ -1,6 +1,6 @@
 import { getServiceConnection } from '../Connection/ConnectionApi';
-import { TrackingStateResponse } from '../Connection/RequestTypes';
-import { TrackingState } from './TrackingTypes';
+import { type TrackingStateResponse } from '../Connection/RequestTypes';
+import { type TrackingState } from './TrackingTypes';
 
 /**
  * Request a {@link TrackingState} representing the current state of the tracking software

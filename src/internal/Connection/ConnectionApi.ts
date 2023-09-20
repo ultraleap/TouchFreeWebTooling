@@ -1,4 +1,4 @@
-import { Address, ServiceState } from './ConnectionTypes';
+import { type Address, type ServiceState } from './ConnectionTypes';
 import { convertResponseToServiceState } from './RequestTypes';
 import { ServiceConnection } from './ServiceConnection';
 

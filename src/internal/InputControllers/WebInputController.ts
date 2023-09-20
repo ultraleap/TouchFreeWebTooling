@@ -1,4 +1,4 @@
-import { InputType, TouchFreeInputAction } from '../InputActions/InputAction';
+import { InputType, type TouchFreeInputAction } from '../InputActions/InputAction';
 import { dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
 import { BaseInputController } from './BaseInputController';
 

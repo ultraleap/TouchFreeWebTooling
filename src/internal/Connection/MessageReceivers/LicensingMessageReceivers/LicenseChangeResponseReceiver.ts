@@ -1,6 +1,6 @@
 import { ActionCode } from '../../ActionCode';
-import { CallbackList } from '../../CallbackLists';
-import { LicenseChangeResponse } from '../../RequestTypes';
+import { type CallbackList } from '../../CallbackLists';
+import { type LicenseChangeResponse } from '../../RequestTypes';
 import { BaseMessageReceiver } from '../BaseMessageReceiver';
 
 /**

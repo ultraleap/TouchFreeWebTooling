@@ -1,6 +1,6 @@
 import { ActionCode } from '../ActionCode';
-import { CallbackList } from '../CallbackLists';
-import { WebSocketResponse } from '../RequestTypes';
+import { type CallbackList } from '../CallbackLists';
+import { type WebSocketResponse } from '../RequestTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**
