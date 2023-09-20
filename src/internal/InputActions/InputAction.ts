@@ -75,10 +75,7 @@ export enum InputType {
  * @public
  */
 export enum InteractionType {
-    /**
-     * The user must perform a GRAB gesture to 'Touch' by making a fist
-     * @internal
-     */
+    /** The user must perform a GRAB gesture to 'Touch' by making a fist */
     GRAB,
     /** The user must perform a HOVER gesture to 'Touch' by holding their hand still for a fixed time */
     HOVER,
@@ -86,9 +83,6 @@ export enum InteractionType {
     PUSH,
     /** The user must perform a move past a plane in space to 'Touch' */
     TOUCHPLANE,
-    /**
-     * The user must perform a SWIPE gesture to 'Touch' by moving their hand quickly up, down, left or right
-     * @internal
-     */
+    /** The user must perform a SWIPE gesture to 'Touch' by moving their hand quickly up, down, left or right */
     VELOCITYSWIPE,
 }
