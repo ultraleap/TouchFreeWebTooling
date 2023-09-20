@@ -131,12 +131,10 @@ export interface InteractionConfig {
 
 // @public
 export enum InteractionType {
-    // @internal
     GRAB = 0,
     HOVER = 1,
     PUSH = 2,
     TOUCHPLANE = 3,
-    // @internal
     VELOCITYSWIPE = 4
 }
 
