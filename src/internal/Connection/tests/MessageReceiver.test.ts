@@ -213,7 +213,11 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for a hand presence event', async () => {
-        if (serviceConnection === null) return;
+        if (serviceConnection === null) {
+            expect(serviceConnection).toBeTruthy();
+            return;
+        }
+
         const testFn = vi.spyOn(serviceConnection, 'handleHandPresenceEvent');
         testFn.mockImplementation(() => {});
         mockOpen();
@@ -224,7 +228,10 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for an interaction zone event', async () => {
-        if (serviceConnection === null) return;
+        if (serviceConnection === null) {
+            expect(serviceConnection).toBeTruthy();
+            return;
+        }
         const testFn = vi.spyOn(serviceConnection, 'handleInteractionZoneEvent');
         mockOpen();
 
