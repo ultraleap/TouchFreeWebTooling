@@ -1,4 +1,5 @@
 import { InteractionType, HandType, HandChirality, InputType } from '../../InputActions/InputAction';
+import { snapshotAllCombinations } from '../../tests/testUtils';
 import {
     BitmaskFlags,
     getInteractionFlags,
@@ -67,26 +68,26 @@ const bitmaskFlagParams: BitmaskFlags[] = [
 describe('BitmaskFlag', () => {
     // Suppress errors from console and store them in an array which we print only if a test fails
     const errors: string[] = [];
-    const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation((msg: string) => errors.push(msg));
+    const consoleErrorMock = vi.spyOn(console, 'error').mockImplementation((msg: string) => errors.push(msg));
 
     it('should combine the same as before', () => {
-        expect(getInteractionFlags).toVerifyAllCombinations(interactionTypes, handTypes, handChiralities, inputTypes);
+        snapshotAllCombinations(getInteractionFlags, interactionTypes, handTypes, handChiralities, inputTypes);
     });
 
     it('should deserialize hand chirality the same as before', () => {
-        expect(getChiralityFromFlags).toVerifyAllCombinations(bitmaskFlagParams);
+        snapshotAllCombinations(getChiralityFromFlags, bitmaskFlagParams);
     });
 
     it('should deserialize hand type the same as before', () => {
-        expect(getHandTypeFromFlags).toVerifyAllCombinations(bitmaskFlagParams);
+        snapshotAllCombinations(getHandTypeFromFlags, bitmaskFlagParams);
     });
 
     it('should deserialize input type the same as before', () => {
-        expect(getInputTypeFromFlags).toVerifyAllCombinations(bitmaskFlagParams);
+        snapshotAllCombinations(getInputTypeFromFlags, bitmaskFlagParams);
     });
 
     it('should deserialize interaction type the same as before', () => {
-        expect(getInteractionTypeFromFlags).toVerifyAllCombinations(bitmaskFlagParams);
+        snapshotAllCombinations(getInteractionTypeFromFlags, bitmaskFlagParams);
     });
 
     afterAll(() => {

@@ -1,7 +1,7 @@
 import { dispatchEventCallback } from '../../TouchFreeEvents/TouchFreeEvents';
 import { ActionCode } from '../ActionCode';
-import { CallbackList } from '../CallbackLists';
-import { ServiceStateResponse, convertResponseToServiceState } from '../RequestTypes';
+import { type CallbackList } from '../CallbackLists';
+import { type ServiceStateResponse, convertResponseToServiceState } from '../RequestTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**

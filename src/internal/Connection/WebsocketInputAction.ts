@@ -1,5 +1,11 @@
-import { TouchFreeInputAction, InteractionType, HandType, HandChirality, InputType } from '../InputActions/InputAction';
-import { Vector2 } from '../Math/Vectors';
+import {
+    type TouchFreeInputAction,
+    InteractionType,
+    HandType,
+    HandChirality,
+    InputType,
+} from '../InputActions/InputAction';
+import { type Vector2 } from '../Math/Vectors';
 
 /**
  * The version of an inputAction received via the WebSocket. This must be converted into a

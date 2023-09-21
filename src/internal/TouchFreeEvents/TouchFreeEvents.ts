@@ -1,7 +1,7 @@
 import { isConnected } from '../Connection/ConnectionApi';
-import { ServiceState, TrackingServiceState } from '../Connection/ConnectionTypes';
+import { type ServiceState, TrackingServiceState } from '../Connection/ConnectionTypes';
 import { HandFrame } from '../Hands/HandFrame';
-import { TouchFreeInputAction } from '../InputActions/InputAction';
+import { type TouchFreeInputAction } from '../InputActions/InputAction';
 import { LicenseState } from '../Licensing/LicensingTypes';
 
 /**

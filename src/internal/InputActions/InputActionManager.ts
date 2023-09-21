@@ -1,5 +1,5 @@
 import { dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
-import { TouchFreeInputAction } from './InputAction';
+import { type TouchFreeInputAction } from './InputAction';
 import { InputActionPlugin } from './InputActionPlugin';
 
 /**

@@ -1,9 +1,9 @@
-import { PhysicalConfig, InteractionConfig, DeepPartial } from '../Configuration/ConfigurationTypes';
-import { LicenseChangeResult, LicenseState } from '../Licensing/LicensingTypes';
-import { Mask } from '../Tracking/TrackingTypes';
+import { type PhysicalConfig, type InteractionConfig, type DeepPartial } from '../Configuration/ConfigurationTypes';
+import { type LicenseChangeResult, LicenseState } from '../Licensing/LicensingTypes';
+import { type Mask } from '../Tracking/TrackingTypes';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionCode } from './ActionCode';
-import { TrackingServiceState, ConfigurationState, ServiceState } from './ConnectionTypes';
+import { TrackingServiceState, ConfigurationState, type ServiceState } from './ConnectionTypes';
 
 /**
  * Data structure used as a base for sending requests to the TouchFree Service

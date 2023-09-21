@@ -1,11 +1,16 @@
-import { AnalyticSessionEvents, AnalyticsSessionRequestType } from '../Analytics/AnalyticsTypes';
+import { type AnalyticSessionEvents, type AnalyticsSessionRequestType } from '../Analytics/AnalyticsTypes';
 import { dispatchEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
-import { TrackingState } from '../Tracking/TrackingTypes';
+import { type TrackingState } from '../Tracking/TrackingTypes';
 import { ActionCode } from './ActionCode';
-import { CallbackList, CallbackLists, createDefaultCallbackLists, setClearCallbacksInterval } from './CallbackLists';
-import { Address, HandPresenceState, InteractionZoneState } from './ConnectionTypes';
+import {
+    type CallbackList,
+    type CallbackLists,
+    createDefaultCallbackLists,
+    setClearCallbacksInterval,
+} from './CallbackLists';
+import { type Address, HandPresenceState, InteractionZoneState } from './ConnectionTypes';
 import { AnalyticsMessageReceiver } from './MessageReceivers/AnalyticsMessageReceiver';
-import { MessageReceiver } from './MessageReceivers/BaseMessageReceiver';
+import { type MessageReceiver } from './MessageReceivers/BaseMessageReceiver';
 import { ConfigStateMessageReceiver } from './MessageReceivers/ConfigStateMessageReceiver';
 import { HandDataHandler } from './MessageReceivers/HandDataHandler';
 import { HandPresenceMessageReceiver } from './MessageReceivers/HandPresenceMessageReceiver';
@@ -25,17 +30,17 @@ import { ServiceStateMessageReceiver } from './MessageReceivers/ServiceStateMess
 import { TrackingStateMessageReceiver } from './MessageReceivers/TrackingStateMessageReceiver';
 import { VersionHandshakeMessageReceiver } from './MessageReceivers/VersionHandshakeMessageReceiver';
 import {
-    VersionHandshakeResponse,
-    WebSocketResponse,
-    ConfigState,
-    ServiceStateResponse,
-    TrackingStateResponse,
-    TrackingStateRequest,
-    TouchFreeRequest,
-    LicenseChangeResponse,
-    LicenseStateResponse,
+    type VersionHandshakeResponse,
+    type WebSocketResponse,
+    type ConfigState,
+    type ServiceStateResponse,
+    type TrackingStateResponse,
+    type TrackingStateRequest,
+    type TouchFreeRequest,
+    type LicenseChangeResponse,
+    type LicenseStateResponse,
 } from './RequestTypes';
-import { CommunicationWrapper, VERSION_INFO } from './ServiceTypes';
+import { type CommunicationWrapper, VERSION_INFO } from './ServiceTypes';
 import { v4 as uuidgen } from 'uuid';
 
 const createMessageReceivers = (serviceConnection: ServiceConnection) => {

@@ -1,4 +1,4 @@
-import { TouchFreeInputAction, InputType } from '../InputActions/InputAction';
+import { type TouchFreeInputAction, InputType } from '../InputActions/InputAction';
 import { mapRangeToRange } from '../Math/Utilities';
 import { registerEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
 import { TouchlessCursor } from './TouchlessCursor';

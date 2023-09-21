@@ -1,5 +1,5 @@
 import { InteractionType } from '../InputActions/InputAction';
-import { Vector } from '../Math/Vectors';
+import { type Vector } from '../Math/Vectors';
 
 /**
  * Makes all properties and nested properties of T optional

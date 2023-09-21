@@ -1,5 +1,5 @@
 import { connect } from '../Connection/ConnectionApi';
-import { Address } from '../Connection/ConnectionTypes';
+import { type Address } from '../Connection/ConnectionTypes';
 import { setCurrentCursor } from '../Cursors/CurrentCursor';
 import { SVGCursor } from '../Cursors/SvgCursor';
 import { setInputController } from '../InputControllers/CurrentInputController';

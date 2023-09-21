@@ -1,11 +1,11 @@
 import { getServiceConnection } from '../Connection/ConnectionApi';
-import { ResponseCallback } from '../Connection/ConnectionTypes';
+import { type ResponseCallback } from '../Connection/ConnectionTypes';
 import {
-    AnalyticSessionEvents,
-    AnalyticEventKey,
-    AnalyticsSessionRequestType,
-    StartAnalyticsSessionOptions,
-    StopAnalyticsSessionOptions,
+    type AnalyticSessionEvents,
+    type AnalyticEventKey,
+    type AnalyticsSessionRequestType,
+    type StartAnalyticsSessionOptions,
+    type StopAnalyticsSessionOptions,
 } from './AnalyticsTypes';
 import { v4 as uuidgen } from 'uuid';
 

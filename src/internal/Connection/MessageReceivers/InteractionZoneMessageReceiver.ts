@@ -1,6 +1,6 @@
 import { ActionCode } from '../ActionCode';
 import { InteractionZoneState } from '../ConnectionTypes';
-import { EventUpdate, CommunicationWrapper, InteractionZoneEvent } from '../ServiceTypes';
+import { type EventUpdate, type CommunicationWrapper, type InteractionZoneEvent } from '../ServiceTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**

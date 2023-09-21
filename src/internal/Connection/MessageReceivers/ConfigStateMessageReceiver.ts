@@ -1,6 +1,6 @@
 import { ActionCode } from '../ActionCode';
-import { CallbackList } from '../CallbackLists';
-import { ConfigState } from '../RequestTypes';
+import { type CallbackList } from '../CallbackLists';
+import { type ConfigState } from '../RequestTypes';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**

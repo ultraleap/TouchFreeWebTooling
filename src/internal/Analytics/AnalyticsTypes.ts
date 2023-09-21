@@ -1,4 +1,4 @@
-import { ResponseCallback } from '../Connection/ConnectionTypes';
+import { type ResponseCallback } from '../Connection/ConnectionTypes';
 
 /**
  * Index object of {@link AnalyticEventKey} to number

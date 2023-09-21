@@ -67,7 +67,6 @@ export {
     dispatchEventCallback,
 } from './internal/index';
 
-
 export type {
     /** Analytics - Record analytics data while running */
     AnalyticEventKey,

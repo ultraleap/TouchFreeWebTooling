@@ -1,7 +1,7 @@
-import { TouchFreeInputAction, InputType } from '../../InputActions/InputAction';
+import { type TouchFreeInputAction, InputType } from '../../InputActions/InputAction';
 import { InputActionManager } from '../../InputActions/InputActionManager';
 import { ActionCode } from '../ActionCode';
-import { WebsocketInputAction, BitmaskFlags, convertInputAction } from '../WebsocketInputAction';
+import { type WebsocketInputAction, BitmaskFlags, convertInputAction } from '../WebsocketInputAction';
 import { BaseMessageReceiver } from './BaseMessageReceiver';
 
 /**
