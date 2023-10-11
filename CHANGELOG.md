@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `TouchFree.ControlAnalyticsSession()` function that can start and stop an analytics session in the Service.
 - New `TouchFree.RegisterAnalyticEvents()` and `TouchFree.UnegisterAnalyticEvents()` functions to register / unregister non-TouchFree analytic events (e.g. `pointerdown` or `touchstart`)
 - New `TouchFree.IsAnalyticsActive()` that allows users to determine if there is an active session.
+- `OnServiceStatusChange` event will now be sent with 'Disconnected' state when the TouchFree Service disconnects when it was previously connected.
 
 ## [1.4.0] - 2023-04-06
 

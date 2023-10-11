@@ -177,7 +177,7 @@ export interface TouchFreeEventSignatures {
     OnConnected: () => void;
     WhenConnected: () => void;
     OnTrackingServiceStateChange: (state: TrackingServiceState) => void;
-    OnServiceStatusChange: (state: ServiceStatus) => void;
+    OnServiceStatusChange: (state: ServiceStatus | 'Disconnected') => void;
     HandFound: () => void;
     HandsLost: () => void;
     TransmitHandData: (data: HandFrame) => void;

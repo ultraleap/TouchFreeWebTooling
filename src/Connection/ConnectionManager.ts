@@ -101,11 +101,12 @@ export class ConnectionManager extends EventTarget {
     // Function: Connect
     // Creates a new <ServiceConnection> using <iPAddress> and <port>.
     // Also invokes <OnConnected> on all listeners.
-    public static Connect(): void {
+    public static Connect(): ServiceConnection {
         ConnectionManager.currentServiceConnection = new ServiceConnection(
             ConnectionManager.iPAddress,
             ConnectionManager.port
         );
+        return ConnectionManager.currentServiceConnection;
     }
 
     // Function: HandleHandPresenceEvent
