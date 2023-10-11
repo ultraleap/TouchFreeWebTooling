@@ -55,9 +55,10 @@ export function getServiceConnection(): ServiceConnection | null {
  * A successful connection will dispatch the `"onConnected"` event.
  * @public
  */
-export function connect(address: Address = defaultConnectionAddress): void {
+export function connect(address: Address = defaultConnectionAddress): ServiceConnection {
     currentServiceConnection = new ServiceConnection(address);
     currentConnectionAddress = address;
+    return currentServiceConnection;
 }
 
 /**
