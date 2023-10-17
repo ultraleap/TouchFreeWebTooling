@@ -140,7 +140,7 @@ export class ServiceConnection {
         this.handshakeRequested = false;
         this.handshakeCompleted = false;
 
-        this.webSocket.addEventListener('error', (ev) => console.error(ev));
+        this.webSocket.addEventListener('error', console.error);
         this.webSocket.addEventListener('close', (_ev) => {
             if (this.handshakeCompleted) {
                 dispatchEventCallback('onServiceStatusChange', 'Disconnected');

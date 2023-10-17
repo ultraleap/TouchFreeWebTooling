@@ -24,7 +24,7 @@ export interface TouchFreeEventSignatures {
     onTrackingServiceStateChange: (state: TrackingServiceState) => void;
     /**
      * Event dispatched when the status of TouchFree Service changes.
-     * An event for 'Disconnected' will be sent only if it was connected before.
+     * An event for 'Disconnected' will only be sent if a connection was already established
      */
     onServiceStatusChange: (state: ServiceState | 'Disconnected') => void;
     /**
