@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Generated markdown files detailing the public API.
 - An api report detailing the public API is now generated in `api/touchfree.api.md`.
 - `DeepPartial` type was added to support situations where all properties (nested included) of a type should be optional.
+- `TouchFreeServiceState` type to distinguish situations where no information is available when disconnected and full `ServiceState` information is available.
 - `onServiceStatusChange` event will now be sent with 'Disconnected' state when the TouchFree Service disconnects when it was previously connected.
 
 ### Changed

@@ -84,6 +84,7 @@ export type {
     /** Connection - Manage a connection to the TouchFree service and messages send or receive messages */
     Address,
     ServiceState,
+    TouchFreeServiceState,
     ResponseState,
     ResponseCallback,
 
