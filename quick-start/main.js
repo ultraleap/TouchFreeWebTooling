@@ -84,3 +84,8 @@ touchfree.registerEventCallback('transmitInputAction', (action) => {
     if (!hovered) return;
     hovered.style.transform = `scale(${1.1 - action.ProgressToClick * 0.1})`;
 });
+
+touchfree.registerEventCallback('onServiceStatusChange', (state) => {
+    if (state !== 'Disconnected') return;
+    setTimeout(touchfree.connect, 5000);
+});
