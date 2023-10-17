@@ -48,6 +48,7 @@ export {
     requestServiceStatus,
     Address,
     ServiceState,
+    TouchFreeServiceState,
     TrackingServiceState,
     ConfigurationState,
     HandPresenceState,
