@@ -66,6 +66,14 @@ export class ServiceConnection {
         this.handshakeRequested = false;
         this.handshakeCompleted = false;
 
+        this.webSocket.addEventListener('error', console.error);
+        this.webSocket.addEventListener('close', (_ev) => {
+            if (this.handshakeCompleted) {
+                TouchFree.DispatchEvent('OnServiceStatusChange', 'Disconnected');
+                console.log('Disconnected from TouchFree Service');
+            }
+        });
+
         this.webSocket.addEventListener('open', this.RequestHandshake, { once: true });
     }
 

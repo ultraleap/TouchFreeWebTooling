@@ -9,7 +9,13 @@ All notable changes to the TouchFree Web Tooling project are documented in this 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.4.1] - 2023-10-18
+
+### Changed
+
+- `OnServiceStatusChange` event will now be sent with 'Disconnected' state when the TouchFree Service disconnects when it was previously connected.
+
+## [1.4.0] - 2023-04-06
 
 ### Added
 
