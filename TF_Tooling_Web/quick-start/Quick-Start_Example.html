@@ -97,6 +97,12 @@
         // This is the only call required to initialise TouchFree tooling, getting a default cursor
         TouchFree.Init();
 
+        // Attempt to reconnect to TouchFree Service after a disconnect
+        TouchFree.RegisterEventCallback('OnServiceStatusChange', (state) => {
+            if (state !== 'Disconnected') return;
+            setTimeout(TouchFree.Connection.ConnectionManager.Connect, 5000);
+        });
+
         var changeText = function (content) {
             var textToChange = document.getElementById("Text to change");
             textToChange.textContent = content;
