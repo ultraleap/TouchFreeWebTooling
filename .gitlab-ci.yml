@@ -45,6 +45,7 @@ build::bundle:
     # Package Tooling
     - mkdir ./Tooling_Release
     - cp ${CI_PROJECT_DIR}/Version.txt ./Tooling_Release
+    - cp ${CI_PROJECT_DIR}/CHANGELOG.md ./Tooling_Release
     - cp -R ${CI_PROJECT_DIR}/dist ./Tooling_Release
     - cp -R ${CI_PROJECT_DIR}/Plugins ./Tooling_Release
     - cp -R ${CI_PROJECT_DIR}/quick-start ./Tooling_Release

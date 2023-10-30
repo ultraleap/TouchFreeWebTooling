@@ -134,6 +134,14 @@ export class ServiceConnection {
         this.handshakeRequested = false;
         this.handshakeCompleted = false;
 
+        this.webSocket.addEventListener('error', console.error);
+        this.webSocket.addEventListener('close', (_ev) => {
+            if (this.handshakeCompleted) {
+                dispatchEventCallback('onServiceStatusChange', 'Disconnected');
+                console.log('Disconnected from TouchFree Service');
+            }
+        });
+
         this.webSocket.addEventListener('open', this.requestHandshake, { once: true });
     }
 
@@ -183,7 +191,7 @@ export class ServiceConnection {
      */
     private connectionResultCallback = (response: VersionHandshakeResponse | WebSocketResponse): void => {
         if (response.status === 'Success') {
-            console.log('Successful Connection');
+            console.log('Successful Connection to TouchFree Service');
             const handshakeResponse = response as VersionHandshakeResponse;
             if (handshakeResponse) {
                 this.internalTouchFreeVersion = handshakeResponse.touchFreeVersion;
