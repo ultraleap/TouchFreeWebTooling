@@ -16,15 +16,9 @@ import { HandDataHandler } from './MessageReceivers/HandDataHandler';
 import { HandPresenceMessageReceiver } from './MessageReceivers/HandPresenceMessageReceiver';
 import { InputActionMessageReceiver } from './MessageReceivers/InputActionMessageReceiver';
 import { InteractionZoneMessageReceiver } from './MessageReceivers/InteractionZoneMessageReceiver';
-import {
-    LicensingChangeResponseMessageReceiver
-} from './MessageReceivers/LicensingMessageReceivers/LicenseChangeResponseReceiver';
-import {
-    LicensingStateMessageReceiver
-} from './MessageReceivers/LicensingMessageReceivers/LicenseStateMessageReceiver';
-import {
-    LicensingStateResponseMessageReceiver
-} from './MessageReceivers/LicensingMessageReceivers/LicenseStateResponseMessageReceiver';
+import { LicensingChangeResponseMessageReceiver } from './MessageReceivers/LicensingMessageReceivers/LicenseChangeResponseReceiver';
+import { LicensingStateMessageReceiver } from './MessageReceivers/LicensingMessageReceivers/LicenseStateMessageReceiver';
+import { LicensingStateResponseMessageReceiver } from './MessageReceivers/LicensingMessageReceivers/LicenseStateResponseMessageReceiver';
 import { ResponseMessageReceiver } from './MessageReceivers/ResponseMessageReceiver';
 import { ServiceStateMessageReceiver } from './MessageReceivers/ServiceStateMessageReceiver';
 import { TrackingStateMessageReceiver } from './MessageReceivers/TrackingStateMessageReceiver';
@@ -46,19 +40,19 @@ import { v4 as uuidgen } from 'uuid';
 const createMessageReceivers = (serviceConnection: ServiceConnection) => {
     const callbacks = serviceConnection.getCallbackLists();
     return [
-        new AnalyticsMessageReceiver(callbacks.analyticsRequestCallbacks),
-        new ConfigStateMessageReceiver(callbacks.configStateCallbacks),
+        new AnalyticsMessageReceiver(callbacks.analyticsRequestCallbacks.callbacks),
+        new ConfigStateMessageReceiver(callbacks.configStateCallbacks.callbacks),
         // Passing wrapped callbacks so that the method is not copied and can be replaced in tests
         new HandPresenceMessageReceiver((state) => serviceConnection.handleHandPresenceEvent(state)),
         new InputActionMessageReceiver(),
         new InteractionZoneMessageReceiver((state) => serviceConnection.handleInteractionZoneEvent(state)),
-        new ResponseMessageReceiver(callbacks.responseCallbacks),
-        new ServiceStateMessageReceiver(callbacks.serviceStatusCallbacks),
-        new TrackingStateMessageReceiver(callbacks.trackingStateCallbacks),
-        new VersionHandshakeMessageReceiver(callbacks.handshakeCallbacks),
-        new LicensingChangeResponseMessageReceiver(callbacks.licenseChangeCallbacks),
+        new ResponseMessageReceiver(callbacks.responseCallbacks.callbacks),
+        new ServiceStateMessageReceiver(callbacks.serviceStatusCallbacks.callbacks),
+        new TrackingStateMessageReceiver(callbacks.trackingStateCallbacks.callbacks),
+        new VersionHandshakeMessageReceiver(callbacks.handshakeCallbacks.callbacks),
+        new LicensingChangeResponseMessageReceiver(callbacks.licenseChangeCallbacks.callbacks),
         new LicensingStateMessageReceiver(),
-        new LicensingStateResponseMessageReceiver(callbacks.licenseStateCallbacks),
+        new LicensingStateResponseMessageReceiver(callbacks.licenseStateCallbacks.callbacks),
     ];
 };
 
@@ -130,7 +124,7 @@ export class ServiceConnection {
         this.callbackLists = createDefaultCallbackLists();
         this.handDataHandler = new HandDataHandler();
         this.messageReceivers = createMessageReceivers(this);
-        setClearCallbacksInterval(300, 300, this.callbackLists);
+        setClearCallbacksInterval(300, this.callbackLists);
 
         this.webSocket = new WebSocket(`ws://${address.ip}:${address.port}/connect`);
         this.webSocket.binaryType = 'arraybuffer';
@@ -180,7 +174,7 @@ export class ServiceConnection {
                     JSON.stringify(handshakeRequest),
                     guid,
                     this.connectionResultCallback,
-                    this.callbackLists.handshakeCallbacks
+                    this.callbackLists.handshakeCallbacks.callbacks
                 );
             }
         }
@@ -245,7 +239,12 @@ export class ServiceConnection {
         requestID: string,
         callback?: (detail: WebSocketResponse | T) => void
     ): void => {
-        this.sendMessageWithSimpleResponse(message, requestID, callback, this.callbackLists.responseCallbacks);
+        this.sendMessageWithSimpleResponse(
+            message,
+            requestID,
+            callback,
+            this.callbackLists.responseCallbacks.callbacks
+        );
     };
 
     private sendMessageWithSimpleResponse = <T extends WebSocketResponse>(
@@ -285,7 +284,7 @@ export class ServiceConnection {
             ActionCode.REQUEST_CONFIGURATION_STATE,
             'config state',
             callback,
-            this.callbackLists.configStateCallbacks
+            this.callbackLists.configStateCallbacks.callbacks
         );
     };
 
@@ -299,7 +298,7 @@ export class ServiceConnection {
             ActionCode.RESET_INTERACTION_CONFIG_FILE,
             'config state',
             callback,
-            this.callbackLists.configStateCallbacks
+            this.callbackLists.configStateCallbacks.callbacks
         );
     };
 
@@ -313,7 +312,7 @@ export class ServiceConnection {
             ActionCode.REQUEST_SERVICE_STATUS,
             'service status',
             callback,
-            this.callbackLists.serviceStatusCallbacks
+            this.callbackLists.serviceStatusCallbacks.callbacks
         );
     };
 
@@ -327,7 +326,7 @@ export class ServiceConnection {
             ActionCode.REQUEST_CONFIGURATION_FILE,
             'config file',
             callback,
-            this.callbackLists.configStateCallbacks
+            this.callbackLists.configStateCallbacks.callbacks
         );
     };
 
@@ -343,7 +342,7 @@ export class ServiceConnection {
             ActionCode.GET_LICENSE_STATE,
             'License state',
             callback,
-            this.callbackLists.licenseStateCallbacks
+            this.callbackLists.licenseStateCallbacks.callbacks
         );
     };
 
@@ -358,7 +357,7 @@ export class ServiceConnection {
         this.baseRequest(
             { licenseKey: licenseKey },
             ActionCode.ADD_LICENSE_KEY,
-            this.callbackLists.licenseChangeCallbacks,
+            this.callbackLists.licenseChangeCallbacks.callbacks,
             callback
         );
     };
@@ -374,7 +373,7 @@ export class ServiceConnection {
         this.baseRequest(
             { licenseKey: licenseKey },
             ActionCode.ADD_LICENSE_KEY,
-            this.callbackLists.licenseChangeCallbacks,
+            this.callbackLists.licenseChangeCallbacks.callbacks,
             callback
         );
     };
@@ -396,9 +395,9 @@ export class ServiceConnection {
                 position: atTopTarget ? 'Top' : 'Bottom',
             },
             ActionCode.QUICK_SETUP,
-            this.callbackLists.responseCallbacks,
+            this.callbackLists.responseCallbacks.callbacks,
             callback,
-            this.callbackLists.configStateCallbacks,
+            this.callbackLists.configStateCallbacks.callbacks,
             configurationCallback
         );
     };
@@ -413,7 +412,7 @@ export class ServiceConnection {
             ActionCode.GET_TRACKING_STATE,
             'tracking state',
             callback,
-            this.callbackLists.trackingStateCallbacks
+            this.callbackLists.trackingStateCallbacks.callbacks
         );
     };
 
@@ -445,7 +444,7 @@ export class ServiceConnection {
         this.baseRequest(
             requestContent,
             ActionCode.SET_TRACKING_STATE,
-            this.callbackLists.trackingStateCallbacks,
+            this.callbackLists.trackingStateCallbacks.callbacks,
             callback
         );
     };
@@ -541,7 +540,7 @@ export class ServiceConnection {
         this.baseRequest(
             { sessionID, requestType },
             ActionCode.ANALYTICS_SESSION_REQUEST,
-            this.callbackLists.analyticsRequestCallbacks,
+            this.callbackLists.analyticsRequestCallbacks.callbacks,
             callback
         );
 
@@ -559,7 +558,7 @@ export class ServiceConnection {
         this.baseRequest(
             { sessionID, sessionEvents: events },
             ActionCode.ANALYTICS_UPDATE_SESSION_EVENTS_REQUEST,
-            this.callbackLists.analyticsRequestCallbacks,
+            this.callbackLists.analyticsRequestCallbacks.callbacks,
             callback
         );
 

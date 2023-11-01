@@ -47,7 +47,7 @@ describe('MessageReceiver', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         vi.spyOn(serviceConnection as any, 'requestHandshake');
         if (serviceConnection === null) return;
-        serviceConnection.getCallbackLists().handshakeCallbacks['handshake-guid'] = {
+        serviceConnection.getCallbackLists().handshakeCallbacks.callbacks['handshake-guid'] = {
             timestamp: Date.now(),
             callback: () => {},
         };
