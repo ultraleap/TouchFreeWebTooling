@@ -63,6 +63,12 @@ export enum InteractionZoneState {
 }
 
 /**
+ * State of the service if connected
+ * @public
+ */
+export type TouchFreeServiceState = ServiceState | 'Disconnected';
+
+/**
  * State including TouchFree service/config, tracking service and camera
  * @public
  */

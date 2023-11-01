@@ -1,5 +1,5 @@
 import { isConnected } from '../Connection/ConnectionApi';
-import { ServiceState, TrackingServiceState } from '../Connection/ConnectionTypes';
+import { type TouchFreeServiceState, TrackingServiceState } from '../Connection/ConnectionTypes';
 import { HandFrame } from '../Hands/HandFrame';
 import { TouchFreeInputAction } from '../InputActions/InputAction';
 
@@ -22,9 +22,10 @@ export interface TouchFreeEventSignatures {
      */
     onTrackingServiceStateChange: (state: TrackingServiceState) => void;
     /**
-     * Event dispatched when the status of TouchFree Service changes
+     * Event dispatched when the status of TouchFree Service changes.
+     * An event for 'Disconnected' will only be sent if a connection was already established
      */
-    onServiceStatusChange: (state: ServiceState) => void;
+    onServiceStatusChange: (state: TouchFreeServiceState) => void;
     /**
      * Event dispatched when the first hand has started tracking
      */
