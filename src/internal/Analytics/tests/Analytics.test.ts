@@ -1,5 +1,5 @@
 import { connect, getServiceConnection } from '../../Connection/ConnectionApi';
-import { WebSocketResponse } from '../../Connection/RequestTypes';
+import { type WebSocketResponse } from '../../Connection/RequestTypes';
 import { ServiceConnection } from '../../Connection/ServiceConnection';
 import {
     startAnalyticsSession,
@@ -10,7 +10,8 @@ import {
     registerAnalyticEvents,
     getAnalyticSessionEvents,
 } from '../AnalyticsApi';
-import { AnalyticEventKey } from '../AnalyticsTypes';
+import { type AnalyticEventKey } from '../AnalyticsTypes';
+import type { SpyInstance } from 'vitest';
 
 const successResponse: WebSocketResponse = {
     message: 'test',
@@ -22,14 +23,14 @@ const successResponse: WebSocketResponse = {
 const requestMock = (serviceConnection: ServiceConnection | null) => {
     if (!serviceConnection) throw new Error('Service connection not available');
 
-    return jest.spyOn(serviceConnection, 'analyticsSessionRequest').mockImplementation((_arg1, _arg2, callback) => {
+    return vi.spyOn(serviceConnection, 'analyticsSessionRequest').mockImplementation((_arg1, _arg2, callback) => {
         callback?.(successResponse);
     });
 };
 
 describe('Analytics', () => {
     test('no service connection', () => {
-        const testFn = jest.fn();
+        const testFn = vi.fn();
         startAnalyticsSession('test', { callback: testFn });
         expect(testFn).toBeCalledTimes(0);
     });
@@ -37,13 +38,13 @@ describe('Analytics', () => {
     describe('start/stopAnalyticsSession', () => {
         let serviceConnection: ServiceConnection | null = null;
         const applicationName = 'testApplication';
-        let updateSessionEventsMock: jest.SpyInstance;
+        let updateSessionEventsMock: SpyInstance;
 
         beforeAll(() => {
             connect();
             serviceConnection = getServiceConnection();
             if (!serviceConnection) throw new Error('Service connection not available');
-            updateSessionEventsMock = jest
+            updateSessionEventsMock = vi
                 .spyOn(serviceConnection, 'updateAnalyticSessionEvents')
                 .mockImplementation((_sessionID, _events, callback) => {
                     callback?.(successResponse);
@@ -52,7 +53,7 @@ describe('Analytics', () => {
 
         beforeEach(() => {
             if (!serviceConnection) throw new Error('Service connection not available');
-            const testFn = jest
+            const testFn = vi
                 .spyOn(serviceConnection, 'analyticsSessionRequest')
                 .mockImplementation((requestType, sessionID, callback) => {
                     expect(sessionID.includes(applicationName)).toBe(true);
@@ -65,7 +66,7 @@ describe('Analytics', () => {
 
         it('should call analyticsSessionRequest with the correct arguments', () => {
             if (!serviceConnection) throw new Error('Service connection not available');
-            const testFn = jest
+            const testFn = vi
                 .spyOn(serviceConnection, 'analyticsSessionRequest')
                 .mockImplementation((requestType, sessionID, callback) => {
                     expect(sessionID.includes(applicationName)).toBe(true);
@@ -84,21 +85,21 @@ describe('Analytics', () => {
         it('should call updateAnalyticSessionEvents every 2 seconds on successful start', async () => {
             const mockCalls = updateSessionEventsMock.mock.calls.length;
             expect(updateSessionEventsMock).toBeCalledTimes(mockCalls);
-            jest.useFakeTimers();
+            vi.useFakeTimers();
             const mock = requestMock(serviceConnection);
 
             startAnalyticsSession(applicationName);
-            jest.advanceTimersByTime(2000);
+            vi.advanceTimersByTime(2000);
             expect(updateSessionEventsMock).toBeCalledTimes(mockCalls + 1);
-            jest.advanceTimersByTime(1000);
+            vi.advanceTimersByTime(1000);
             expect(updateSessionEventsMock).toBeCalledTimes(mockCalls + 1);
-            jest.advanceTimersByTime(1000);
+            vi.advanceTimersByTime(1000);
             expect(updateSessionEventsMock).toBeCalledTimes(mockCalls + 2);
             stopAnalyticsSession(applicationName);
             expect(updateSessionEventsMock).toBeCalledTimes(mockCalls + 3);
-            jest.advanceTimersByTime(4000);
+            vi.advanceTimersByTime(4000);
             expect(updateSessionEventsMock).toBeCalledTimes(mockCalls + 3);
-            jest.useRealTimers();
+            vi.useRealTimers();
             mock.mockRestore();
         });
 
@@ -106,14 +107,14 @@ describe('Analytics', () => {
             if (!serviceConnection) throw new Error('Service connection not available');
             let id = '';
 
-            const mock = jest
+            const mock = vi
                 .spyOn(serviceConnection, 'analyticsSessionRequest')
                 .mockImplementation((_arg1, sessionID, callback) => {
                     id = sessionID;
                     // This callback is here to mimic the Service sending a successful response
                     callback?.(successResponse);
                 });
-            const testFn = jest.spyOn(console, 'warn').mockImplementation((arg) => {
+            const testFn = vi.spyOn(console, 'warn').mockImplementation((arg) => {
                 expect(arg).toBe(`Session: ${id} already in progress`);
             });
 
@@ -128,7 +129,7 @@ describe('Analytics', () => {
 
         it('should give appropriate warnings on STOP', () => {
             const mock = requestMock(serviceConnection);
-            const testFn = jest.spyOn(console, 'warn').mockImplementation((arg) => {
+            const testFn = vi.spyOn(console, 'warn').mockImplementation((arg) => {
                 expect(arg).toBe('No active session');
             });
 
@@ -157,7 +158,7 @@ describe('Analytics', () => {
             if (!serviceConnection) throw new Error('Service connection not available');
 
             let id: string;
-            const testFn = jest
+            const testFn = vi
                 .spyOn(serviceConnection, 'analyticsSessionRequest')
                 .mockImplementationOnce((requestType, sessionID, callback) => {
                     id = sessionID;
@@ -184,7 +185,7 @@ describe('Analytics', () => {
 
         test('callbacks should be called when provided', () => {
             const mock = requestMock(serviceConnection);
-            const testFn = jest.fn();
+            const testFn = vi.fn();
             startAnalyticsSession(applicationName, { callback: testFn });
             stopAnalyticsSession(applicationName, { callback: testFn });
             expect(testFn).toBeCalledTimes(2);
@@ -194,9 +195,9 @@ describe('Analytics', () => {
         test('callbacks should be called when provided when Start function stopping previous', () => {
             if (!serviceConnection) throw new Error('Service connection not available');
 
-            const testFn = jest.fn();
+            const testFn = vi.fn();
 
-            const mock = jest
+            const mock = vi
                 .spyOn(serviceConnection, 'analyticsSessionRequest')
                 .mockImplementationOnce((_requestType, _sessionID, callback) => {
                     // This callback is here to mimic the Service sending a successful response
@@ -221,7 +222,7 @@ describe('Analytics', () => {
         const listeners: string[] = [];
         const addedEvents: AnalyticEventKey[] = [];
 
-        const mock = jest.spyOn(document, 'addEventListener').mockImplementation((event, _callback, option) => {
+        const mock = vi.spyOn(document, 'addEventListener').mockImplementation((event, _callback, option) => {
             listeners.push(event);
             expect(option).toBeTruthy();
         });
@@ -275,7 +276,7 @@ describe('Analytics', () => {
         const listeners: string[] = [];
         const defaults: AnalyticEventKey[] = ['touchstart', 'touchmove', 'touchend'];
 
-        const mock = jest.spyOn(document, 'removeEventListener').mockImplementation((event, _callback, option) => {
+        const mock = vi.spyOn(document, 'removeEventListener').mockImplementation((event, _callback, option) => {
             listeners.push(event);
             expect(option).toBeTruthy();
         });

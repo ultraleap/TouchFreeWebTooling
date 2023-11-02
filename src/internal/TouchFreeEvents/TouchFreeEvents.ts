@@ -1,7 +1,8 @@
 import { isConnected } from '../Connection/ConnectionApi';
 import { type TouchFreeServiceState, TrackingServiceState } from '../Connection/ConnectionTypes';
 import { HandFrame } from '../Hands/HandFrame';
-import { TouchFreeInputAction } from '../InputActions/InputAction';
+import { type TouchFreeInputAction } from '../InputActions/InputAction';
+import { LicenseState } from '../Licensing/LicensingTypes';
 
 /**
  * Names and signatures of all TouchFree events
@@ -64,6 +65,11 @@ export interface TouchFreeEventSignatures {
      * Event dispatched when the active hand enters the interaction zone
      */
     handExited: () => void;
+    /**
+     * Event dispatched when the Licensing state of TouchFree Service changes
+     * @internal
+     */
+    onLicenseStateChange: (state: LicenseState) => void;
 }
 
 /**
@@ -264,6 +270,12 @@ function eventImplementations(): EventImpls {
         handExited: {
             withCallback: (callback) => ({
                 listener: callback, // Void callback can be returned directly
+                registerEventFunc: defaultRegisterEventFunc,
+            }),
+        },
+        onLicenseStateChange: {
+            withCallback: (callback) => ({
+                listener: makeCustomEventWrapper(callback),
                 registerEventFunc: defaultRegisterEventFunc,
             }),
         },

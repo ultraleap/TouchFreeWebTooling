@@ -1,7 +1,7 @@
 import { ActionCode } from '../ActionCode';
-import { CallbackList } from '../CallbackLists';
-import { TouchFreeRequest, WebSocketResponse } from '../RequestTypes';
-import { CommunicationWrapper } from '../ServiceTypes';
+import { type CallbackList } from '../CallbackLists';
+import { type TouchFreeRequest, type WebSocketResponse } from '../RequestTypes';
+import { type CommunicationWrapper } from '../ServiceTypes';
 
 export interface MessageReceiver {
     receiveMessage: (message: CommunicationWrapper<unknown>) => void;

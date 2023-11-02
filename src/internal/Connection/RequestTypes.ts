@@ -1,8 +1,9 @@
-import { PhysicalConfig, InteractionConfig, DeepPartial } from '../Configuration/ConfigurationTypes';
-import { Mask } from '../Tracking/TrackingTypes';
+import { type PhysicalConfig, type InteractionConfig, type DeepPartial } from '../Configuration/ConfigurationTypes';
+import { type LicenseChangeResult, LicenseState } from '../Licensing/LicensingTypes';
+import { type Mask } from '../Tracking/TrackingTypes';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionCode } from './ActionCode';
-import { TrackingServiceState, ConfigurationState, ServiceState } from './ConnectionTypes';
+import { TrackingServiceState, ConfigurationState, type ServiceState } from './ConnectionTypes';
 
 /**
  * Data structure used as a base for sending requests to the TouchFree Service
@@ -170,3 +171,32 @@ export function convertResponseToServiceState(response: ServiceStateResponse): S
         trackingServiceVersion: response.trackingVersion,
     };
 }
+
+/**
+ * The structure seen when the Service responds to a {@link LicenseStatusRequest}. Contains a
+ * {@link LicenseState} representing the current state of Service's Licenses.
+ *
+ * @internal
+ */
+export interface LicenseStateResponse extends TouchFreeRequest {
+    licenseState: LicenseState;
+}
+
+/**
+ * Used to request the addition / removal of License Keys from TouchFree. A {@link LicenseChangeResponse}
+ * should follow from the Service, which should be connected to this via request via its requestID.
+ *
+ * @internal
+ */
+export interface LicenseKeyRequest extends TouchFreeRequest {
+    licenseKey: string;
+}
+
+/**
+ * The response to a request to modify (add/remove) a License Key in TouchFree Service. Contains
+ * a boolean representing whether the modification was successful, and a changeDetails string
+ * containing a message detailing any relevant info, for displaying to users.
+ *
+ * @internal
+ */
+export interface LicenseChangeResponse extends TouchFreeRequest, LicenseChangeResult {}

@@ -29,6 +29,9 @@ export * from './Connection/MessageReceivers/ResponseMessageReceiver';
 export * from './Connection/MessageReceivers/ServiceStateMessageReceiver';
 export * from './Connection/MessageReceivers/TrackingStateMessageReceiver';
 export * from './Connection/MessageReceivers/VersionHandshakeMessageReceiver';
+export * from './Connection/MessageReceivers/LicensingMessageReceivers/LicenseChangeResponseReceiver';
+export * from './Connection/MessageReceivers/LicensingMessageReceivers/LicenseStateMessageReceiver';
+export * from './Connection/MessageReceivers/LicensingMessageReceivers/LicenseStateResponseMessageReceiver';
 export * from './Connection/RequestTypes';
 export * from './Connection/ServiceConnection';
 export * from './Connection/ServiceTypes';
@@ -51,6 +54,9 @@ export * from './InputActions/InputActionPlugin';
 export * from './InputControllers/BaseInputController';
 export * from './InputControllers/CurrentInputController';
 export * from './InputControllers/WebInputController';
+
+export * from './Licensing/LicensingApi';
+export * from './Licensing/LicensingTypes';
 
 export * from './Math/Utilities';
 export * from './Math/Vectors';

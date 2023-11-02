@@ -1,9 +1,14 @@
 import { ActionCode } from '../Connection/ActionCode';
 import { getServiceConnection } from '../Connection/ConnectionApi';
-import { ResponseCallback } from '../Connection/ConnectionTypes';
-import { PartialConfigState } from '../Connection/RequestTypes';
-import { CommunicationWrapper } from '../Connection/ServiceTypes';
-import { DeepPartial, InteractionConfig, PhysicalConfig, TouchFreeConfig } from './ConfigurationTypes';
+import { type ResponseCallback } from '../Connection/ConnectionTypes';
+import { type PartialConfigState } from '../Connection/RequestTypes';
+import { type CommunicationWrapper } from '../Connection/ServiceTypes';
+import {
+    type DeepPartial,
+    type InteractionConfig,
+    type PhysicalConfig,
+    type TouchFreeConfig,
+} from './ConfigurationTypes';
 import { v4 as uuidgen } from 'uuid';
 
 /**

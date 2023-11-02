@@ -10,7 +10,7 @@ export const VERSION_INFO = {
     /**
      * The current version of communication API used between Tooling and the TouchFree Service
      */
-    API_VERSION: '1.5.0',
+    API_VERSION: '1.6.0',
 
     /**
      * The name of the header we wish the Service to compare our version with.

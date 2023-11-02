@@ -1,25 +1,26 @@
 import * as ConnectionApi from '../../Connection/ConnectionApi';
 import { init } from '../../Initialization/Initialization';
 import {
-    TouchFreeEventSignatures,
+    type TouchFreeEventSignatures,
     registerEventCallback,
     dispatchEventCallback,
-    TouchFreeEvent,
+    type TouchFreeEvent,
 } from '../TouchFreeEvents';
 
 const events: TouchFreeEventSignatures = {
-    onConnected: jest.fn(),
-    whenConnected: jest.fn(),
-    onServiceStatusChange: jest.fn(),
-    onTrackingServiceStateChange: jest.fn(),
-    handFound: jest.fn(),
-    handsLost: jest.fn(),
-    inputAction: jest.fn(),
-    transmitHandData: jest.fn(),
-    transmitInputAction: jest.fn(),
-    transmitInputActionRaw: jest.fn(),
-    handEntered: jest.fn(),
-    handExited: jest.fn(),
+    onConnected: vi.fn(),
+    whenConnected: vi.fn(),
+    onServiceStatusChange: vi.fn(),
+    onTrackingServiceStateChange: vi.fn(),
+    handFound: vi.fn(),
+    handsLost: vi.fn(),
+    inputAction: vi.fn(),
+    transmitHandData: vi.fn(),
+    transmitInputAction: vi.fn(),
+    transmitInputActionRaw: vi.fn(),
+    handEntered: vi.fn(),
+    handExited: vi.fn(),
+    onLicenseStateChange: vi.fn(),
 };
 
 describe('Events', () => {
@@ -32,7 +33,7 @@ describe('Events', () => {
                 expect(fn).toBeCalledTimes(1);
             });
             it('Should pass whenConnected callback through to onConnected if there is a current connection', () => {
-                const mock = jest.spyOn(ConnectionApi, 'isConnected').mockReturnValue(true);
+                const mock = vi.spyOn(ConnectionApi, 'isConnected').mockReturnValue(true);
                 registerEventCallback('whenConnected', fn);
                 mock.mockRestore();
                 expect(fn).toBeCalledTimes(2);

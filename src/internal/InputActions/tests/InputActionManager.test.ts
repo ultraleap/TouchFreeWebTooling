@@ -7,7 +7,7 @@ import {
     checkTwoInputActionsAreSame,
     sleep,
 } from '../../tests/testUtils';
-import { TouchFreeInputAction, InteractionType, HandType, HandChirality, InputType } from '../InputAction';
+import { type TouchFreeInputAction, InteractionType, HandType, HandChirality, InputType } from '../InputAction';
 import { InputActionManager } from '../InputActionManager';
 import { InputActionPlugin } from '../InputActionPlugin';
 

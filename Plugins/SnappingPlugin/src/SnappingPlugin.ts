@@ -1,4 +1,4 @@
-import { TouchFreeInputAction } from '../../../src/index';
+import { type TouchFreeInputAction } from '../../../src/index';
 import { InputActionPlugin } from '../../../src/internal/index';
 import { SnappableElement } from './SnappableElement';
 import { Vector2 } from './Vector2';

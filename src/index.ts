@@ -16,13 +16,10 @@
 export {
     /** Analytics - Record analytics data while running */
     isAnalyticsActive,
-    AnalyticEventKey,
     getRegisteredAnalyticEventKeys,
     registerAnalyticEvents,
     unregisterAnalyticEvents,
-    StartAnalyticsSessionOptions,
     startAnalyticsSession,
-    StopAnalyticsSessionOptions,
     stopAnalyticsSession,
 
     /** Configuration - Change configuration of the TouchFree Service */
@@ -31,12 +28,6 @@ export {
     requestConfigFileChange,
     requestConfigFileState,
     resetInteractionConfigFileToDefault,
-    DeepPartial,
-    InteractionConfig,
-    HoverAndHoldInteractionSettings,
-    TouchPlaneInteractionSettings,
-    PhysicalConfig,
-    TouchFreeConfig,
     TrackedPosition,
 
     /** Connection - Manage a connection to the TouchFree service and messages send or receive messages */
@@ -46,15 +37,10 @@ export {
     getCurrentServiceAddress,
     getDefaultServiceAddress,
     requestServiceStatus,
-    Address,
-    ServiceState,
-    TouchFreeServiceState,
     TrackingServiceState,
     ConfigurationState,
     HandPresenceState,
     InteractionZoneState,
-    ResponseState,
-    ResponseCallback,
 
     /** Cursors - Multiple cursor styles/implementations and current cursor management */
     DotCursor,
@@ -65,11 +51,9 @@ export {
     setCurrentCursor,
 
     /** Initialization - Set up TouchFree tooling */
-    TfInitParams,
     init,
 
     /** InputActions - Receive data about interactions */
-    TouchFreeInputAction,
     HandChirality,
     HandType,
     InputType,
@@ -77,6 +61,40 @@ export {
 
     /** Math types and functions */
     mapRangeToRange,
+
+    /** TouchFreeEvents - Access to events occurring within TouchFree */
+    registerEventCallback,
+    dispatchEventCallback,
+} from './internal/index';
+
+export type {
+    /** Analytics - Record analytics data while running */
+    AnalyticEventKey,
+    StartAnalyticsSessionOptions,
+    StopAnalyticsSessionOptions,
+
+    /** Configuration - Change configuration of the TouchFree Service */
+    DeepPartial,
+    InteractionConfig,
+    HoverAndHoldInteractionSettings,
+    TouchPlaneInteractionSettings,
+    PhysicalConfig,
+    TouchFreeConfig,
+
+    /** Connection - Manage a connection to the TouchFree service and messages send or receive messages */
+    Address,
+    ServiceState,
+    TouchFreeServiceState,
+    ResponseState,
+    ResponseCallback,
+
+    /** Initialization - Set up TouchFree tooling */
+    TfInitParams,
+
+    /** InputActions - Receive data about interactions */
+    TouchFreeInputAction,
+
+    /** Math types and functions */
     Vector,
     Vector2,
 
@@ -84,6 +102,4 @@ export {
     TouchFreeEventSignatures,
     TouchFreeEvent,
     TouchFreeEventHandle,
-    registerEventCallback,
-    dispatchEventCallback,
 } from './internal/index';

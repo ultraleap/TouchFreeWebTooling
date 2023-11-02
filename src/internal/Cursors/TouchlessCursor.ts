@@ -1,4 +1,4 @@
-import { TouchFreeInputAction } from '../InputActions/InputAction';
+import { type TouchFreeInputAction } from '../InputActions/InputAction';
 import { registerEventCallback } from '../TouchFreeEvents/TouchFreeEvents';
 
 /**

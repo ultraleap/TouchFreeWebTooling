@@ -1,12 +1,12 @@
 import { HandDataManager } from '../../Hands/HandDataManager';
 import { init } from '../../Initialization/Initialization';
-import { TouchFreeEventHandle, registerEventCallback } from '../../TouchFreeEvents/TouchFreeEvents';
+import { type TouchFreeEventHandle, registerEventCallback } from '../../TouchFreeEvents/TouchFreeEvents';
 import { intervalTest } from '../../tests/testUtils';
 import { ActionCode } from '../ActionCode';
 import { getServiceConnection } from '../ConnectionApi';
 import { HandPresenceState, InteractionZoneState } from '../ConnectionTypes';
 import { ServiceConnection } from '../ServiceConnection';
-import { BitmaskFlags, WebsocketInputAction, convertInputAction } from '../WebsocketInputAction';
+import { BitmaskFlags, type WebsocketInputAction, convertInputAction } from '../WebsocketInputAction';
 import { v4 as uuidgen } from 'uuid';
 
 describe('MessageReceiver', () => {
@@ -43,11 +43,11 @@ describe('MessageReceiver', () => {
     const mockOpen = () => serviceConnection?.webSocket.dispatchEvent(new Event('open'));
 
     const mockHandshake = (consoleProperty: string) => {
-        const testFn = jest.spyOn(console, consoleProperty as 'Console').mockImplementation();
+        const testFn = vi.spyOn(console, consoleProperty as 'Console');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        jest.spyOn(serviceConnection as any, 'requestHandshake').mockImplementation();
+        vi.spyOn(serviceConnection as any, 'requestHandshake');
         if (serviceConnection === null) return;
-        serviceConnection.getCallbackLists().handshakeCallbacks['handshake-guid'] = {
+        serviceConnection.getCallbackLists().handshakeCallbacks.callbacks['handshake-guid'] = {
             timestamp: Date.now(),
             callback: () => {},
         };
@@ -79,9 +79,9 @@ describe('MessageReceiver', () => {
         // Reset service after each test to completely reset mocks
         init();
         serviceConnection = getServiceConnection();
-        jest.restoreAllMocks();
+        vi.restoreAllMocks();
         if (serviceConnection) {
-            serviceConnection.webSocket.send = jest.fn((msg) => {
+            serviceConnection.webSocket.send = vi.fn((msg) => {
                 message = msg as string;
             });
         }
@@ -115,7 +115,7 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for a handshake response without a callback', async () => {
-        const testFn = jest
+        const testFn = vi
             .spyOn(console, 'warn')
             .mockImplementation((message: string) =>
                 message.includes('Received a Handshake Response that did not match a callback')
@@ -127,7 +127,7 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for a response with a callback', async () => {
-        const testFn = jest.fn();
+        const testFn = vi.fn();
         mockOpen();
         const guid = uuidgen();
         serviceConnection?.sendMessage('test', guid, testFn);
@@ -138,7 +138,7 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for a response without a callback', async () => {
-        const testFn = jest
+        const testFn = vi
             .spyOn(console, 'warn')
             .mockImplementation((message: string) =>
                 message.includes('Received a Handshake Response that did not match a callback')
@@ -151,7 +151,7 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for a config state with a callback', async () => {
-        const testFn = jest.fn();
+        const testFn = vi.fn();
         mockOpen();
         serviceConnection?.requestConfigState(testFn);
 
@@ -161,7 +161,7 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for a config state without a callback', async () => {
-        const testFn = jest.spyOn(console, 'warn');
+        const testFn = vi.spyOn(console, 'warn');
         testFn.mockImplementation(() => {});
 
         onMessage(ActionCode.CONFIGURATION_STATE);
@@ -174,7 +174,7 @@ describe('MessageReceiver', () => {
 
     it('should correctly check for the service status with a callback', async () => {
         mockOpen();
-        const testFn = jest.fn();
+        const testFn = vi.fn();
         serviceConnection?.requestServiceStatus(testFn);
 
         onMessage(ActionCode.SERVICE_STATUS, undefined, JSON.parse(message).guid);
@@ -184,7 +184,7 @@ describe('MessageReceiver', () => {
 
     it('should correctly check for the service status without a callback', async () => {
         mockOpen();
-        const testFn = jest.fn();
+        const testFn = vi.fn();
         registerEventCallback('onServiceStatusChange', testFn);
 
         onMessage(ActionCode.SERVICE_STATUS);
@@ -193,7 +193,7 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for the tracking state response', async () => {
-        const testFn = jest.fn();
+        const testFn = vi.fn();
         mockOpen();
         serviceConnection?.requestTrackingState(testFn);
 
@@ -203,7 +203,7 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for the session state change response', async () => {
-        const testFn = jest.fn();
+        const testFn = vi.fn();
         mockOpen();
         serviceConnection?.analyticsSessionRequest('START', 'test', testFn);
 
@@ -213,8 +213,12 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for a hand presence event', async () => {
-        if (serviceConnection === null) fail();
-        const testFn = jest.spyOn(serviceConnection, 'handleHandPresenceEvent');
+        if (serviceConnection === null) {
+            expect(serviceConnection).toBeTruthy();
+            return;
+        }
+
+        const testFn = vi.spyOn(serviceConnection, 'handleHandPresenceEvent');
         testFn.mockImplementation(() => {});
         mockOpen();
 
@@ -224,8 +228,11 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for an interaction zone event', async () => {
-        if (serviceConnection === null) fail();
-        const testFn = jest.spyOn(serviceConnection, 'handleInteractionZoneEvent').mockImplementation();
+        if (serviceConnection === null) {
+            expect(serviceConnection).toBeTruthy();
+            return;
+        }
+        const testFn = vi.spyOn(serviceConnection, 'handleInteractionZoneEvent');
         mockOpen();
 
         onMessage(ActionCode.INTERACTION_ZONE_EVENT, { state: InteractionZoneState.HAND_ENTERED });
@@ -234,7 +241,7 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for an input action', async () => {
-        const testFn = jest.fn();
+        const testFn = vi.fn();
         handler = registerEventCallback('transmitInputAction', testFn);
         mockOpen();
 
@@ -259,7 +266,7 @@ describe('MessageReceiver', () => {
 
         const { CursorPosition } = convertInputAction(moveAction);
 
-        const testFn = jest.fn((action) => action.CursorPosition);
+        const testFn = vi.fn((action) => action.CursorPosition);
         handler = registerEventCallback('transmitInputAction', testFn);
 
         onMessage(ActionCode.INPUT_ACTION, { ...moveAction });
@@ -272,7 +279,7 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly cull all excess non-key actions', async () => {
-        const testFn = jest.fn();
+        const testFn = vi.fn();
         handler = registerEventCallback('transmitInputAction', testFn);
         mockOpen();
 
@@ -290,7 +297,7 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly not cull the key actions', async () => {
-        const testFn = jest.fn();
+        const testFn = vi.fn();
         handler = registerEventCallback('transmitInputAction', testFn);
         mockOpen();
 
@@ -311,7 +318,7 @@ describe('MessageReceiver', () => {
     });
 
     it('should correctly check for hand data', async () => {
-        const testFn = jest.spyOn(HandDataManager, 'handleHandFrame').mockImplementation();
+        const testFn = vi.spyOn(HandDataManager, 'handleHandFrame');
         mockOpen();
 
         serviceConnection?.onMessage(new MessageEvent('message', { data: [1, 0, 0, 0] }));
