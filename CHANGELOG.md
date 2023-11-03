@@ -70,11 +70,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `TouchFree.SetCurrentCursor` allows you to set the current cursor of TouchFree. For use when `initialiseCursor` is set to `false`.
-
-## [1.4.0] - 2023-04-06
-
-### Added
-
 - `ServiceStatus` now includes the service version, tracking version, camera serial number and camera firmware version.
 - `OnServiceStatusChange` event - provides data about the status of the TouchFree Service whenever it changes.
 - `WhenConnected` event - functions identically to `OnConnected` but will dispatch an event immediately if already connected to the TouchFree Service.
@@ -94,7 +89,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `ConnectionManager.AddConnectionListener()` - functions identically to the `WhenConnected` event added this release and has been deprecated in favor of it.
 - `ConnectionManager.AddServiceStatusListener()` - functions identically to the `OnTrackingServiceStateChange` event and has been deprecated in favor of it.
-  ]
 
 ### Fixed
 
