@@ -35,9 +35,9 @@ build::bundle:
 
     # Build Tooling
     - cd ${CI_PROJECT_DIR}
-    - npx generate-license-file --input ./package.json --output $CI_PROJECT_DIR/ThirdPartyLicenses.txt
     - npm i
     - npm run build:bundle
+    - npx generate-license-file --input ./package.json --output $CI_PROJECT_DIR/ThirdPartyLicenses.txt
     # Clean last build
     - cd ${CI_PROJECT_DIR}
     - if (Test-Path -Path "./Tooling_Release") {
