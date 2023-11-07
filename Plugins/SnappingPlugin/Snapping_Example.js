@@ -1,6 +1,5 @@
 window.onload = function () {
     touchfree.init();
-    console.log(touchfree);
     var plugins = [new SnappingPlugin.SnappingPlugin()];
 
     touchfree.internal.InputActionManager.setPlugins(plugins);
