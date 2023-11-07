@@ -32,10 +32,10 @@ build::bundle:
     - python ./Scripts/UpdateVersionFile.py --path ${CI_PROJECT_DIR}/Version.txt --swVer $TF_TFW_VERSION --apiVer $TF_API_VERSION --ref ${CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
     - Get-Content ${CI_PROJECT_DIR}/Version.txt
 
-    - npx generate-license-file --input ./package.json --output $CI_PROJECT_DIR/ThirdPartyLicenses.txt
 
     # Build Tooling
     - cd ${CI_PROJECT_DIR}
+    - npx generate-license-file --input ./package.json --output $CI_PROJECT_DIR/ThirdPartyLicenses.txt
     - npm i
     - npm run build:bundle
     # Clean last build
