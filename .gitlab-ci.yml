@@ -32,6 +32,8 @@ build::bundle:
     - python ./Scripts/UpdateVersionFile.py --path ${CI_PROJECT_DIR}/Version.txt --swVer $TF_TFW_VERSION --apiVer $TF_API_VERSION --ref ${CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
     - Get-Content ${CI_PROJECT_DIR}/Version.txt
 
+    - npx generate-license-file --input ./package.json --output $CI_PROJECT_DIR/ThirdPartyLicenses.txt
+
     # Build Tooling
     - cd ${CI_PROJECT_DIR}
     - npm i
@@ -44,6 +46,7 @@ build::bundle:
       }
     # Package Tooling
     - mkdir ./Tooling_Release
+    - cp $CI_PROJECT_DIR/ThirdPartyLicenses.txt ./Tooling_Release
     - cp ${CI_PROJECT_DIR}/Version.txt ./Tooling_Release
     - cp ${CI_PROJECT_DIR}/CHANGELOG.md ./Tooling_Release
     - cp -R ${CI_PROJECT_DIR}/dist ./Tooling_Release
