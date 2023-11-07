@@ -1,7 +1,7 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   # Requires manually keeping up to date with package.json
-  TF_TFW_VERSION: 1.4.0
+  TF_TFW_VERSION: 2.0.0
 
 stages:
   - build
