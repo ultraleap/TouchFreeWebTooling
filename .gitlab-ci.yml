@@ -140,7 +140,7 @@ npm::publish:
     - docker-windows
   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
   only:
-    - release
+    - /^release\/.+/
   script:
     - npm config -L project set //registry.npmjs.org/:username=ul-touchfree
     - npm config -L project set //registry.npmjs.org/:_authToken=$NPM_TOKEN
@@ -155,7 +155,7 @@ npm::pack:
     - docker-windows
   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
   only:
-    - release
+    - /^release\/.+/
   script:
     - npm i
     - npm run build:tsc
