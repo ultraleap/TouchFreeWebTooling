@@ -1,7 +1,7 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   # Requires manually keeping up to date with package.json
-  TF_TFW_VERSION: 1.4.0
+  TF_TFW_VERSION: 2.0.0
 
 stages:
   - build
@@ -32,10 +32,12 @@ build::bundle:
     - python ./Scripts/UpdateVersionFile.py --path ${CI_PROJECT_DIR}/Version.txt --swVer $TF_TFW_VERSION --apiVer $TF_API_VERSION --ref ${CI_COMMIT_SHORT_SHA} --branchName "$CI_COMMIT_REF_NAME"
     - Get-Content ${CI_PROJECT_DIR}/Version.txt
 
+
     # Build Tooling
     - cd ${CI_PROJECT_DIR}
     - npm i
     - npm run build:bundle
+    - npx generate-license-file --input ./package.json --output $CI_PROJECT_DIR/ThirdPartyLicenses.txt
     # Clean last build
     - cd ${CI_PROJECT_DIR}
     - if (Test-Path -Path "./Tooling_Release") {
@@ -44,6 +46,7 @@ build::bundle:
       }
     # Package Tooling
     - mkdir ./Tooling_Release
+    - cp $CI_PROJECT_DIR/ThirdPartyLicenses.txt ./Tooling_Release
     - cp ${CI_PROJECT_DIR}/Version.txt ./Tooling_Release
     - cp ${CI_PROJECT_DIR}/CHANGELOG.md ./Tooling_Release
     - cp -R ${CI_PROJECT_DIR}/dist ./Tooling_Release
@@ -137,7 +140,7 @@ npm::publish:
     - docker-windows
   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
   only:
-    - release
+    - /^release\/.+/
   script:
     - npm config -L project set //registry.npmjs.org/:username=ul-touchfree
     - npm config -L project set //registry.npmjs.org/:_authToken=$NPM_TOKEN
@@ -152,7 +155,7 @@ npm::pack:
     - docker-windows
   image: registry.ultrahaptics.com/ooh/infrastructure/windows-touchfree-toolchain:latest
   only:
-    - release
+    - /^release\/.+/
   script:
     - npm i
     - npm run build:tsc
